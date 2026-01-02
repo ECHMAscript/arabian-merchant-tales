@@ -1,6 +1,8 @@
-import ProductCard from "./ProductCard";
+import { useState } from "react";
+import ProductCard, { ProductCardProps } from "./ProductCard";
+import ProductModal from "./ProductModal";
 
-const products = [
+const products: ProductCardProps[] = [
   {
     id: 1,
     name: "Handwoven Silk Scarf",
@@ -79,6 +81,14 @@ const products = [
 ];
 
 const ProductGrid = () => {
+  const [selectedProduct, setSelectedProduct] = useState<ProductCardProps | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleProductClick = (product: ProductCardProps) => {
+    setSelectedProduct(product);
+    setIsModalOpen(true);
+  };
+
   return (
     <div className="flex-1">
       {/* Header */}
@@ -108,7 +118,7 @@ const ProductGrid = () => {
             className="animate-fade-in"
             style={{ animationDelay: `${index * 0.1}s` }}
           >
-            <ProductCard {...product} />
+            <ProductCard {...product} onClick={() => handleProductClick(product)} />
           </div>
         ))}
       </div>
@@ -119,6 +129,13 @@ const ProductGrid = () => {
           Load More Products
         </button>
       </div>
+
+      {/* Product Modal */}
+      <ProductModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        product={selectedProduct}
+      />
     </div>
   );
 };

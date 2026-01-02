@@ -2,7 +2,7 @@ import { Star, Heart, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
-interface ProductCardProps {
+export interface ProductCardProps {
   id: number;
   name: string;
   price: number;
@@ -13,6 +13,10 @@ interface ProductCardProps {
   category: string;
 }
 
+interface ProductCardComponentProps extends ProductCardProps {
+  onClick?: () => void;
+}
+
 const ProductCard = ({
   name,
   price,
@@ -21,7 +25,8 @@ const ProductCard = ({
   reviewCount,
   image,
   category,
-}: ProductCardProps) => {
+  onClick,
+}: ProductCardComponentProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -42,9 +47,10 @@ const ProductCard = ({
 
   return (
     <div
-      className="group bg-card rounded-xl overflow-hidden shadow-soft hover:shadow-card transition-all duration-300 hover:-translate-y-1"
+      className="group bg-card rounded-xl overflow-hidden shadow-soft hover:shadow-card transition-all duration-300 hover:-translate-y-1 cursor-pointer"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={onClick}
     >
       {/* Image Container - 75% of card */}
       <div className="relative aspect-[3/4] overflow-hidden">
