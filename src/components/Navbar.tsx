@@ -1,29 +1,31 @@
 import { ShoppingCart, Search, User, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <nav className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-border shadow-soft">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <div className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2">
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center">
               <span className="font-display text-primary-foreground text-lg font-bold">S</span>
             </div>
             <span className="font-display text-xl md:text-2xl font-semibold text-foreground">
               Souk<span className="text-primary">Luxe</span>
             </span>
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
-            <a href="#" className="font-body text-foreground hover:text-primary transition-colors duration-200">
+            <Link to="/" className="font-body text-foreground hover:text-primary transition-colors duration-200">
               Home
-            </a>
+            </Link>
             <a href="#" className="font-body text-foreground hover:text-primary transition-colors duration-200">
               Collections
             </a>
@@ -40,10 +42,20 @@ const Navbar = () => {
             <Button variant="ghost" size="icon" className="hidden md:flex">
               <Search className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" size="icon" className="hidden md:flex">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="hidden md:flex"
+              onClick={() => navigate('/profile')}
+            >
               <User className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" size="icon" className="relative">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="relative"
+              onClick={() => navigate('/checkout')}
+            >
               <ShoppingCart className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 w-5 h-5 bg-secondary text-secondary-foreground text-xs rounded-full flex items-center justify-center font-semibold">
                 3
@@ -64,9 +76,9 @@ const Navbar = () => {
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-border animate-slide-up">
             <div className="flex flex-col gap-4">
-              <a href="#" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
+              <Link to="/" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
                 Home
-              </a>
+              </Link>
               <a href="#" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
                 Collections
               </a>
@@ -76,6 +88,9 @@ const Navbar = () => {
               <a href="#" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
                 About
               </a>
+              <Link to="/profile" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
+                Profile
+              </Link>
             </div>
           </div>
         )}
