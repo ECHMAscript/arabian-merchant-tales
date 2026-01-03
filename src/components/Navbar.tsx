@@ -6,6 +6,7 @@ import SearchDropdown from "./SearchDropdown";
 import ProductModal from "./ProductModal";
 import { ProductCardProps } from "./ProductCard";
 import { useFavorites } from "@/contexts/FavoritesContext";
+import { useCart } from "@/contexts/CartContext";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -13,6 +14,7 @@ const Navbar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
   const { favorites } = useFavorites();
+  const { cartCount } = useCart();
 
   const handleSearchProductClick = (product: ProductCardProps) => {
     setSelectedProduct(product);
@@ -83,9 +85,11 @@ const Navbar = () => {
                 onClick={() => navigate('/checkout')}
               >
                 <ShoppingCart className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-secondary text-secondary-foreground text-xs rounded-full flex items-center justify-center font-semibold">
-                  3
-                </span>
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-secondary text-secondary-foreground text-xs rounded-full flex items-center justify-center font-semibold">
+                    {cartCount}
+                  </span>
+                )}
               </Button>
               <Button
                 variant="ghost"

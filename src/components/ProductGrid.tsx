@@ -1,64 +1,135 @@
 import { useState } from "react";
-import ProductCard, { ProductCardProps } from "./ProductCard";
+import ProductCard from "./ProductCard";
 import ProductModal from "./ProductModal";
-import { products } from "@/data/products";
+import { products, ExtendedProduct } from "@/data/products";
+import { useProductFilter } from "@/hooks/useProductFilter";
+import FilterSidebar from "./FilterSidebar";
+import { Button } from "@/components/ui/button";
+import { SlidersHorizontal } from "lucide-react";
+
+const ITEMS_PER_PAGE = 8;
 
 const ProductGrid = () => {
-  const [selectedProduct, setSelectedProduct] = useState<ProductCardProps | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<ExtendedProduct | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [displayCount, setDisplayCount] = useState(ITEMS_PER_PAGE);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
-  const handleProductClick = (product: ProductCardProps) => {
+  const {
+    filters,
+    filteredProducts,
+    updateFilter,
+    toggleArrayFilter,
+    resetFilters,
+  } = useProductFilter(products);
+
+  const displayedProducts = filteredProducts.slice(0, displayCount);
+  const hasMoreProducts = displayCount < filteredProducts.length;
+
+  const handleProductClick = (product: ExtendedProduct) => {
     setSelectedProduct(product);
     setIsModalOpen(true);
   };
 
+  const handleLoadMore = () => {
+    setDisplayCount((prev) => prev + ITEMS_PER_PAGE);
+  };
+
   return (
-    <div className="flex-1">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div>
-          <h2 className="font-display text-2xl font-semibold text-foreground">
-            Our Collection
-          </h2>
-          <p className="font-body text-muted-foreground mt-1">
-            Showing {products.length} artisan products
-          </p>
-        </div>
-        <select className="px-4 py-2 bg-card border border-border rounded-lg font-body text-foreground focus:ring-2 focus:ring-primary focus:border-primary outline-none">
-          <option>Sort by: Featured</option>
-          <option>Price: Low to High</option>
-          <option>Price: High to Low</option>
-          <option>Rating: High to Low</option>
-          <option>Newest First</option>
-        </select>
+    <div className="flex flex-col lg:flex-row gap-8 w-full">
+      {/* Mobile Filter Button */}
+      <div className="lg:hidden">
+        <Button 
+          variant="outline" 
+          onClick={() => setMobileFiltersOpen(true)}
+          className="w-full gap-2"
+        >
+          <SlidersHorizontal className="h-4 w-4" />
+          Filters
+        </Button>
       </div>
 
-      {/* Product Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {products.map((product, index) => (
-          <div
-            key={product.id}
-            className="animate-fade-in"
-            style={{ animationDelay: `${index * 0.1}s` }}
-          >
-            <ProductCard {...product} onClick={() => handleProductClick(product)} />
-          </div>
-        ))}
-      </div>
-
-      {/* Load More */}
-      <div className="mt-12 text-center">
-        <button className="px-8 py-3 bg-transparent border-2 border-primary text-primary font-body font-medium rounded-lg hover:bg-primary hover:text-primary-foreground transition-all duration-300">
-          Load More Products
-        </button>
-      </div>
-
-      {/* Product Modal */}
-      <ProductModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        product={selectedProduct}
+      {/* Filter Sidebar */}
+      <FilterSidebar
+        filters={filters}
+        onPriceChange={(value) => updateFilter("priceRange", value)}
+        onToggleSubcategory={(value) => toggleArrayFilter("subcategories", value)}
+        onToggleGender={(value) => toggleArrayFilter("gender", value)}
+        onToggleColor={(value) => toggleArrayFilter("colors", value)}
+        onToggleSize={(value) => toggleArrayFilter("sizes", value)}
+        onReset={resetFilters}
+        isMobileOpen={mobileFiltersOpen}
+        onMobileClose={() => setMobileFiltersOpen(false)}
       />
+
+      {/* Products Section */}
+      <div className="flex-1">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 className="font-display text-2xl font-semibold text-foreground">
+              Our Collection
+            </h2>
+            <p className="font-body text-muted-foreground mt-1">
+              Showing {displayedProducts.length} of {filteredProducts.length} artisan products
+            </p>
+          </div>
+          <select className="px-4 py-2 bg-card border border-border rounded-lg font-body text-foreground focus:ring-2 focus:ring-primary focus:border-primary outline-none">
+            <option>Sort by: Featured</option>
+            <option>Price: Low to High</option>
+            <option>Price: High to Low</option>
+            <option>Rating: High to Low</option>
+            <option>Newest First</option>
+          </select>
+        </div>
+
+        {/* Product Grid */}
+        {filteredProducts.length === 0 ? (
+          <div className="text-center py-16">
+            <p className="font-body text-muted-foreground text-lg mb-4">
+              No products match your filters.
+            </p>
+            <Button variant="outline" onClick={resetFilters}>
+              Clear Filters
+            </Button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {displayedProducts.map((product, index) => (
+              <div
+                key={product.id}
+                className="animate-fade-in"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <ProductCard {...product} onClick={() => handleProductClick(product)} />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Load More */}
+        <div className="mt-12 text-center">
+          {hasMoreProducts ? (
+            <button 
+              onClick={handleLoadMore}
+              className="px-8 py-3 bg-transparent border-2 border-primary text-primary font-body font-medium rounded-lg hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+            >
+              Load More Products
+            </button>
+          ) : filteredProducts.length > 0 ? (
+            <p className="font-body text-muted-foreground">
+              You've reached the end of our collection
+            </p>
+          ) : null}
+        </div>
+
+        {/* Product Modal */}
+        <ProductModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          product={selectedProduct}
+        />
+      </div>
     </div>
   );
 };
