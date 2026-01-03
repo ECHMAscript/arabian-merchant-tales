@@ -2,6 +2,8 @@ import { Star, Heart, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useFavorites } from "@/contexts/FavoritesContext";
+import { useCart } from "@/contexts/CartContext";
+import { toast } from "sonner";
 
 export interface ProductCardProps {
   id: number;
@@ -31,6 +33,7 @@ const ProductCard = ({
 }: ProductCardComponentProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { addToCart } = useCart();
   const isLiked = isFavorite(id);
 
   const product: ProductCardProps = {
@@ -47,6 +50,12 @@ const ProductCard = ({
   const handleHeartClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     toggleFavorite(product);
+  };
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    addToCart(product);
+    toast.success(`${name} added to cart`);
   };
 
   const renderStars = (rating: number) => {
@@ -102,7 +111,7 @@ const ProductCard = ({
             isHovered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
           }`}
         >
-          <Button variant="hero" size="sm" className="w-full gap-2">
+          <Button variant="hero" size="sm" className="w-full gap-2" onClick={handleAddToCart}>
             <ShoppingCart className="h-4 w-4" />
             Add to Cart
           </Button>

@@ -1,7 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
-import FilterSidebar from "@/components/FilterSidebar";
 import ProductGrid from "@/components/ProductGrid";
 
 const Index = () => {
@@ -21,16 +20,13 @@ const Index = () => {
         
         {/* Main Content */}
         <main className="container mx-auto px-4 py-12">
-          <div className="flex flex-col lg:flex-row gap-8">
-            <FilterSidebar />
-            <ProductGrid />
-          </div>
+          <ProductGrid />
         </main>
 
         {/* Footer */}
         <footer className="bg-foreground text-card py-12 mt-16">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               <div>
                 <div className="flex items-center gap-2 mb-4">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center">
