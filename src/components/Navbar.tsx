@@ -1,101 +1,137 @@
-import { ShoppingCart, Search, User, Menu } from "lucide-react";
+import { ShoppingCart, User, Menu, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import SearchDropdown from "./SearchDropdown";
+import ProductModal from "./ProductModal";
+import { ProductCardProps } from "./ProductCard";
+import { useFavorites } from "@/contexts/FavoritesContext";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<ProductCardProps | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
+  const { favorites } = useFavorites();
+
+  const handleSearchProductClick = (product: ProductCardProps) => {
+    setSelectedProduct(product);
+    setIsModalOpen(true);
+  };
 
   return (
-    <nav className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-border shadow-soft">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center">
-              <span className="font-display text-primary-foreground text-lg font-bold">S</span>
-            </div>
-            <span className="font-display text-xl md:text-2xl font-semibold text-foreground">
-              Souk<span className="text-primary">Luxe</span>
-            </span>
-          </Link>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
-            <Link to="/" className="font-body text-foreground hover:text-primary transition-colors duration-200">
-              Home
-            </Link>
-            <a href="#" className="font-body text-foreground hover:text-primary transition-colors duration-200">
-              Collections
-            </a>
-            <a href="#" className="font-body text-foreground hover:text-primary transition-colors duration-200">
-              New Arrivals
-            </a>
-            <a href="#" className="font-body text-foreground hover:text-primary transition-colors duration-200">
-              About
-            </a>
-          </div>
-
-          {/* Right Actions */}
-          <div className="flex items-center gap-2 md:gap-4">
-            <Button variant="ghost" size="icon" className="hidden md:flex">
-              <Search className="h-5 w-5" />
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="hidden md:flex"
-              onClick={() => navigate('/profile')}
-            >
-              <User className="h-5 w-5" />
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="relative"
-              onClick={() => navigate('/checkout')}
-            >
-              <ShoppingCart className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 w-5 h-5 bg-secondary text-secondary-foreground text-xs rounded-full flex items-center justify-center font-semibold">
-                3
+    <>
+      <nav className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-border shadow-soft">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16 md:h-20">
+            {/* Logo */}
+            <Link to="/" className="flex items-center gap-2">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center">
+                <span className="font-display text-primary-foreground text-lg font-bold">S</span>
+              </div>
+              <span className="font-display text-xl md:text-2xl font-semibold text-foreground">
+                Souk<span className="text-primary">Luxe</span>
               </span>
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              <Menu className="h-5 w-5" />
-            </Button>
-          </div>
-        </div>
+            </Link>
 
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-border animate-slide-up">
-            <div className="flex flex-col gap-4">
-              <Link to="/" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center gap-8">
+              <Link to="/" className="font-body text-foreground hover:text-primary transition-colors duration-200">
                 Home
               </Link>
-              <a href="#" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
+              <Link to="/collections" className="font-body text-foreground hover:text-primary transition-colors duration-200">
                 Collections
-              </a>
-              <a href="#" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
+              </Link>
+              <Link to="/new-arrivals" className="font-body text-foreground hover:text-primary transition-colors duration-200">
                 New Arrivals
-              </a>
-              <a href="#" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
+              </Link>
+              <a href="#" className="font-body text-foreground hover:text-primary transition-colors duration-200">
                 About
               </a>
-              <Link to="/profile" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
-                Profile
-              </Link>
+            </div>
+
+            {/* Right Actions */}
+            <div className="flex items-center gap-2 md:gap-4">
+              <div className="hidden md:block">
+                <SearchDropdown onProductClick={handleSearchProductClick} />
+              </div>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="relative hidden md:flex"
+                onClick={() => navigate('/favorites')}
+              >
+                <Heart className="h-5 w-5" />
+                {favorites.length > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-secondary text-secondary-foreground text-xs rounded-full flex items-center justify-center font-semibold">
+                    {favorites.length}
+                  </span>
+                )}
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="hidden md:flex"
+                onClick={() => navigate('/profile')}
+              >
+                <User className="h-5 w-5" />
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="relative"
+                onClick={() => navigate('/checkout')}
+              >
+                <ShoppingCart className="h-5 w-5" />
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-secondary text-secondary-foreground text-xs rounded-full flex items-center justify-center font-semibold">
+                  3
+                </span>
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="md:hidden"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+              >
+                <Menu className="h-5 w-5" />
+              </Button>
             </div>
           </div>
-        )}
-      </div>
-    </nav>
+
+          {/* Mobile Menu */}
+          {isMenuOpen && (
+            <div className="md:hidden py-4 border-t border-border animate-slide-up">
+              <div className="flex flex-col gap-4">
+                <Link to="/" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
+                  Home
+                </Link>
+                <Link to="/collections" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
+                  Collections
+                </Link>
+                <Link to="/new-arrivals" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
+                  New Arrivals
+                </Link>
+                <a href="#" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
+                  About
+                </a>
+                <Link to="/favorites" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
+                  Favorites ({favorites.length})
+                </Link>
+                <Link to="/profile" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
+                  Profile
+                </Link>
+              </div>
+            </div>
+          )}
+        </div>
+      </nav>
+
+      <ProductModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        product={selectedProduct}
+      />
+    </>
   );
 };
 
