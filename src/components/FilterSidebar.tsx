@@ -30,10 +30,51 @@ const FilterSection = ({ title, children, defaultOpen = true }: FilterSectionPro
   );
 };
 
+interface SubCategoryProps {
+  title: string;
+  items: string[];
+}
+
+const SubCategory = ({ title, items }: SubCategoryProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="mb-2">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between py-2 font-body text-foreground font-medium hover:text-primary transition-colors"
+      >
+        {title}
+        {isOpen ? (
+          <ChevronUp className="h-3 w-3 text-muted-foreground" />
+        ) : (
+          <ChevronDown className="h-3 w-3 text-muted-foreground" />
+        )}
+      </button>
+      {isOpen && (
+        <div className="pl-4 space-y-2 animate-slide-up">
+          {items.map((item) => (
+            <label key={item} className="flex items-center gap-3 cursor-pointer group">
+              <Checkbox className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary" />
+              <span className="font-body text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+                {item}
+              </span>
+            </label>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const FilterSidebar = () => {
   const [priceRange, setPriceRange] = useState([0, 500]);
   const sizes = ["XS", "S", "M", "L", "XL", "XXL"];
-  const categories = ["Textiles", "Jewelry", "Pottery", "Lamps", "Rugs", "Accessories"];
+  
+  const menSubcategories = ["Clothing", "Jewelry", "Accessories"];
+  const womenSubcategories = ["Clothing", "Jewelry", "Accessories"];
+  const homeCategories = ["Pottery", "Lamps", "Rugs", "Textiles"];
+  
   const colors = [
     { name: "Gold", class: "bg-gold" },
     { name: "Burgundy", class: "bg-burgundy" },
@@ -52,15 +93,10 @@ const FilterSidebar = () => {
 
       {/* Categories */}
       <FilterSection title="Categories">
-        <div className="space-y-3">
-          {categories.map((category) => (
-            <label key={category} className="flex items-center gap-3 cursor-pointer group">
-              <Checkbox className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary" />
-              <span className="font-body text-muted-foreground group-hover:text-foreground transition-colors">
-                {category}
-              </span>
-            </label>
-          ))}
+        <div className="space-y-1">
+          <SubCategory title="Men" items={menSubcategories} />
+          <SubCategory title="Women" items={womenSubcategories} />
+          <SubCategory title="Home & Decor" items={homeCategories} />
         </div>
       </FilterSection>
 

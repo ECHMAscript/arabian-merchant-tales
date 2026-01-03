@@ -1,6 +1,7 @@
 import { Star, Heart, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useFavorites } from "@/contexts/FavoritesContext";
 
 export interface ProductCardProps {
   id: number;
@@ -18,6 +19,7 @@ interface ProductCardComponentProps extends ProductCardProps {
 }
 
 const ProductCard = ({
+  id,
   name,
   price,
   originalPrice,
@@ -27,8 +29,25 @@ const ProductCard = ({
   category,
   onClick,
 }: ProductCardComponentProps) => {
-  const [isLiked, setIsLiked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const isLiked = isFavorite(id);
+
+  const product: ProductCardProps = {
+    id,
+    name,
+    price,
+    originalPrice,
+    rating,
+    reviewCount,
+    image,
+    category,
+  };
+
+  const handleHeartClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    toggleFavorite(product);
+  };
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, index) => (
@@ -67,7 +86,7 @@ const ProductCard = ({
 
         {/* Like Button */}
         <button
-          onClick={() => setIsLiked(!isLiked)}
+          onClick={handleHeartClick}
           className={`absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${
             isLiked
               ? "bg-secondary text-secondary-foreground"
