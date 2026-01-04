@@ -41,15 +41,15 @@ const Navbar = () => {
               <Link to="/" className="font-body text-foreground hover:text-primary transition-colors duration-200">
                 Home
               </Link>
-              <Link to="/collections" className="font-body text-foreground hover:text-primary transition-colors duration-200">
-                Collections
+              <Link to="/tailoring" className="font-body text-foreground hover:text-primary transition-colors duration-200">
+                Tailoring
               </Link>
               <Link to="/new-arrivals" className="font-body text-foreground hover:text-primary transition-colors duration-200">
                 New Arrivals
               </Link>
-              <a href="#" className="font-body text-foreground hover:text-primary transition-colors duration-200">
+              <Link to="/about" className="font-body text-foreground hover:text-primary transition-colors duration-200">
                 About
-              </a>
+              </Link>
             </div>
 
             {/* Right Actions */}
@@ -109,15 +109,15 @@ const Navbar = () => {
                 <Link to="/" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
                   Home
                 </Link>
-                <Link to="/collections" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
-                  Collections
+                <Link to="/tailoring" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
+                  Tailoring
                 </Link>
                 <Link to="/new-arrivals" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
                   New Arrivals
                 </Link>
-                <a href="#" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
+                <Link to="/about" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
                   About
-                </a>
+                </Link>
                 <Link to="/favorites" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
                   Favorites ({favorites.length})
                 </Link>
