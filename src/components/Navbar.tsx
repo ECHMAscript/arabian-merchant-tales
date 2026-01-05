@@ -1,4 +1,4 @@
-import { ShoppingCart, User, Menu, Heart } from "lucide-react";
+import { ShoppingCart, User, Menu, Heart, BookMarked } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -7,7 +7,7 @@ import ProductModal from "./ProductModal";
 import { ProductCardProps } from "./ProductCard";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useCart } from "@/contexts/CartContext";
-
+import { useWishlist } from "@/contexts/WishlistContext";
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ProductCardProps | null>(null);
@@ -15,6 +15,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { favorites } = useFavorites();
   const { cartCount } = useCart();
+  const { wishlist } = useWishlist();
 
   const handleSearchProductClick = (product: ProductCardProps) => {
     setSelectedProduct(product);
@@ -44,6 +45,9 @@ const Navbar = () => {
               <Link to="/tailoring" className="font-body text-foreground hover:text-primary transition-colors duration-200">
                 Tailoring
               </Link>
+              <Link to="/books" className="font-body text-foreground hover:text-primary transition-colors duration-200">
+                Books
+              </Link>
               <Link to="/new-arrivals" className="font-body text-foreground hover:text-primary transition-colors duration-200">
                 New Arrivals
               </Link>
@@ -61,7 +65,22 @@ const Navbar = () => {
                 variant="ghost" 
                 size="icon" 
                 className="relative hidden md:flex"
+                onClick={() => navigate('/wishlist')}
+                title="Wishlist"
+              >
+                <BookMarked className="h-5 w-5" />
+                {wishlist.length > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-primary-foreground text-xs rounded-full flex items-center justify-center font-semibold">
+                    {wishlist.length}
+                  </span>
+                )}
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="relative hidden md:flex"
                 onClick={() => navigate('/favorites')}
+                title="Favorites"
               >
                 <Heart className="h-5 w-5" />
                 {favorites.length > 0 && (
@@ -112,11 +131,17 @@ const Navbar = () => {
                 <Link to="/tailoring" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
                   Tailoring
                 </Link>
+                <Link to="/books" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
+                  Books
+                </Link>
                 <Link to="/new-arrivals" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
                   New Arrivals
                 </Link>
                 <Link to="/about" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
                   About
+                </Link>
+                <Link to="/wishlist" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
+                  Wishlist ({wishlist.length})
                 </Link>
                 <Link to="/favorites" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
                   Favorites ({favorites.length})
