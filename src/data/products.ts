@@ -308,10 +308,12 @@ export const newArrivals: ExtendedProduct[] = [
 
 export const pages = [
   { name: "Home", path: "/" },
-  { name: "Collections", path: "/collections" },
+  { name: "Tailoring", path: "/tailoring" },
+  { name: "Books", path: "/books" },
   { name: "New Arrivals", path: "/new-arrivals" },
   { name: "About", path: "/about" },
   { name: "Favorites", path: "/favorites" },
+  { name: "Wishlist", path: "/wishlist" },
   { name: "Profile", path: "/profile" },
   { name: "Checkout", path: "/checkout" },
 ];

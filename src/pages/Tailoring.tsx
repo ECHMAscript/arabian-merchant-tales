@@ -51,7 +51,7 @@ const garmentTypes: GarmentType[] = [
     name: "Thobe / Kandura",
     arabicName: "ثوب",
     description: "Traditional ankle-length white robe worn by Arabian men",
-    image: "https://images.unsplash.com/photo-1609948543911-7ce262a5e6c6?w=400&h=500&fit=crop",
+    image: "https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=400&h=500&fit=crop",
     measurements: [
       { id: "height", label: "Full Length (Shoulder to Ankle)", placeholder: "e.g., 150", unit: "cm" },
       { id: "shoulder", label: "Shoulder Width", placeholder: "e.g., 48", unit: "cm" },
