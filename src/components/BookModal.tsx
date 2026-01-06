@@ -7,7 +7,8 @@ import { BookProduct } from "@/data/books";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { toast } from "sonner";
-import { Star, Heart, ShoppingCart, Package, AlertCircle } from "lucide-react";
+import { Star, BookmarkPlus, BookmarkCheck, ShoppingCart, Package, AlertCircle } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface BookModalProps {
   isOpen: boolean;
@@ -299,14 +300,25 @@ const BookModal = ({ isOpen, onClose, book }: BookModalProps) => {
                 <ShoppingCart className="h-4 w-4" />
                 {isOutOfStock ? "Request Order" : "Add to Cart"}
               </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={handleWishlist}
-                className={inWishlist ? "text-destructive border-destructive" : ""}
-              >
-                <Heart className={`h-5 w-5 ${inWishlist ? "fill-current" : ""}`} />
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={handleWishlist}
+                    className={inWishlist ? "text-primary border-primary" : ""}
+                  >
+                    {inWishlist ? (
+                      <BookmarkCheck className="h-5 w-5" />
+                    ) : (
+                      <BookmarkPlus className="h-5 w-5" />
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{inWishlist ? "Remove from Wishlist" : "Add to Wishlist"}</p>
+                </TooltipContent>
+              </Tooltip>
             </div>
           </div>
         </div>

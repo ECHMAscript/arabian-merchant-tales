@@ -1,13 +1,15 @@
-import { ShoppingCart, User, Menu, Heart, BookMarked } from "lucide-react";
+import { ShoppingCart, Menu, Heart, BookMarked } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import SearchDropdown from "./SearchDropdown";
 import ProductModal from "./ProductModal";
+import UpperNav from "./UpperNav";
 import { ProductCardProps } from "./ProductCard";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
+
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ProductCardProps | null>(null);
@@ -24,17 +26,25 @@ const Navbar = () => {
 
   return (
     <>
+      {/* Upper Navigation Bar */}
+      <UpperNav />
+
       <nav className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-border shadow-soft">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center">
-                <span className="font-display text-primary-foreground text-lg font-bold">S</span>
+                <span className="font-display text-primary-foreground text-lg font-bold">ر</span>
               </div>
-              <span className="font-display text-xl md:text-2xl font-semibold text-foreground">
-                Souk<span className="text-primary">Luxe</span>
-              </span>
+              <div className="flex flex-col">
+                <span className="font-display text-lg md:text-xl font-semibold text-foreground leading-tight">
+                  Rooh Al Andalus
+                </span>
+                <span className="font-body text-xs text-muted-foreground hidden md:block">
+                  روح الأندلس
+                </span>
+              </div>
             </Link>
 
             {/* Desktop Navigation */}
@@ -88,14 +98,6 @@ const Navbar = () => {
                     {favorites.length}
                   </span>
                 )}
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="hidden md:flex"
-                onClick={() => navigate('/profile')}
-              >
-                <User className="h-5 w-5" />
               </Button>
               <Button 
                 variant="ghost" 
