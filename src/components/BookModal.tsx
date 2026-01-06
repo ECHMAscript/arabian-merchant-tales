@@ -26,6 +26,17 @@ const BookModal = ({ isOpen, onClose, book }: BookModalProps) => {
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
 
+  // Reset form state when book changes
+  const handleClose = () => {
+    setShowRequestForm(false);
+    setRequestOrderEmail("");
+    setQuantityError("");
+    setQuantity(1);
+    setSelectedVolumes([]);
+    setBuyFullSet(false);
+    onClose();
+  };
+
   if (!book) return null;
 
   const isOutOfStock = book.quantityLeft === 0;
@@ -104,7 +115,7 @@ const BookModal = ({ isOpen, onClose, book }: BookModalProps) => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-0">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
           {/* Left: Image */}
