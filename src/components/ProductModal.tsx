@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Star, X, Send, Heart, ShoppingCart } from "lucide-react";
+import { Star, X, Send, BookmarkPlus, BookmarkCheck, ShoppingCart } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { toast } from "sonner";
@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface Review {
   id: number;
@@ -213,14 +214,25 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
                   <ShoppingCart className="h-4 w-4" />
                   Add to Cart
                 </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  onClick={handleWishlist}
-                  className={inWishlist ? "text-destructive border-destructive" : ""}
-                >
-                  <Heart className={`h-5 w-5 ${inWishlist ? "fill-current" : ""}`} />
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      onClick={handleWishlist}
+                      className={inWishlist ? "text-primary border-primary" : ""}
+                    >
+                      {inWishlist ? (
+                        <BookmarkCheck className="h-5 w-5" />
+                      ) : (
+                        <BookmarkPlus className="h-5 w-5" />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{inWishlist ? "Remove from Wishlist" : "Add to Wishlist"}</p>
+                  </TooltipContent>
+                </Tooltip>
               </div>
             </div>
           </div>

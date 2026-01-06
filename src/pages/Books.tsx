@@ -235,7 +235,7 @@ const Books = () => {
   return (
     <>
       <Helmet>
-        <title>Books & School Resources - SoukLuxe</title>
+        <title>Books & School Resources - Rooh Al Andalus</title>
         <meta name="description" content="Explore our collection of Islamic books including Tafseer, Fiqh, Seerah, Hadeeth and school supplies." />
       </Helmet>
 
