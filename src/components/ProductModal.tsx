@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { Star, X, Send } from "lucide-react";
+import { Star, X, Send, Heart, ShoppingCart } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
+import { useWishlist } from "@/contexts/WishlistContext";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -71,8 +74,31 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
   const [selectedColor, setSelectedColor] = useState<string>("Gold");
   const [reviews, setReviews] = useState<Review[]>(mockReviews);
   const [newReview, setNewReview] = useState({ author: "", rating: 5, comment: "" });
+  
+  const { addToCart } = useCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
 
   if (!product) return null;
+
+  const inWishlist = isInWishlist(product.id);
+
+  const handleAddToCart = () => {
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      rating: product.rating,
+      reviewCount: product.reviewCount,
+      image: product.image,
+      category: product.category,
+    });
+    toast.success(`${product.name} added to cart!`);
+  };
+
+  const handleWishlist = () => {
+    toggleWishlist(product);
+    toast.success(inWishlist ? "Removed from wishlist" : "Added to wishlist!");
+  };
 
   const renderStars = (rating: number, interactive = false, onSelect?: (r: number) => void) => {
     return Array.from({ length: 5 }, (_, index) => (
@@ -182,9 +208,20 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
                   </span>
                 )}
               </div>
-              <Button variant="gold" size="lg" className="w-full">
-                Add to Cart
-              </Button>
+              <div className="flex gap-3">
+                <Button variant="gold" size="lg" className="flex-1 gap-2" onClick={handleAddToCart}>
+                  <ShoppingCart className="h-4 w-4" />
+                  Add to Cart
+                </Button>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={handleWishlist}
+                  className={inWishlist ? "text-destructive border-destructive" : ""}
+                >
+                  <Heart className={`h-5 w-5 ${inWishlist ? "fill-current" : ""}`} />
+                </Button>
+              </div>
             </div>
           </div>
 

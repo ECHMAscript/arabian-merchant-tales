@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { useCart } from "@/contexts/CartContext";
 import BookModal from "@/components/BookModal";
+import ProductModal from "@/components/ProductModal";
 import { BookProduct } from "@/data/books";
 import { Button } from "@/components/ui/button";
 import { Star, Trash2, ShoppingCart, BookMarked } from "lucide-react";
@@ -13,12 +14,17 @@ const Wishlist = () => {
   const { wishlist, removeFromWishlist } = useWishlist();
   const { addToCart } = useCart();
   const [selectedBook, setSelectedBook] = useState<BookProduct | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isBookModalOpen, setIsBookModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
 
   const handleProductClick = (item: any) => {
     if (item.category === "books" || item.category === "school-supplies") {
       setSelectedBook(item as BookProduct);
-      setIsModalOpen(true);
+      setIsBookModalOpen(true);
+    } else {
+      setSelectedProduct(item);
+      setIsProductModalOpen(true);
     }
   };
 
@@ -141,9 +147,15 @@ const Wishlist = () => {
         </main>
 
         <BookModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          isOpen={isBookModalOpen}
+          onClose={() => setIsBookModalOpen(false)}
           book={selectedBook}
+        />
+
+        <ProductModal
+          isOpen={isProductModalOpen}
+          onClose={() => setIsProductModalOpen(false)}
+          product={selectedProduct}
         />
       </div>
     </>
