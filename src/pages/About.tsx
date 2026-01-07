@@ -9,7 +9,11 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Link } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Plus, FileText } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useAdmin } from "@/contexts/AdminContext";
+import AddArticleModal from "@/components/admin/AddArticleModal";
+import AddTopicModal from "@/components/admin/AddTopicModal";
 
 interface FAQSection {
   id: string;
@@ -337,6 +341,10 @@ const About = () => {
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [activeLinkId, setActiveLinkId] = useState<string | null>(null);
   const [expandedSections, setExpandedSections] = useState<string[]>(faqSections.map(s => s.id));
+  const [isArticleModalOpen, setIsArticleModalOpen] = useState(false);
+  const [isTopicModalOpen, setIsTopicModalOpen] = useState(false);
+  const [topicMode, setTopicMode] = useState<"section" | "subtopic">("section");
+  const { isAdmin } = useAdmin();
 
   const activeLink = activeSection
     ? faqSections
@@ -360,6 +368,16 @@ const About = () => {
   const handleBackToFAQ = () => {
     setActiveSection(null);
     setActiveLinkId(null);
+  };
+
+  const handleAddSection = () => {
+    setTopicMode("section");
+    setIsTopicModalOpen(true);
+  };
+
+  const handleAddSubtopic = () => {
+    setTopicMode("subtopic");
+    setIsTopicModalOpen(true);
   };
 
   return (
@@ -416,7 +434,19 @@ const About = () => {
           {/* FAQ Navigation Sidebar */}
           <aside className="w-full lg:w-72 flex-shrink-0">
             <div className="bg-card rounded-lg border border-border p-4 lg:sticky lg:top-24">
-              <h2 className="font-display text-lg text-foreground mb-4">Topics</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-display text-lg text-foreground">Topics</h2>
+                {isAdmin && (
+                  <div className="flex gap-1">
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={handleAddSection} title="Add section">
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={handleAddSubtopic} title="Add subtopic">
+                      <FileText className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
+              </div>
               <nav className="space-y-2">
                 {faqSections.map((section) => (
                   <div key={section.id}>
@@ -451,6 +481,14 @@ const About = () => {
                   </div>
                 ))}
               </nav>
+              
+              {/* Admin Post Article Button */}
+              {isAdmin && (
+                <Button className="w-full mt-4 gap-2" onClick={() => setIsArticleModalOpen(true)}>
+                  <FileText className="h-4 w-4" />
+                  Post Article
+                </Button>
+              )}
             </div>
           </aside>
 
@@ -500,6 +538,19 @@ const About = () => {
           </main>
         </div>
       </div>
+
+      {/* Admin Modals */}
+      <AddArticleModal
+        isOpen={isArticleModalOpen}
+        onClose={() => setIsArticleModalOpen(false)}
+        existingSections={faqSections.map(s => ({ id: s.id, title: s.title }))}
+      />
+      <AddTopicModal
+        isOpen={isTopicModalOpen}
+        onClose={() => setIsTopicModalOpen(false)}
+        existingSections={faqSections.map(s => ({ id: s.id, title: s.title }))}
+        mode={topicMode}
+      />
     </div>
   );
 };

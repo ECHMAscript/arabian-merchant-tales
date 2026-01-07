@@ -15,6 +15,8 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import AdminAddButton from "@/components/admin/AdminAddButton";
+import AddProductModal from "@/components/admin/AddProductModal";
 
 const NewArrivals = () => {
   const [selectedProduct, setSelectedProduct] = useState<ExtendedProduct | null>(null);
@@ -23,6 +25,8 @@ const NewArrivals = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [isAddCarouselModalOpen, setIsAddCarouselModalOpen] = useState(false);
+  const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
 
   const handleProductClick = (product: ExtendedProduct) => {
     setSelectedProduct(product);
@@ -94,9 +98,15 @@ const NewArrivals = () => {
         <section className="relative bg-foreground py-8 sm:py-12">
           <div className="container mx-auto px-4">
             <div className="text-center mb-8">
-              <span className="inline-block px-4 py-2 bg-gold/20 text-gold-light rounded-full text-sm font-medium mb-4">
-                ✦ Just Arrived
-              </span>
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <span className="inline-block px-4 py-2 bg-gold/20 text-gold-light rounded-full text-sm font-medium">
+                  ✦ Just Arrived
+                </span>
+                <AdminAddButton
+                  onClick={() => setIsAddCarouselModalOpen(true)}
+                  tooltip="Add to carousel"
+                />
+              </div>
               <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-card mb-4">
                 New Arrivals
               </h1>
@@ -292,9 +302,15 @@ const NewArrivals = () => {
         {/* Product Grid */}
         <main className="container mx-auto px-4 py-8 sm:py-12">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-            <p className="font-body text-muted-foreground">
-              Showing {filteredProducts.length} new items
-            </p>
+            <div className="flex items-center gap-3">
+              <p className="font-body text-muted-foreground">
+                Showing {filteredProducts.length} new items
+              </p>
+              <AdminAddButton
+                onClick={() => setIsAddProductModalOpen(true)}
+                tooltip="Add new arrival"
+              />
+            </div>
             <select className="px-4 py-2 bg-card border border-border rounded-lg font-body text-foreground focus:ring-2 focus:ring-primary focus:border-primary outline-none">
               <option>Sort by: Newest</option>
               <option>Price: Low to High</option>
@@ -331,6 +347,18 @@ const NewArrivals = () => {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           product={selectedProduct}
+        />
+
+        {/* Admin Add Modals */}
+        <AddProductModal
+          isOpen={isAddCarouselModalOpen}
+          onClose={() => setIsAddCarouselModalOpen(false)}
+          productType="carousel"
+        />
+        <AddProductModal
+          isOpen={isAddProductModalOpen}
+          onClose={() => setIsAddProductModalOpen(false)}
+          productType="product"
         />
       </div>
     </>
