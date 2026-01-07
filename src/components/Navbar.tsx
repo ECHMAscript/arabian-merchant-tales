@@ -1,4 +1,4 @@
-import { ShoppingCart, Menu, Heart, BookMarked } from "lucide-react";
+import { ShoppingCart, Menu, Heart, BookMarked, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -98,6 +98,15 @@ const Navbar = () => {
                     {favorites.length}
                   </span>
                 )}
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="relative hidden md:flex"
+                onClick={() => navigate('/profile')}
+                title="My Profile"
+              >
+                <User className="h-5 w-5" />
               </Button>
               <Button 
                 variant="ghost" 

@@ -6,6 +6,8 @@ import { useProductFilter } from "@/hooks/useProductFilter";
 import FilterSidebar from "./FilterSidebar";
 import { Button } from "@/components/ui/button";
 import { SlidersHorizontal } from "lucide-react";
+import AdminAddButton from "./admin/AdminAddButton";
+import AddProductModal from "./admin/AddProductModal";
 
 const ITEMS_PER_PAGE = 8;
 
@@ -14,6 +16,7 @@ const ProductGrid = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [displayCount, setDisplayCount] = useState(ITEMS_PER_PAGE);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const {
     filters,
@@ -66,13 +69,19 @@ const ProductGrid = () => {
       <div className="flex-1">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-          <div>
-            <h2 className="font-display text-2xl font-semibold text-foreground">
-              Our Collection
-            </h2>
-            <p className="font-body text-muted-foreground mt-1">
-              Showing {displayedProducts.length} of {filteredProducts.length} artisan products
-            </p>
+          <div className="flex items-center gap-3">
+            <div>
+              <h2 className="font-display text-2xl font-semibold text-foreground">
+                Our Collection
+              </h2>
+              <p className="font-body text-muted-foreground mt-1">
+                Showing {displayedProducts.length} of {filteredProducts.length} artisan products
+              </p>
+            </div>
+            <AdminAddButton 
+              onClick={() => setIsAddModalOpen(true)} 
+              tooltip="Add new product"
+            />
           </div>
           <select className="px-4 py-2 bg-card border border-border rounded-lg font-body text-foreground focus:ring-2 focus:ring-primary focus:border-primary outline-none">
             <option>Sort by: Featured</option>
@@ -128,6 +137,13 @@ const ProductGrid = () => {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           product={selectedProduct}
+        />
+
+        {/* Admin Add Product Modal */}
+        <AddProductModal
+          isOpen={isAddModalOpen}
+          onClose={() => setIsAddModalOpen(false)}
+          productType="product"
         />
       </div>
     </div>

@@ -8,6 +8,8 @@ import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Book, GraduationCap, SlidersHorizontal, X, ChevronDown, ChevronRight } from "lucide-react";
+import AdminAddButton from "@/components/admin/AdminAddButton";
+import AddProductModal from "@/components/admin/AddProductModal";
 
 type MainCategory = "books" | "school-supplies";
 
@@ -23,6 +25,8 @@ const Books = () => {
     books: true,
     schoolSupplies: false
   });
+  const [isAddBookModalOpen, setIsAddBookModalOpen] = useState(false);
+  const [isAddSupplyModalOpen, setIsAddSupplyModalOpen] = useState(false);
 
   const handleProductClick = (product: BookProduct) => {
     setSelectedProduct(product);
@@ -302,22 +306,34 @@ const Books = () => {
             <main className="flex-1">
               {/* Category Tabs */}
               <div className="flex gap-4 mb-6">
-                <Button
-                  variant={mainCategory === "books" ? "default" : "outline"}
-                  onClick={() => handleMainCategoryChange("books")}
-                  className="gap-2"
-                >
-                  <Book className="h-4 w-4" />
-                  Books
-                </Button>
-                <Button
-                  variant={mainCategory === "school-supplies" ? "default" : "outline"}
-                  onClick={() => handleMainCategoryChange("school-supplies")}
-                  className="gap-2"
-                >
-                  <GraduationCap className="h-4 w-4" />
-                  School Resources
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant={mainCategory === "books" ? "default" : "outline"}
+                    onClick={() => handleMainCategoryChange("books")}
+                    className="gap-2"
+                  >
+                    <Book className="h-4 w-4" />
+                    Books
+                  </Button>
+                  <AdminAddButton
+                    onClick={() => setIsAddBookModalOpen(true)}
+                    tooltip="Add new book"
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant={mainCategory === "school-supplies" ? "default" : "outline"}
+                    onClick={() => handleMainCategoryChange("school-supplies")}
+                    className="gap-2"
+                  >
+                    <GraduationCap className="h-4 w-4" />
+                    School Resources
+                  </Button>
+                  <AdminAddButton
+                    onClick={() => setIsAddSupplyModalOpen(true)}
+                    tooltip="Add school supply"
+                  />
+                </div>
               </div>
 
               {/* Results Info */}
@@ -365,6 +381,18 @@ const Books = () => {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           book={selectedProduct}
+        />
+
+        {/* Admin Add Modals */}
+        <AddProductModal
+          isOpen={isAddBookModalOpen}
+          onClose={() => setIsAddBookModalOpen(false)}
+          productType="book"
+        />
+        <AddProductModal
+          isOpen={isAddSupplyModalOpen}
+          onClose={() => setIsAddSupplyModalOpen(false)}
+          productType="school-supply"
         />
       </div>
     </>

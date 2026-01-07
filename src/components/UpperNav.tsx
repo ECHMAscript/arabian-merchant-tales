@@ -1,10 +1,13 @@
 import { Link } from "react-router-dom";
-import { User, LogIn } from "lucide-react";
+import { User, LogIn, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAdmin } from "@/contexts/AdminContext";
+import { Switch } from "@/components/ui/switch";
 
 const UpperNav = () => {
   // This would be replaced with actual auth state
   const isLoggedIn = false;
+  const { isAdmin, toggleAdminMode } = useAdmin();
 
   return (
     <div className="bg-foreground text-card py-2">
@@ -22,8 +25,19 @@ const UpperNav = () => {
             Free shipping on orders over $100
           </div>
 
-          {/* Right side - Auth Links */}
+          {/* Right side - Auth Links & Admin Toggle */}
           <div className="flex items-center gap-3">
+            {/* Admin Mode Toggle */}
+            <div className="flex items-center gap-2 border-r border-card/20 pr-3 mr-1">
+              <Shield className={`h-3 w-3 ${isAdmin ? 'text-gold' : 'text-card/60'}`} />
+              <span className="hidden sm:inline text-xs text-card/70">Admin</span>
+              <Switch
+                checked={isAdmin}
+                onCheckedChange={toggleAdminMode}
+                className="scale-75 data-[state=checked]:bg-gold"
+              />
+            </div>
+
             {isLoggedIn ? (
               <Link to="/profile">
                 <Button variant="ghost" size="sm" className="text-card/80 hover:text-card hover:bg-card/10 gap-2 h-7 text-xs">
