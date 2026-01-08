@@ -14,7 +14,137 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      articles: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          title: string
+          topic_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          title: string
+          topic_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          title?: string
+          topic_id?: string
+        }
+        Relationships: []
+      }
+      books: {
+        Row: {
+          author: string | null
+          category: string
+          created_at: string
+          discount_percentage: number | null
+          id: string
+          image: string
+          original_price: number | null
+          price: number
+          quantity_left: number | null
+          title: string
+          volumes: string[] | null
+        }
+        Insert: {
+          author?: string | null
+          category?: string
+          created_at?: string
+          discount_percentage?: number | null
+          id?: string
+          image: string
+          original_price?: number | null
+          price: number
+          quantity_left?: number | null
+          title: string
+          volumes?: string[] | null
+        }
+        Update: {
+          author?: string | null
+          category?: string
+          created_at?: string
+          discount_percentage?: number | null
+          id?: string
+          image?: string
+          original_price?: number | null
+          price?: number
+          quantity_left?: number | null
+          title?: string
+          volumes?: string[] | null
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          category: string
+          created_at: string
+          discount_percentage: number | null
+          id: string
+          image: string
+          is_new_arrival: boolean | null
+          original_price: number | null
+          price: number
+          title: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          discount_percentage?: number | null
+          id?: string
+          image: string
+          is_new_arrival?: boolean | null
+          original_price?: number | null
+          price: number
+          title: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          discount_percentage?: number | null
+          id?: string
+          image?: string
+          is_new_arrival?: boolean | null
+          original_price?: number | null
+          price?: number
+          title?: string
+        }
+        Relationships: []
+      }
+      topics: {
+        Row: {
+          created_at: string
+          id: string
+          parent_id: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          parent_id?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          parent_id?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "topics_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

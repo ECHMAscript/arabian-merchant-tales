@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import ProductCard from "./ProductCard";
 import ProductModal from "./ProductModal";
 import { products, ExtendedProduct } from "@/data/products";
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { SlidersHorizontal } from "lucide-react";
 import AdminAddButton from "./admin/AdminAddButton";
 import AddProductModal from "./admin/AddProductModal";
+import { useDbProducts } from "@/hooks/useDbProducts";
 
 const ITEMS_PER_PAGE = 8;
 
@@ -18,13 +19,34 @@ const ProductGrid = () => {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
+  const { products: dbProducts, refetch: refetchProducts } = useDbProducts();
+
+  // Combine static products with database products
+  const allProducts = useMemo(() => {
+    const dbProductsMapped: ExtendedProduct[] = dbProducts.map((p) => ({
+      id: p.id,
+      name: p.title,
+      price: Number(p.price),
+      originalPrice: p.original_price ? Number(p.original_price) : undefined,
+      image: p.image,
+      category: p.category,
+      rating: 4.5,
+      reviews: 0,
+      reviewCount: 0,
+      isNew: p.is_new_arrival,
+      colors: [],
+      sizes: [],
+    }));
+    return [...dbProductsMapped, ...products];
+  }, [dbProducts]);
+
   const {
     filters,
     filteredProducts,
     updateFilter,
     toggleArrayFilter,
     resetFilters,
-  } = useProductFilter(products);
+  } = useProductFilter(allProducts);
 
   const displayedProducts = filteredProducts.slice(0, displayCount);
   const hasMoreProducts = displayCount < filteredProducts.length;
@@ -144,6 +166,7 @@ const ProductGrid = () => {
           isOpen={isAddModalOpen}
           onClose={() => setIsAddModalOpen(false)}
           productType="product"
+          onProductAdded={refetchProducts}
         />
       </div>
     </div>
