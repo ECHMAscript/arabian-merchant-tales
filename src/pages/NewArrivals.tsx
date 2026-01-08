@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/carousel";
 import AdminAddButton from "@/components/admin/AdminAddButton";
 import AddProductModal from "@/components/admin/AddProductModal";
+import { useDbNewArrivals } from "@/hooks/useDbProducts";
 
 const NewArrivals = () => {
   const [selectedProduct, setSelectedProduct] = useState<ExtendedProduct | null>(null);
@@ -27,6 +28,27 @@ const NewArrivals = () => {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [isAddCarouselModalOpen, setIsAddCarouselModalOpen] = useState(false);
   const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
+
+  const { arrivals: dbArrivals, refetch: refetchArrivals } = useDbNewArrivals();
+
+  // Combine database arrivals with static data
+  const allArrivals = useMemo(() => {
+    const dbArrivalsMapped: ExtendedProduct[] = dbArrivals.map((p) => ({
+      id: p.id,
+      name: p.title,
+      price: Number(p.price),
+      originalPrice: p.original_price ? Number(p.original_price) : undefined,
+      image: p.image,
+      category: p.category,
+      rating: 4.5,
+      reviews: 0,
+      reviewCount: 0,
+      isNew: true,
+      colors: [],
+      sizes: [],
+    }));
+    return [...dbArrivalsMapped, ...newArrivals];
+  }, [dbArrivals]);
 
   const handleProductClick = (product: ExtendedProduct) => {
     setSelectedProduct(product);
@@ -46,7 +68,7 @@ const NewArrivals = () => {
   };
 
   const filteredProducts = useMemo(() => {
-    return newArrivals.filter((product) => {
+    return allArrivals.filter((product) => {
       // Price filter
       if (product.price < priceRange[0] || product.price > priceRange[1]) {
         return false;
@@ -63,7 +85,7 @@ const NewArrivals = () => {
       }
       return true;
     });
-  }, [priceRange, selectedCategories, selectedColors]);
+  }, [allArrivals, priceRange, selectedCategories, selectedColors]);
 
   const categories = ["Textiles", "Pottery", "Accessories", "Jewelry"];
   const colors = [
@@ -87,8 +109,8 @@ const NewArrivals = () => {
   return (
     <>
       <Helmet>
-        <title>New Arrivals - SoukLuxe</title>
-        <meta name="description" content="Discover the latest arrivals at SoukLuxe. Fresh handcrafted treasures." />
+        <title>New Arrivals - Rooh Al Andalus</title>
+        <meta name="description" content="Discover the latest arrivals at Rooh Al Andalus. Fresh handcrafted treasures." />
       </Helmet>
 
       <div className="min-h-screen bg-background">
@@ -117,7 +139,7 @@ const NewArrivals = () => {
 
             <Carousel className="w-full max-w-5xl mx-auto">
               <CarouselContent>
-                {newArrivals.map((product) => (
+                {allArrivals.map((product) => (
                   <CarouselItem key={product.id} className="basis-full sm:basis-1/2 lg:basis-1/3">
                     <div
                       className="p-2 cursor-pointer"
@@ -354,11 +376,13 @@ const NewArrivals = () => {
           isOpen={isAddCarouselModalOpen}
           onClose={() => setIsAddCarouselModalOpen(false)}
           productType="carousel"
+          onProductAdded={refetchArrivals}
         />
         <AddProductModal
           isOpen={isAddProductModalOpen}
           onClose={() => setIsAddProductModalOpen(false)}
           productType="product"
+          onProductAdded={refetchArrivals}
         />
       </div>
     </>

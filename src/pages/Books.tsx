@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Book, GraduationCap, SlidersHorizontal, X, ChevronDown, ChevronRight } from "lucide-react";
 import AdminAddButton from "@/components/admin/AdminAddButton";
 import AddProductModal from "@/components/admin/AddProductModal";
+import { useDbBooks } from "@/hooks/useDbProducts";
 
 type MainCategory = "books" | "school-supplies";
 
@@ -27,6 +28,50 @@ const Books = () => {
   });
   const [isAddBookModalOpen, setIsAddBookModalOpen] = useState(false);
   const [isAddSupplyModalOpen, setIsAddSupplyModalOpen] = useState(false);
+
+  const { books: dbBooks, refetch: refetchBooks } = useDbBooks();
+
+  // Map database books to BookProduct format and combine with static data
+  const allBooks = useMemo(() => {
+    const dbBooksMapped: BookProduct[] = dbBooks
+      .filter((b) => b.category === "books")
+      .map((b) => ({
+        id: b.id,
+        name: b.title,
+        author: b.author || undefined,
+        price: Number(b.price),
+        originalPrice: b.original_price ? Number(b.original_price) : undefined,
+        image: b.image,
+        category: "books" as const,
+        subcategory: "General",
+        quantityLeft: b.quantity_left,
+        rating: 4.5,
+        reviews: 0,
+        reviewCount: 0,
+        volumes: b.volumes || undefined,
+      }));
+    return [...dbBooksMapped, ...booksData];
+  }, [dbBooks]);
+
+  const allSchoolSupplies = useMemo(() => {
+    const dbSuppliesMapped: BookProduct[] = dbBooks
+      .filter((b) => b.category === "school-supplies")
+      .map((b) => ({
+        id: b.id,
+        name: b.title,
+        author: b.author || undefined,
+        price: Number(b.price),
+        originalPrice: b.original_price ? Number(b.original_price) : undefined,
+        image: b.image,
+        category: "school-supplies" as const,
+        subcategory: "General",
+        quantityLeft: b.quantity_left,
+        rating: 4.5,
+        reviews: 0,
+        reviewCount: 0,
+      }));
+    return [...dbSuppliesMapped, ...schoolSuppliesData];
+  }, [dbBooks]);
 
   const handleProductClick = (product: BookProduct) => {
     setSelectedProduct(product);
@@ -53,7 +98,7 @@ const Books = () => {
   };
 
   const filteredProducts = useMemo(() => {
-    const products = mainCategory === "books" ? booksData : schoolSuppliesData;
+    const products = mainCategory === "books" ? allBooks : allSchoolSupplies;
     
     return products.filter((product) => {
       // Subcategory filter
@@ -70,7 +115,7 @@ const Books = () => {
       }
       return true;
     });
-  }, [mainCategory, selectedSubcategories, priceRange, showInStockOnly]);
+  }, [mainCategory, allBooks, allSchoolSupplies, selectedSubcategories, priceRange, showInStockOnly]);
 
   const currentCategories = mainCategory === "books" ? bookCategories : schoolSupplyCategories;
 
@@ -388,11 +433,13 @@ const Books = () => {
           isOpen={isAddBookModalOpen}
           onClose={() => setIsAddBookModalOpen(false)}
           productType="book"
+          onProductAdded={refetchBooks}
         />
         <AddProductModal
           isOpen={isAddSupplyModalOpen}
           onClose={() => setIsAddSupplyModalOpen(false)}
           productType="school-supply"
+          onProductAdded={refetchBooks}
         />
       </div>
     </>
