@@ -4,8 +4,8 @@ import { ProductCardProps } from "@/components/ProductCard";
 interface FavoritesContextType {
   favorites: ProductCardProps[];
   addFavorite: (product: ProductCardProps) => void;
-  removeFavorite: (productId: number) => void;
-  isFavorite: (productId: number) => boolean;
+  removeFavorite: (productId: number | string) => void;
+  isFavorite: (productId: number | string) => boolean;
   toggleFavorite: (product: ProductCardProps) => void;
 }
 
@@ -21,11 +21,11 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const removeFavorite = (productId: number) => {
+  const removeFavorite = (productId: number | string) => {
     setFavorites((prev) => prev.filter((p) => p.id !== productId));
   };
 
-  const isFavorite = (productId: number) => {
+  const isFavorite = (productId: number | string) => {
     return favorites.some((p) => p.id === productId);
   };
 

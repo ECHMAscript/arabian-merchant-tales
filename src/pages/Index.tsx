@@ -7,7 +7,7 @@ const Index = () => {
   return (
     <>
       <Helmet>
-        <title>SoukLuxe - Authentic Arabian Luxury Crafts & Artisan Products</title>
+        <title>Rooh Al Andalus - Authentic Arabian Luxury Crafts & Artisan Products</title>
         <meta 
           name="description" 
           content="Discover handcrafted Arabian luxury goods. Shop authentic textiles, jewelry, pottery, and home décor from skilled artisans. Free shipping on orders over $100." 
@@ -30,10 +30,10 @@ const Index = () => {
               <div>
                 <div className="flex items-center gap-2 mb-4">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center">
-                    <span className="font-display text-primary-foreground text-lg font-bold">S</span>
+                    <span className="font-display text-primary-foreground text-lg font-bold">R</span>
                   </div>
                   <span className="font-display text-xl font-semibold text-card">
-                    Souk<span className="text-gold-light">Luxe</span>
+                    Rooh Al<span className="text-gold-light"> Andalus</span>
                   </span>
                 </div>
                 <p className="font-body text-card/70 text-sm leading-relaxed">
@@ -79,7 +79,7 @@ const Index = () => {
             
             <div className="border-t border-card/20 mt-10 pt-6 text-center">
               <p className="font-body text-card/50 text-sm">
-                © 2024 SoukLuxe. All rights reserved. Crafted with ♥ for artisan traditions.
+                © 2024 Rooh Al Andalus. All rights reserved. Crafted with ♥ for artisan traditions.
               </p>
             </div>
           </div>

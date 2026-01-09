@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Navbar from "@/components/Navbar";
 import {
   Breadcrumb,
@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { useAdmin } from "@/contexts/AdminContext";
 import AddArticleModal from "@/components/admin/AddArticleModal";
 import AddTopicModal from "@/components/admin/AddTopicModal";
+import { useDbTopics, useDbArticles } from "@/hooks/useDbArticles";
 
 interface FAQSection {
   id: string;
@@ -25,26 +26,26 @@ interface FAQSection {
   }[];
 }
 
-const faqSections: FAQSection[] = [
+// Static FAQ sections as fallback
+const staticFaqSections: FAQSection[] = [
   {
     id: "getting-started",
     title: "Getting Started",
     links: [
       {
-        id: "about-soukluxe",
-        title: "About SoukLuxe",
+        id: "about-roohalandalus",
+        title: "About Rooh Al Andalus",
         content: `
-          <h2 class="font-display text-2xl md:text-3xl text-foreground mb-6">About SoukLuxe</h2>
+          <h2 class="font-display text-2xl md:text-3xl text-foreground mb-6">About Rooh Al Andalus</h2>
           <p class="text-muted-foreground mb-4">
-            SoukLuxe is your premier destination for authentic Arabian-inspired fashion and home décor. 
+            Rooh Al Andalus is your premier destination for authentic Arabian-inspired fashion and home décor. 
             Founded in 2020, we bridge the gap between traditional Middle Eastern craftsmanship and 
             contemporary style, bringing you curated collections that celebrate the rich heritage of 
             Arabian artistry.
           </p>
           <p class="text-muted-foreground mb-4">
-            Our name, "Souk," pays homage to the traditional marketplaces that have been the heart of 
-            Middle Eastern commerce for centuries. Combined with "Luxe," we represent our commitment to 
-            quality and elegance in every piece we offer.
+            Our name, "Rooh Al Andalus" (روح الأندلس), meaning "Soul of Andalusia," pays homage to the rich cultural 
+            heritage of Islamic Spain. Combined with our commitment to quality, we represent elegance in every piece we offer.
           </p>
           <h3 class="font-display text-xl text-foreground mt-8 mb-4">Our Mission</h3>
           <p class="text-muted-foreground mb-4">
@@ -60,7 +61,7 @@ const faqSections: FAQSection[] = [
         content: `
           <h2 class="font-display text-2xl md:text-3xl text-foreground mb-6">Our Story</h2>
           <p class="text-muted-foreground mb-4">
-            SoukLuxe began as a passion project by our founder, who traveled extensively through 
+            Rooh Al Andalus began as a passion project by our founder, who traveled extensively through 
             Morocco, Egypt, and the Arabian Peninsula. Captivated by the intricate patterns, rich 
             fabrics, and timeless designs found in traditional souks, she dreamed of sharing these 
             treasures with the world.
@@ -72,7 +73,7 @@ const faqSections: FAQSection[] = [
           </p>
           <h3 class="font-display text-xl text-foreground mt-8 mb-4">Our Journey</h3>
           <ul class="list-disc list-inside text-muted-foreground space-y-2 mb-4">
-            <li><strong>2020:</strong> SoukLuxe launches with 50 handpicked products</li>
+            <li><strong>2020:</strong> Rooh Al Andalus launches with 50 handpicked products</li>
             <li><strong>2021:</strong> Partnership with 20+ artisan communities established</li>
             <li><strong>2022:</strong> Expanded to include tailoring and custom services</li>
             <li><strong>2023:</strong> Launched our sustainable packaging initiative</li>
@@ -86,7 +87,7 @@ const faqSections: FAQSection[] = [
         content: `
           <h2 class="font-display text-2xl md:text-3xl text-foreground mb-6">How to Shop</h2>
           <p class="text-muted-foreground mb-4">
-            Shopping at SoukLuxe is designed to be a seamless and enjoyable experience. Here's how 
+            Shopping at Rooh Al Andalus is designed to be a seamless and enjoyable experience. Here's how 
             to get started:
           </p>
           <h3 class="font-display text-xl text-foreground mt-6 mb-4">1. Browse Our Collections</h3>
@@ -268,14 +269,14 @@ const faqSections: FAQSection[] = [
           </p>
           <h3 class="font-display text-xl text-foreground mt-6 mb-4">Customer Service</h3>
           <ul class="text-muted-foreground space-y-2 mb-4">
-            <li><strong>Email:</strong> support@soukluxe.com</li>
+            <li><strong>Email:</strong> support@roohalandalus.com</li>
             <li><strong>Phone:</strong> +971 4 123 4567</li>
             <li><strong>WhatsApp:</strong> +971 50 123 4567</li>
             <li><strong>Hours:</strong> Sunday - Thursday, 9am - 6pm GST</li>
           </ul>
           <h3 class="font-display text-xl text-foreground mt-6 mb-4">Visit Our Studio</h3>
           <p class="text-muted-foreground mb-4">
-            SoukLuxe Showroom<br />
+            Rooh Al Andalus Showroom<br />
             Dubai Design District<br />
             Building 7, Ground Floor<br />
             Dubai, UAE
@@ -340,11 +341,64 @@ const faqSections: FAQSection[] = [
 const About = () => {
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [activeLinkId, setActiveLinkId] = useState<string | null>(null);
-  const [expandedSections, setExpandedSections] = useState<string[]>(faqSections.map(s => s.id));
+  const [expandedSections, setExpandedSections] = useState<string[]>([]);
   const [isArticleModalOpen, setIsArticleModalOpen] = useState(false);
   const [isTopicModalOpen, setIsTopicModalOpen] = useState(false);
   const [topicMode, setTopicMode] = useState<"section" | "subtopic">("section");
   const { isAdmin } = useAdmin();
+
+  // Fetch dynamic topics and articles from database
+  const { topics: dbTopics, refetch: refetchTopics } = useDbTopics();
+  const { articles: dbArticles, refetch: refetchArticles } = useDbArticles();
+
+  // Combine static and dynamic sections
+  const faqSections = useMemo(() => {
+    // Get parent topics (sections) from database
+    const dbSections = dbTopics
+      .filter((t) => !t.parent_id)
+      .map((section) => {
+        // Get subtopics for this section
+        const subtopics = dbTopics.filter((t) => t.parent_id === section.id);
+        
+        // Get articles for subtopics
+        const links = subtopics.map((subtopic) => {
+          const article = dbArticles.find((a) => a.topic_id === subtopic.id);
+          return {
+            id: subtopic.id,
+            title: subtopic.title,
+            content: article?.content || `<h2 class="font-display text-2xl md:text-3xl text-foreground mb-6">${subtopic.title}</h2><p class="text-muted-foreground">Content coming soon...</p>`,
+          };
+        });
+
+        // Also check for articles directly under the section
+        const sectionArticles = dbArticles.filter((a) => a.topic_id === section.id);
+        sectionArticles.forEach((article) => {
+          if (!links.find((l) => l.id === article.id)) {
+            links.push({
+              id: article.id,
+              title: article.title,
+              content: article.content,
+            });
+          }
+        });
+
+        return {
+          id: section.id,
+          title: section.title,
+          links,
+        };
+      });
+
+    // Combine static with dynamic, putting dynamic first
+    return [...dbSections, ...staticFaqSections];
+  }, [dbTopics, dbArticles]);
+
+  // Initialize expanded sections when faqSections change
+  useMemo(() => {
+    if (expandedSections.length === 0 && faqSections.length > 0) {
+      setExpandedSections(faqSections.map((s) => s.id));
+    }
+  }, [faqSections, expandedSections.length]);
 
   const activeLink = activeSection
     ? faqSections
@@ -379,6 +433,20 @@ const About = () => {
     setTopicMode("subtopic");
     setIsTopicModalOpen(true);
   };
+
+  const handleTopicAdded = () => {
+    refetchTopics();
+  };
+
+  const handleArticleAdded = () => {
+    refetchArticles();
+    refetchTopics();
+  };
+
+  // Build sections list for modals (combining static + dynamic)
+  const allSections = useMemo(() => {
+    return faqSections.map((s) => ({ id: s.id, title: s.title }));
+  }, [faqSections]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -425,7 +493,7 @@ const About = () => {
           <p className="text-muted-foreground">
             {activeLink 
               ? "Browse our help center for answers" 
-              : "Find answers to your questions about SoukLuxe"}
+              : "Find answers to your questions about Rooh Al Andalus"}
           </p>
         </div>
 
@@ -543,13 +611,15 @@ const About = () => {
       <AddArticleModal
         isOpen={isArticleModalOpen}
         onClose={() => setIsArticleModalOpen(false)}
-        existingSections={faqSections.map(s => ({ id: s.id, title: s.title }))}
+        existingSections={allSections}
+        onArticleAdded={handleArticleAdded}
       />
       <AddTopicModal
         isOpen={isTopicModalOpen}
         onClose={() => setIsTopicModalOpen(false)}
-        existingSections={faqSections.map(s => ({ id: s.id, title: s.title }))}
+        existingSections={allSections}
         mode={topicMode}
+        onTopicAdded={handleTopicAdded}
       />
     </div>
   );

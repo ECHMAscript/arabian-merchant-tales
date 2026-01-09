@@ -41,7 +41,7 @@ const Wishlist = () => {
     toast.success(`${item.name} added to cart!`);
   };
 
-  const handleRemove = (id: number) => {
+  const handleRemove = (id: number | string) => {
     removeFromWishlist(id);
     toast.success("Removed from wishlist");
   };
@@ -58,8 +58,8 @@ const Wishlist = () => {
   return (
     <>
       <Helmet>
-        <title>Wishlist - SoukLuxe</title>
-        <meta name="description" content="View and manage your wishlist items at SoukLuxe." />
+        <title>Wishlist - Rooh Al Andalus</title>
+        <meta name="description" content="View and manage your wishlist items at Rooh Al Andalus." />
       </Helmet>
 
       <div className="min-h-screen bg-background">
