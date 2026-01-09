@@ -1,5 +1,5 @@
 export interface BookProduct {
-  id: number;
+  id: number | string;
   name: string;
   arabicName?: string;
   price: number;

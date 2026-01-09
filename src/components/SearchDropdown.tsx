@@ -10,7 +10,7 @@ interface SearchDropdownProps {
 }
 
 interface BookSearchResult {
-  id: number;
+  id: number | string;
   name: string;
   price: number;
   image: string;

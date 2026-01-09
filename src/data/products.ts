@@ -1,6 +1,7 @@
 import { ProductCardProps } from "@/components/ProductCard";
 
-export interface ExtendedProduct extends ProductCardProps {
+export interface ExtendedProduct extends Omit<ProductCardProps, 'id'> {
+  id: number | string;
   gender?: "men" | "women" | "unisex";
   subcategory?: string;
   colors?: string[];

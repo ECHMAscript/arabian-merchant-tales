@@ -7,8 +7,8 @@ type WishlistItem = ProductCardProps | BookProduct;
 interface WishlistContextType {
   wishlist: WishlistItem[];
   addToWishlist: (item: WishlistItem) => void;
-  removeFromWishlist: (itemId: number) => void;
-  isInWishlist: (itemId: number) => boolean;
+  removeFromWishlist: (itemId: number | string) => void;
+  isInWishlist: (itemId: number | string) => boolean;
   toggleWishlist: (item: WishlistItem) => void;
 }
 
@@ -24,11 +24,11 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const removeFromWishlist = (itemId: number) => {
+  const removeFromWishlist = (itemId: number | string) => {
     setWishlist((prev) => prev.filter((p) => p.id !== itemId));
   };
 
-  const isInWishlist = (itemId: number) => {
+  const isInWishlist = (itemId: number | string) => {
     return wishlist.some((p) => p.id === itemId);
   };
 

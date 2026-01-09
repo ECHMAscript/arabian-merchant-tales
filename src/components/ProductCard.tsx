@@ -6,7 +6,7 @@ import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 
 export interface ProductCardProps {
-  id: number;
+  id: number | string;
   name: string;
   price: number;
   originalPrice?: number;

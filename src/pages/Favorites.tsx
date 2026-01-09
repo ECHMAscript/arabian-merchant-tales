@@ -20,8 +20,8 @@ const Favorites = () => {
   return (
     <>
       <Helmet>
-        <title>My Favorites - SoukLuxe</title>
-        <meta name="description" content="View your saved favorite items at SoukLuxe." />
+        <title>My Favorites - Rooh Al Andalus</title>
+        <meta name="description" content="View your saved favorite items at Rooh Al Andalus." />
       </Helmet>
 
       <div className="min-h-screen bg-background">

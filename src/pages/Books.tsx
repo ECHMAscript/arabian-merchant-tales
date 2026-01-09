@@ -48,7 +48,7 @@ const Books = () => {
         rating: 4.5,
         reviews: 0,
         reviewCount: 0,
-        volumes: b.volumes || undefined,
+        volumes: b.volumes?.length || undefined,
       }));
     return [...dbBooksMapped, ...booksData];
   }, [dbBooks]);
