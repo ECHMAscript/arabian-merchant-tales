@@ -126,15 +126,23 @@ const ProductGrid = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {displayedProducts.map((product, index) => (
-              <div
-                key={product.id}
-                className="animate-fade-in"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <ProductCard {...product} onClick={() => handleProductClick(product)} />
-              </div>
-            ))}
+            {displayedProducts.map((product, index) => {
+              const isDbProduct = typeof product.id === "string";
+              return (
+                <div
+                  key={product.id}
+                  className="animate-fade-in"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <ProductCard 
+                    {...product} 
+                    onClick={() => handleProductClick(product)}
+                    isDbProduct={isDbProduct}
+                    onDeleted={refetchProducts}
+                  />
+                </div>
+              );
+            })}
           </div>
         )}
 

@@ -2,18 +2,29 @@ import { Star, Heart } from "lucide-react";
 import { BookProduct } from "@/data/books";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { toast } from "sonner";
+import AdminDeleteButton from "@/components/admin/AdminDeleteButton";
+import { useDeleteItem } from "@/hooks/useDeleteItem";
 
 interface BookCardProps {
   book: BookProduct;
   onClick: () => void;
+  onDeleted?: () => void;
+  isDbBook?: boolean;
 }
 
-const BookCard = ({ book, onClick }: BookCardProps) => {
+const BookCard = ({ book, onClick, onDeleted, isDbBook = false }: BookCardProps) => {
   const { isInWishlist, toggleWishlist } = useWishlist();
+  const { deleteItem } = useDeleteItem();
   const inWishlist = isInWishlist(book.id);
 
   const isOutOfStock = book.quantityLeft === 0;
   const isLowStock = book.quantityLeft > 0 && book.quantityLeft <= 5;
+
+  const handleDelete = () => {
+    if (isDbBook && typeof book.id === "string") {
+      deleteItem("books", book.id, book.name, onDeleted);
+    }
+  };
 
   const handleHeartClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -65,6 +76,13 @@ const BookCard = ({ book, onClick }: BookCardProps) => {
         >
           <Heart className={`h-4 w-4 ${inWishlist ? "fill-current" : ""}`} />
         </button>
+
+        {/* Admin Delete Button */}
+        {isDbBook && (
+          <div className="absolute top-3 right-14">
+            <AdminDeleteButton onDelete={handleDelete} itemName={book.name} />
+          </div>
+        )}
 
         {/* Category Badge */}
         <div className="absolute bottom-3 left-3 px-2 py-1 bg-background/90 rounded text-xs font-medium text-foreground">

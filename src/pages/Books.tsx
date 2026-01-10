@@ -407,15 +407,23 @@ const Books = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {filteredProducts.map((product, index) => (
-                    <div
-                      key={product.id}
-                      className="animate-fade-in"
-                      style={{ animationDelay: `${index * 0.05}s` }}
-                    >
-                      <BookCard book={product} onClick={() => handleProductClick(product)} />
-                    </div>
-                  ))}
+                  {filteredProducts.map((product, index) => {
+                    const isDbBook = typeof product.id === "string";
+                    return (
+                      <div
+                        key={product.id}
+                        className="animate-fade-in"
+                        style={{ animationDelay: `${index * 0.05}s` }}
+                      >
+                        <BookCard 
+                          book={product} 
+                          onClick={() => handleProductClick(product)}
+                          isDbBook={isDbBook}
+                          onDeleted={refetchBooks}
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </main>
