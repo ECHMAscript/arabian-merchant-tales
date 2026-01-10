@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
+import AdminDeleteButton from "@/components/admin/AdminDeleteButton";
+import { useDeleteItem } from "@/hooks/useDeleteItem";
 
 export interface ProductCardProps {
   id: number | string;
@@ -18,6 +20,8 @@ export interface ProductCardProps {
 
 interface ProductCardComponentProps extends ProductCardProps {
   onClick?: () => void;
+  onDeleted?: () => void;
+  isDbProduct?: boolean;
 }
 
 const ProductCard = ({
@@ -30,11 +34,20 @@ const ProductCard = ({
   image,
   category,
   onClick,
+  onDeleted,
+  isDbProduct = false,
 }: ProductCardComponentProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const { isFavorite, toggleFavorite } = useFavorites();
   const { addToCart } = useCart();
+  const { deleteItem } = useDeleteItem();
   const isLiked = isFavorite(id);
+
+  const handleDelete = () => {
+    if (isDbProduct && typeof id === "string") {
+      deleteItem("products", id, name, onDeleted);
+    }
+  };
 
   const product: ProductCardProps = {
     id,
@@ -104,6 +117,13 @@ const ProductCard = ({
         >
           <Heart className={`h-4 w-4 ${isLiked ? "fill-current" : ""}`} />
         </button>
+
+        {/* Admin Delete Button */}
+        {isDbProduct && (
+          <div className="absolute top-3 right-14">
+            <AdminDeleteButton onDelete={handleDelete} itemName={name} />
+          </div>
+        )}
 
         {/* Quick Add Button */}
         <div

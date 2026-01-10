@@ -15,6 +15,8 @@ import { useAdmin } from "@/contexts/AdminContext";
 import AddArticleModal from "@/components/admin/AddArticleModal";
 import AddTopicModal from "@/components/admin/AddTopicModal";
 import { useDbTopics, useDbArticles } from "@/hooks/useDbArticles";
+import AdminDeleteButton from "@/components/admin/AdminDeleteButton";
+import { useDeleteItem } from "@/hooks/useDeleteItem";
 
 interface FAQSection {
   id: string;
@@ -350,6 +352,33 @@ const About = () => {
   // Fetch dynamic topics and articles from database
   const { topics: dbTopics, refetch: refetchTopics } = useDbTopics();
   const { articles: dbArticles, refetch: refetchArticles } = useDbArticles();
+  const { deleteItem } = useDeleteItem();
+
+  // Check if a section/topic is from database (UUID format)
+  const isDbItem = (id: string) => {
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+  };
+
+  const handleDeleteTopic = (id: string, title: string) => {
+    deleteItem("topics", id, title, () => {
+      refetchTopics();
+      refetchArticles();
+      // Reset view if deleted topic was active
+      if (activeSection === id || activeLinkId === id) {
+        setActiveSection(null);
+        setActiveLinkId(null);
+      }
+    });
+  };
+
+  const handleDeleteArticle = (id: string, title: string) => {
+    deleteItem("articles", id, title, () => {
+      refetchArticles();
+      if (activeLinkId === id) {
+        setActiveLinkId(null);
+      }
+    });
+  };
 
   // Combine static and dynamic sections
   const faqSections = useMemo(() => {
@@ -518,31 +547,48 @@ const About = () => {
               <nav className="space-y-2">
                 {faqSections.map((section) => (
                   <div key={section.id}>
-                    <button
-                      onClick={() => toggleSection(section.id)}
-                      className="w-full flex items-center justify-between py-2 px-3 text-left font-medium text-foreground hover:bg-muted/50 rounded-md transition-colors"
-                    >
-                      {section.title}
-                      <ChevronRight
-                        className={`h-4 w-4 text-muted-foreground transition-transform ${
-                          expandedSections.includes(section.id) ? "rotate-90" : ""
-                        }`}
-                      />
-                    </button>
+                    <div className="flex items-center justify-between">
+                      <button
+                        onClick={() => toggleSection(section.id)}
+                        className="flex-1 flex items-center justify-between py-2 px-3 text-left font-medium text-foreground hover:bg-muted/50 rounded-md transition-colors"
+                      >
+                        {section.title}
+                        <ChevronRight
+                          className={`h-4 w-4 text-muted-foreground transition-transform ${
+                            expandedSections.includes(section.id) ? "rotate-90" : ""
+                          }`}
+                        />
+                      </button>
+                      {isDbItem(section.id) && (
+                        <AdminDeleteButton
+                          onDelete={() => handleDeleteTopic(section.id, section.title)}
+                          itemName={section.title}
+                          className="ml-1"
+                        />
+                      )}
+                    </div>
                     {expandedSections.includes(section.id) && (
                       <div className="ml-3 border-l border-border pl-3 mt-1 space-y-1">
                         {section.links.map((link) => (
-                          <button
-                            key={link.id}
-                            onClick={() => handleLinkClick(section.id, link.id)}
-                            className={`w-full text-left py-1.5 px-2 text-sm rounded-md transition-colors ${
-                              activeLinkId === link.id
-                                ? "bg-primary/10 text-primary font-medium"
-                                : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
-                            }`}
-                          >
-                            {link.title}
-                          </button>
+                          <div key={link.id} className="flex items-center justify-between group">
+                            <button
+                              onClick={() => handleLinkClick(section.id, link.id)}
+                              className={`flex-1 text-left py-1.5 px-2 text-sm rounded-md transition-colors ${
+                                activeLinkId === link.id
+                                  ? "bg-primary/10 text-primary font-medium"
+                                  : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
+                              }`}
+                            >
+                              {link.title}
+                            </button>
+                            {isDbItem(link.id) && (
+                              <AdminDeleteButton
+                                onDelete={() => handleDeleteArticle(link.id, link.title)}
+                                itemName={link.title}
+                                className="opacity-0 group-hover:opacity-100 transition-opacity ml-1"
+                              />
+                            )}
+                          </div>
                         ))}
                       </div>
                     )}
