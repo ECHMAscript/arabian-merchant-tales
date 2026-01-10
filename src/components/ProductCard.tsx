@@ -21,7 +21,6 @@ export interface ProductCardProps {
 interface ProductCardComponentProps extends ProductCardProps {
   onClick?: () => void;
   onDeleted?: () => void;
-  isDbProduct?: boolean;
 }
 
 const ProductCard = ({
@@ -35,7 +34,6 @@ const ProductCard = ({
   category,
   onClick,
   onDeleted,
-  isDbProduct = false,
 }: ProductCardComponentProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const { isFavorite, toggleFavorite } = useFavorites();
@@ -43,9 +41,13 @@ const ProductCard = ({
   const { deleteItem } = useDeleteItem();
   const isLiked = isFavorite(id);
 
+  const isDbProduct = typeof id === "string";
+
   const handleDelete = () => {
-    if (isDbProduct && typeof id === "string") {
-      deleteItem("products", id, name, onDeleted);
+    if (isDbProduct) {
+      deleteItem("products", id as string, name, onDeleted);
+    } else {
+      toast.error("Static items cannot be deleted from the database");
     }
   };
 
@@ -119,11 +121,9 @@ const ProductCard = ({
         </button>
 
         {/* Admin Delete Button */}
-        {isDbProduct && (
-          <div className="absolute top-3 right-14">
-            <AdminDeleteButton onDelete={handleDelete} itemName={name} />
-          </div>
-        )}
+        <div className="absolute top-3 right-14">
+          <AdminDeleteButton onDelete={handleDelete} itemName={name} />
+        </div>
 
         {/* Quick Add Button */}
         <div

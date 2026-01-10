@@ -9,20 +9,22 @@ interface BookCardProps {
   book: BookProduct;
   onClick: () => void;
   onDeleted?: () => void;
-  isDbBook?: boolean;
 }
 
-const BookCard = ({ book, onClick, onDeleted, isDbBook = false }: BookCardProps) => {
+const BookCard = ({ book, onClick, onDeleted }: BookCardProps) => {
   const { isInWishlist, toggleWishlist } = useWishlist();
   const { deleteItem } = useDeleteItem();
   const inWishlist = isInWishlist(book.id);
 
   const isOutOfStock = book.quantityLeft === 0;
   const isLowStock = book.quantityLeft > 0 && book.quantityLeft <= 5;
+  const isDbBook = typeof book.id === "string";
 
   const handleDelete = () => {
-    if (isDbBook && typeof book.id === "string") {
-      deleteItem("books", book.id, book.name, onDeleted);
+    if (isDbBook) {
+      deleteItem("books", book.id as string, book.name, onDeleted);
+    } else {
+      toast.error("Static items cannot be deleted from the database");
     }
   };
 
@@ -78,11 +80,9 @@ const BookCard = ({ book, onClick, onDeleted, isDbBook = false }: BookCardProps)
         </button>
 
         {/* Admin Delete Button */}
-        {isDbBook && (
-          <div className="absolute top-3 right-14">
-            <AdminDeleteButton onDelete={handleDelete} itemName={book.name} />
-          </div>
-        )}
+        <div className="absolute top-3 right-14">
+          <AdminDeleteButton onDelete={handleDelete} itemName={book.name} />
+        </div>
 
         {/* Category Badge */}
         <div className="absolute bottom-3 left-3 px-2 py-1 bg-background/90 rounded text-xs font-medium text-foreground">
