@@ -1,13 +1,23 @@
-import { Link } from "react-router-dom";
-import { User, LogIn, Shield } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { User, LogIn, LogOut, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAdmin } from "@/contexts/AdminContext";
 import { Switch } from "@/components/ui/switch";
+import { toast } from "sonner";
 
 const UpperNav = () => {
-  // This would be replaced with actual auth state
-  const isLoggedIn = false;
-  const { isAdmin, toggleAdminMode } = useAdmin();
+  const { isAdmin, isAuthenticated, loading, toggleAdminMode, signOut } = useAdmin();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      toast.success("Signed out successfully");
+      navigate("/");
+    } catch (error) {
+      toast.error("Failed to sign out");
+    }
+  };
 
   return (
     <div className="bg-foreground text-card py-2">
@@ -27,24 +37,39 @@ const UpperNav = () => {
 
           {/* Right side - Auth Links & Admin Toggle */}
           <div className="flex items-center gap-3">
-            {/* Admin Mode Toggle */}
-            <div className="flex items-center gap-2 border-r border-card/20 pr-3 mr-1">
-              <Shield className={`h-3 w-3 ${isAdmin ? 'text-gold' : 'text-card/60'}`} />
-              <span className="hidden sm:inline text-xs text-card/70">Admin</span>
-              <Switch
-                checked={isAdmin}
-                onCheckedChange={toggleAdminMode}
-                className="scale-75 data-[state=checked]:bg-gold"
-              />
-            </div>
+            {/* Admin Mode Toggle - Only show to actual admins */}
+            {isAuthenticated && !loading && (
+              <div className="flex items-center gap-2 border-r border-card/20 pr-3 mr-1">
+                <Shield className={`h-3 w-3 ${isAdmin ? 'text-gold' : 'text-card/60'}`} />
+                <span className="hidden sm:inline text-xs text-card/70">Admin</span>
+                <Switch
+                  checked={isAdmin}
+                  onCheckedChange={toggleAdminMode}
+                  className="scale-75 data-[state=checked]:bg-gold"
+                />
+              </div>
+            )}
 
-            {isLoggedIn ? (
-              <Link to="/profile">
-                <Button variant="ghost" size="sm" className="text-card/80 hover:text-card hover:bg-card/10 gap-2 h-7 text-xs">
-                  <User className="h-3 w-3" />
-                  <span className="hidden sm:inline">My Account</span>
+            {loading ? (
+              <div className="h-7 w-16 bg-card/10 rounded animate-pulse" />
+            ) : isAuthenticated ? (
+              <div className="flex items-center gap-2">
+                <Link to="/profile">
+                  <Button variant="ghost" size="sm" className="text-card/80 hover:text-card hover:bg-card/10 gap-2 h-7 text-xs">
+                    <User className="h-3 w-3" />
+                    <span className="hidden sm:inline">My Account</span>
+                  </Button>
+                </Link>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={handleSignOut}
+                  className="text-card/80 hover:text-card hover:bg-card/10 gap-1.5 h-7 text-xs"
+                >
+                  <LogOut className="h-3 w-3" />
+                  <span className="hidden sm:inline">Sign Out</span>
                 </Button>
-              </Link>
+              </div>
             ) : (
               <>
                 <Link to="/auth">
