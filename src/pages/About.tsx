@@ -17,6 +17,7 @@ import AddTopicModal from "@/components/admin/AddTopicModal";
 import { useDbTopics, useDbArticles } from "@/hooks/useDbArticles";
 import AdminDeleteButton from "@/components/admin/AdminDeleteButton";
 import { useDeleteItem } from "@/hooks/useDeleteItem";
+import { sanitizeHTML } from "@/lib/sanitize";
 
 interface FAQSection {
   id: string;
@@ -613,7 +614,7 @@ const About = () => {
               <div className="bg-card rounded-lg border border-border p-6 md:p-8">
                 <div
                   className="prose prose-gold max-w-none"
-                  dangerouslySetInnerHTML={{ __html: activeLink.content }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeHTML(activeLink.content) }}
                 />
                 <button
                   onClick={handleBackToFAQ}

@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { Eye, EyeOff, Mail, Lock, User, MapPin, ArrowLeft } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, MapPin, ArrowLeft, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ValidationErrors {
   username?: string;
@@ -19,6 +20,7 @@ const Auth = () => {
   const [isLogin, setIsLogin] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   // Form state
@@ -78,41 +80,70 @@ const Auth = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
 
-    if (isLogin) {
-      // Login validation
-      const emailError = validateEmail(formData.email);
-      const passwordError = formData.password ? undefined : "Password is required";
+    try {
+      if (isLogin) {
+        // Login validation
+        const emailError = validateEmail(formData.email);
+        const passwordError = formData.password ? undefined : "Password is required";
 
-      if (emailError || passwordError) {
-        setErrors({ email: emailError, password: passwordError });
-        return;
+        if (emailError || passwordError) {
+          setErrors({ email: emailError, password: passwordError });
+          setIsLoading(false);
+          return;
+        }
+
+        // Real Supabase login
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: formData.email,
+          password: formData.password,
+        });
+
+        if (error) throw error;
+
+        toast.success("Welcome back!");
+        navigate("/");
+      } else {
+        // Signup validation
+        const newErrors: ValidationErrors = {
+          username: validateUsername(formData.username),
+          email: validateEmail(formData.email),
+          password: validatePassword(formData.password),
+          confirmPassword: validateConfirmPassword(formData.password, formData.confirmPassword),
+        };
+
+        const hasErrors = Object.values(newErrors).some((error) => error !== undefined);
+
+        if (hasErrors) {
+          setErrors(newErrors);
+          setIsLoading(false);
+          return;
+        }
+
+        // Real Supabase signup
+        const { data, error } = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+          options: {
+            emailRedirectTo: window.location.origin,
+            data: {
+              username: formData.username,
+            },
+          },
+        });
+
+        if (error) throw error;
+
+        toast.success("Account created successfully! Welcome to Rooh Al Andalus.");
+        navigate("/");
       }
-
-      // Mock login success
-      toast.success("Welcome back!");
-      navigate("/");
-    } else {
-      // Signup validation
-      const newErrors: ValidationErrors = {
-        username: validateUsername(formData.username),
-        email: validateEmail(formData.email),
-        password: validatePassword(formData.password),
-        confirmPassword: validateConfirmPassword(formData.password, formData.confirmPassword),
-      };
-
-      const hasErrors = Object.values(newErrors).some((error) => error !== undefined);
-
-      if (hasErrors) {
-        setErrors(newErrors);
-        return;
-      }
-
-      // Mock signup success
-      toast.success("Account created successfully! Welcome to Rooh Al Andalus.");
-      navigate("/");
+    } catch (error: any) {
+      toast.error(error.message || "Authentication failed");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -206,6 +237,7 @@ const Auth = () => {
                     value={formData.username}
                     onChange={handleInputChange}
                     className={errors.username ? "border-destructive" : ""}
+                    disabled={isLoading}
                   />
                   {errors.username && (
                     <p className="text-destructive text-sm mt-1">{errors.username}</p>
@@ -226,6 +258,7 @@ const Auth = () => {
                   value={formData.email}
                   onChange={handleInputChange}
                   className={errors.email ? "border-destructive" : ""}
+                  disabled={isLoading}
                 />
                 {errors.email && (
                   <p className="text-destructive text-sm mt-1">{errors.email}</p>
@@ -246,6 +279,7 @@ const Auth = () => {
                     value={formData.password}
                     onChange={handleInputChange}
                     className={`pr-10 ${errors.password ? "border-destructive" : ""}`}
+                    disabled={isLoading}
                   />
                   <button
                     type="button"
@@ -289,6 +323,7 @@ const Auth = () => {
                         value={formData.confirmPassword}
                         onChange={handleInputChange}
                         className={`pr-10 ${errors.confirmPassword ? "border-destructive" : ""}`}
+                        disabled={isLoading}
                       />
                       <button
                         type="button"
@@ -329,6 +364,7 @@ const Auth = () => {
                             value={formData.address}
                             onChange={handleInputChange}
                             className="mt-1"
+                            disabled={isLoading}
                           />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
@@ -341,6 +377,7 @@ const Auth = () => {
                               value={formData.city}
                               onChange={handleInputChange}
                               className="mt-1"
+                              disabled={isLoading}
                             />
                           </div>
                           <div>
@@ -352,6 +389,7 @@ const Auth = () => {
                               value={formData.country}
                               onChange={handleInputChange}
                               className="mt-1"
+                              disabled={isLoading}
                             />
                           </div>
                         </div>
@@ -364,6 +402,7 @@ const Auth = () => {
                             value={formData.postalCode}
                             onChange={handleInputChange}
                             className="mt-1"
+                            disabled={isLoading}
                           />
                         </div>
                       </div>
@@ -372,8 +411,15 @@ const Auth = () => {
                 </>
               )}
 
-              <Button type="submit" variant="gold" size="lg" className="w-full">
-                {isLogin ? "Sign In" : "Create Account"}
+              <Button type="submit" variant="gold" size="lg" className="w-full" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    {isLogin ? "Signing In..." : "Creating Account..."}
+                  </>
+                ) : (
+                  isLogin ? "Sign In" : "Create Account"
+                )}
               </Button>
             </form>
 
@@ -387,6 +433,7 @@ const Auth = () => {
                     setErrors({});
                   }}
                   className="text-primary hover:underline font-medium"
+                  disabled={isLoading}
                 >
                   {isLogin ? "Sign up" : "Sign in"}
                 </button>
