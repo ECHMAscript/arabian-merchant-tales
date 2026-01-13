@@ -8,6 +8,7 @@ import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import { CartProvider } from "@/contexts/CartContext";
 import { WishlistProvider } from "@/contexts/WishlistContext";
 import { AdminProvider } from "@/contexts/AdminContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Checkout from "./pages/Checkout";
 import Profile from "./pages/Profile";
@@ -26,32 +27,34 @@ const App = () => (
   <HelmetProvider>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <AdminProvider>
-          <FavoritesProvider>
-            <CartProvider>
-              <WishlistProvider>
-                <Toaster />
-                <Sonner />
-                <BrowserRouter>
-                  <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/checkout" element={<Checkout />} />
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/favorites" element={<Favorites />} />
-                    <Route path="/wishlist" element={<Wishlist />} />
-                    <Route path="/new-arrivals" element={<NewArrivals />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/tailoring" element={<Tailoring />} />
-                    <Route path="/books" element={<Books />} />
-                    <Route path="/auth" element={<Auth />} />
-                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </BrowserRouter>
-              </WishlistProvider>
-            </CartProvider>
-          </FavoritesProvider>
-        </AdminProvider>
+        <AuthProvider>
+          <AdminProvider>
+            <FavoritesProvider>
+              <CartProvider>
+                <WishlistProvider>
+                  <Toaster />
+                  <Sonner />
+                  <BrowserRouter>
+                    <Routes>
+                      <Route path="/" element={<Index />} />
+                      <Route path="/checkout" element={<Checkout />} />
+                      <Route path="/profile" element={<Profile />} />
+                      <Route path="/favorites" element={<Favorites />} />
+                      <Route path="/wishlist" element={<Wishlist />} />
+                      <Route path="/new-arrivals" element={<NewArrivals />} />
+                      <Route path="/about" element={<About />} />
+                      <Route path="/tailoring" element={<Tailoring />} />
+                      <Route path="/books" element={<Books />} />
+                      <Route path="/auth" element={<Auth />} />
+                      {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </BrowserRouter>
+                </WishlistProvider>
+              </CartProvider>
+            </FavoritesProvider>
+          </AdminProvider>
+        </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
   </HelmetProvider>

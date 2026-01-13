@@ -6,9 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { Eye, EyeOff, Mail, Lock, User, MapPin, ArrowLeft, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, MapPin, ArrowLeft, Loader2, CheckCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-
+import { useCheckDuplicate } from "@/hooks/useCheckDuplicate";
 interface ValidationErrors {
   username?: string;
   email?: string;
@@ -21,7 +21,10 @@ const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showEmailVerification, setShowEmailVerification] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState("");
   const navigate = useNavigate();
+  const { checkUsername, isChecking } = useCheckDuplicate();
 
   // Form state
   const [formData, setFormData] = useState({
@@ -115,6 +118,14 @@ const Auth = () => {
           confirmPassword: validateConfirmPassword(formData.password, formData.confirmPassword),
         };
 
+        // Check if username is already taken
+        if (!newErrors.username) {
+          const usernameError = await checkUsername(formData.username);
+          if (usernameError) {
+            newErrors.username = usernameError;
+          }
+        }
+
         const hasErrors = Object.values(newErrors).some((error) => error !== undefined);
 
         if (hasErrors) {
@@ -135,10 +146,19 @@ const Auth = () => {
           },
         });
 
-        if (error) throw error;
+        if (error) {
+          // Check for duplicate email error
+          if (error.message.includes("already registered") || error.message.includes("already exists")) {
+            setErrors({ email: "This email is already registered" });
+            setIsLoading(false);
+            return;
+          }
+          throw error;
+        }
 
-        toast.success("Account created successfully! Welcome to Rooh Al Andalus.");
-        navigate("/");
+        // Show email verification screen
+        setRegisteredEmail(formData.email);
+        setShowEmailVerification(true);
       }
     } catch (error: any) {
       toast.error(error.message || "Authentication failed");
@@ -162,6 +182,59 @@ const Auth = () => {
   };
 
   const passwordStrength = getPasswordStrength(formData.password);
+
+  // Email verification success screen
+  if (showEmailVerification) {
+    return (
+      <>
+        <Helmet>
+          <title>Verify Your Email - Rooh Al Andalus</title>
+          <meta name="description" content="Please verify your email to complete registration" />
+        </Helmet>
+
+        <div className="min-h-screen bg-background flex items-center justify-center p-8">
+          <div className="max-w-md w-full text-center">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center mx-auto mb-6">
+              <CheckCircle className="h-10 w-10 text-white" />
+            </div>
+            <h1 className="font-display text-3xl font-bold text-foreground mb-4">
+              Check Your Email
+            </h1>
+            <p className="font-body text-muted-foreground text-lg mb-6">
+              We've sent a verification link to:
+            </p>
+            <p className="font-body text-primary font-semibold text-xl mb-8">
+              {registeredEmail}
+            </p>
+            <p className="font-body text-muted-foreground mb-8">
+              Click the link in the email to verify your account and complete your registration.
+              If you don't see the email, check your spam folder.
+            </p>
+            <div className="space-y-4">
+              <Button
+                variant="gold"
+                size="lg"
+                className="w-full"
+                onClick={() => {
+                  setShowEmailVerification(false);
+                  setIsLogin(true);
+                }}
+              >
+                Go to Sign In
+              </Button>
+              <Link
+                to="/"
+                className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                <span className="font-body">Back to Shop</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
