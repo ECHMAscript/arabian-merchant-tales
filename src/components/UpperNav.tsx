@@ -6,7 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 
 const UpperNav = () => {
-  const { isAdmin, isAuthenticated, loading, toggleAdminMode, signOut } = useAdmin();
+  const { isAdmin, isAuthenticated, loading, toggleAdminMode, signOut, hasAdminRole } = useAdmin();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -37,8 +37,8 @@ const UpperNav = () => {
 
           {/* Right side - Auth Links & Admin Toggle */}
           <div className="flex items-center gap-3">
-            {/* Admin Mode Toggle - Only show to actual admins */}
-            {isAuthenticated && !loading && (
+            {/* Admin Mode Toggle - Only show to users with admin role */}
+            {isAuthenticated && !loading && hasAdminRole && (
               <div className="flex items-center gap-2 border-r border-card/20 pr-3 mr-1">
                 <Shield className={`h-3 w-3 ${isAdmin ? 'text-gold' : 'text-card/60'}`} />
                 <span className="hidden sm:inline text-xs text-card/70">Admin</span>
