@@ -7,6 +7,7 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   isAdmin: boolean;
+  hasAdminRole: boolean;
   signIn: (email: string, password: string) => Promise<any>;
   signUp: (email: string, password: string, username: string) => Promise<any>;
   signOut: () => Promise<void>;

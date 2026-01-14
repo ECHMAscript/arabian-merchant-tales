@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 interface AdminContextType {
   isAdmin: boolean;
+  hasAdminRole: boolean;
   isAuthenticated: boolean;
   userId: string | null;
   loading: boolean;
@@ -13,7 +14,7 @@ interface AdminContextType {
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
 
 export const AdminProvider = ({ children }: { children: ReactNode }) => {
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [hasAdminRole, setHasAdminRole] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -37,11 +38,11 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
               .eq("role", "admin")
               .maybeSingle();
             
-            setIsAdmin(!!data);
+            setHasAdminRole(!!data);
             setLoading(false);
           }, 0);
         } else {
-          setIsAdmin(false);
+          setHasAdminRole(false);
           setAdminModeEnabled(false);
           setLoading(false);
         }
@@ -62,7 +63,7 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
           .eq("role", "admin")
           .maybeSingle();
         
-        setIsAdmin(!!data);
+        setHasAdminRole(!!data);
       }
       setLoading(false);
     });
@@ -73,15 +74,15 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const toggleAdminMode = () => {
-    // Only allow toggling if user is actually an admin
-    if (isAdmin) {
+    // Only allow toggling if user has admin role
+    if (hasAdminRole) {
       setAdminModeEnabled((prev) => !prev);
     }
   };
 
   const signOut = async () => {
     await supabase.auth.signOut();
-    setIsAdmin(false);
+    setHasAdminRole(false);
     setAdminModeEnabled(false);
     setIsAuthenticated(false);
     setUserId(null);
@@ -89,7 +90,8 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AdminContext.Provider value={{ 
-      isAdmin: isAdmin && adminModeEnabled, 
+      isAdmin: hasAdminRole && adminModeEnabled,
+      hasAdminRole,
       isAuthenticated,
       userId,
       loading,

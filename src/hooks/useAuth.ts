@@ -7,6 +7,7 @@ interface AuthState {
   session: Session | null;
   loading: boolean;
   isAdmin: boolean;
+  hasAdminRole: boolean;
 }
 
 export const useAuth = () => {
@@ -15,6 +16,7 @@ export const useAuth = () => {
     session: null,
     loading: true,
     isAdmin: false,
+    hasAdminRole: false,
   });
 
   useEffect(() => {
@@ -37,7 +39,7 @@ export const useAuth = () => {
             
             setAuthState(prev => ({
               ...prev,
-              isAdmin: !!data,
+              hasAdminRole: !!data,
             }));
           }, 0);
         }
@@ -46,7 +48,8 @@ export const useAuth = () => {
           user,
           session,
           loading: false,
-          isAdmin,
+          isAdmin: false,
+          hasAdminRole: false,
         });
       }
     );
@@ -55,7 +58,7 @@ export const useAuth = () => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       const user = session?.user ?? null;
       
-      let isAdmin = false;
+      let hasAdminRole = false;
       if (user) {
         const { data } = await supabase
           .from("user_roles")
@@ -63,14 +66,15 @@ export const useAuth = () => {
           .eq("user_id", user.id)
           .eq("role", "admin")
           .maybeSingle();
-        isAdmin = !!data;
+        hasAdminRole = !!data;
       }
       
       setAuthState({
         user,
         session,
         loading: false,
-        isAdmin,
+        isAdmin: false,
+        hasAdminRole,
       });
     });
 
