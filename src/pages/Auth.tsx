@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { Button } from "@/components/ui/button";
@@ -6,15 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { Eye, EyeOff, Mail, Lock, User, MapPin, ArrowLeft, Loader2, CheckCircle } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, MapPin, ArrowLeft, Loader2, Check, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useCheckDuplicate } from "@/hooks/useCheckDuplicate";
-interface ValidationErrors {
-  username?: string;
-  email?: string;
-  password?: string;
-  confirmPassword?: string;
-}
+import { useFormValidation } from "@/hooks/useFormValidation";
+import EmailSentScreen from "@/components/EmailSentScreen";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(false);
@@ -24,7 +19,20 @@ const Auth = () => {
   const [showEmailVerification, setShowEmailVerification] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState("");
   const navigate = useNavigate();
-  const { checkUsername, isChecking } = useCheckDuplicate();
+  
+  const {
+    validation,
+    checkUsernameAvailability,
+    validateEmail,
+    validatePassword,
+    validateConfirmPassword,
+    resetValidation,
+    setEmailError,
+    validateUsernameFormat,
+    validateEmailFormat,
+    validatePasswordFormat,
+    validateConfirmPasswordFormat,
+  } = useFormValidation();
 
   // Form state
   const [formData, setFormData] = useState({
@@ -38,49 +46,36 @@ const Auth = () => {
     postalCode: "",
   });
 
-  const [errors, setErrors] = useState<ValidationErrors>({});
   const [showAddressFields, setShowAddressFields] = useState(false);
 
-  // Validation functions
-  const validateUsername = (username: string): string | undefined => {
-    if (!username.trim()) return "Username is required";
-    if (username.length < 3) return "Username must be at least 3 characters";
-    if (username.length > 20) return "Username must be less than 20 characters";
-    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-      return "Username can only contain letters, numbers, and underscores";
+  // Real-time validation as user types
+  useEffect(() => {
+    if (!isLogin && formData.username) {
+      checkUsernameAvailability(formData.username);
     }
-    return undefined;
-  };
+  }, [formData.username, isLogin, checkUsernameAvailability]);
 
-  const validateEmail = (email: string): string | undefined => {
-    if (!email.trim()) return "Email is required";
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) return "Please enter a valid email address";
-    return undefined;
-  };
+  useEffect(() => {
+    if (formData.email) {
+      validateEmail(formData.email);
+    }
+  }, [formData.email, validateEmail]);
 
-  const validatePassword = (password: string): string | undefined => {
-    if (!password) return "Password is required";
-    if (password.length < 8) return "Password must be at least 8 characters";
-    if (!/[A-Z]/.test(password)) return "Password must contain at least one uppercase letter";
-    if (!/[0-9]/.test(password)) return "Password must contain at least one number";
-    return undefined;
-  };
+  useEffect(() => {
+    if (!isLogin && formData.password) {
+      validatePassword(formData.password);
+    }
+  }, [formData.password, isLogin, validatePassword]);
 
-  const validateConfirmPassword = (password: string, confirmPassword: string): string | undefined => {
-    if (!confirmPassword) return "Please confirm your password";
-    if (password !== confirmPassword) return "Passwords do not match";
-    return undefined;
-  };
+  useEffect(() => {
+    if (!isLogin && formData.confirmPassword) {
+      validateConfirmPassword(formData.password, formData.confirmPassword);
+    }
+  }, [formData.password, formData.confirmPassword, isLogin, validateConfirmPassword]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-
-    // Clear error when user starts typing
-    if (errors[name as keyof ValidationErrors]) {
-      setErrors((prev) => ({ ...prev, [name]: undefined }));
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -90,11 +85,11 @@ const Auth = () => {
     try {
       if (isLogin) {
         // Login validation
-        const emailError = validateEmail(formData.email);
+        const emailError = validateEmailFormat(formData.email);
         const passwordError = formData.password ? undefined : "Password is required";
 
         if (emailError || passwordError) {
-          setErrors({ email: emailError, password: passwordError });
+          if (emailError) setEmailError(emailError);
           setIsLoading(false);
           return;
         }
@@ -105,36 +100,43 @@ const Auth = () => {
           password: formData.password,
         });
 
-        if (error) throw error;
-
-        toast.success("Welcome back!");
-        navigate("/");
-      } else {
-        // Signup validation
-        const newErrors: ValidationErrors = {
-          username: validateUsername(formData.username),
-          email: validateEmail(formData.email),
-          password: validatePassword(formData.password),
-          confirmPassword: validateConfirmPassword(formData.password, formData.confirmPassword),
-        };
-
-        // Check if username is already taken
-        if (!newErrors.username) {
-          const usernameError = await checkUsername(formData.username);
-          if (usernameError) {
-            newErrors.username = usernameError;
+        if (error) {
+          if (error.message.includes("Email not confirmed")) {
+            toast.error("Please verify your email before signing in. Check your inbox for the verification link.");
+          } else {
+            throw error;
           }
-        }
-
-        const hasErrors = Object.values(newErrors).some((error) => error !== undefined);
-
-        if (hasErrors) {
-          setErrors(newErrors);
           setIsLoading(false);
           return;
         }
 
-        // Real Supabase signup
+        toast.success("Welcome back!");
+        navigate("/");
+      } else {
+        // Signup validation - check all fields
+        const usernameError = validateUsernameFormat(formData.username);
+        const emailError = validateEmailFormat(formData.email);
+        const passwordError = validatePasswordFormat(formData.password);
+        const confirmError = validateConfirmPasswordFormat(formData.password, formData.confirmPassword);
+
+        // Also check if username is still being validated or has an error
+        if (validation.username.isChecking) {
+          toast.error("Please wait while we check username availability");
+          setIsLoading(false);
+          return;
+        }
+
+        if (usernameError || emailError || passwordError || confirmError || validation.username.error) {
+          // Trigger validation display
+          if (usernameError) checkUsernameAvailability(formData.username);
+          if (emailError) validateEmail(formData.email);
+          if (passwordError) validatePassword(formData.password);
+          if (confirmError) validateConfirmPassword(formData.password, formData.confirmPassword);
+          setIsLoading(false);
+          return;
+        }
+
+        // Create user in Supabase Auth (without auto-confirm)
         const { data, error } = await supabase.auth.signUp({
           email: formData.email,
           password: formData.password,
@@ -149,11 +151,32 @@ const Auth = () => {
         if (error) {
           // Check for duplicate email error
           if (error.message.includes("already registered") || error.message.includes("already exists")) {
-            setErrors({ email: "This email is already registered" });
+            setEmailError("This email is already registered");
             setIsLoading(false);
             return;
           }
           throw error;
+        }
+
+        // User created - now send our custom verification email
+        if (data.user) {
+          try {
+            const { error: emailError } = await supabase.functions.invoke("send-verification-email", {
+              body: {
+                email: formData.email,
+                userId: data.user.id,
+                username: formData.username,
+              },
+            });
+
+            if (emailError) {
+              console.error("Error sending verification email:", emailError);
+              // Still show the verification screen even if email fails
+              // User can try again or contact support
+            }
+          } catch (emailErr) {
+            console.error("Failed to send verification email:", emailErr);
+          }
         }
 
         // Show email verification screen
@@ -183,56 +206,41 @@ const Auth = () => {
 
   const passwordStrength = getPasswordStrength(formData.password);
 
+  // Validation indicator component
+  const ValidationIndicator = ({ isChecking, isValid, error }: { isChecking?: boolean; isValid: boolean; error?: string }) => {
+    if (isChecking) {
+      return <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />;
+    }
+    if (error) {
+      return <X className="h-4 w-4 text-destructive" />;
+    }
+    if (isValid) {
+      return <Check className="h-4 w-4 text-green-500" />;
+    }
+    return null;
+  };
+
   // Email verification success screen
   if (showEmailVerification) {
     return (
-      <>
-        <Helmet>
-          <title>Verify Your Email - Rooh Al Andalus</title>
-          <meta name="description" content="Please verify your email to complete registration" />
-        </Helmet>
-
-        <div className="min-h-screen bg-background flex items-center justify-center p-8">
-          <div className="max-w-md w-full text-center">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center mx-auto mb-6">
-              <CheckCircle className="h-10 w-10 text-white" />
-            </div>
-            <h1 className="font-display text-3xl font-bold text-foreground mb-4">
-              Check Your Email
-            </h1>
-            <p className="font-body text-muted-foreground text-lg mb-6">
-              We've sent a verification link to:
-            </p>
-            <p className="font-body text-primary font-semibold text-xl mb-8">
-              {registeredEmail}
-            </p>
-            <p className="font-body text-muted-foreground mb-8">
-              Click the link in the email to verify your account and complete your registration.
-              If you don't see the email, check your spam folder.
-            </p>
-            <div className="space-y-4">
-              <Button
-                variant="gold"
-                size="lg"
-                className="w-full"
-                onClick={() => {
-                  setShowEmailVerification(false);
-                  setIsLogin(true);
-                }}
-              >
-                Go to Sign In
-              </Button>
-              <Link
-                to="/"
-                className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                <span className="font-body">Back to Shop</span>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </>
+      <EmailSentScreen
+        email={registeredEmail}
+        onBackToSignIn={() => {
+          setShowEmailVerification(false);
+          setIsLogin(true);
+          resetValidation();
+          setFormData({
+            username: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+            address: "",
+            city: "",
+            country: "",
+            postalCode: "",
+          });
+        }}
+      />
     );
   }
 
@@ -303,17 +311,26 @@ const Auth = () => {
                     <User className="h-4 w-4" />
                     Username
                   </Label>
-                  <Input
-                    id="username"
-                    name="username"
-                    placeholder="Enter your username"
-                    value={formData.username}
-                    onChange={handleInputChange}
-                    className={errors.username ? "border-destructive" : ""}
-                    disabled={isLoading}
-                  />
-                  {errors.username && (
-                    <p className="text-destructive text-sm mt-1">{errors.username}</p>
+                  <div className="relative">
+                    <Input
+                      id="username"
+                      name="username"
+                      placeholder="Enter your username"
+                      value={formData.username}
+                      onChange={handleInputChange}
+                      className={`pr-10 ${validation.username.error ? "border-destructive focus-visible:ring-destructive" : validation.username.isValid ? "border-green-500 focus-visible:ring-green-500" : ""}`}
+                      disabled={isLoading}
+                    />
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      <ValidationIndicator
+                        isChecking={validation.username.isChecking}
+                        isValid={validation.username.isValid}
+                        error={validation.username.error}
+                      />
+                    </div>
+                  </div>
+                  {validation.username.error && (
+                    <p className="text-destructive text-sm mt-1">{validation.username.error}</p>
                   )}
                 </div>
               )}
@@ -323,18 +340,26 @@ const Auth = () => {
                   <Mail className="h-4 w-4" />
                   Email
                 </Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className={errors.email ? "border-destructive" : ""}
-                  disabled={isLoading}
-                />
-                {errors.email && (
-                  <p className="text-destructive text-sm mt-1">{errors.email}</p>
+                <div className="relative">
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className={`pr-10 ${validation.email.error ? "border-destructive focus-visible:ring-destructive" : validation.email.isValid ? "border-green-500 focus-visible:ring-green-500" : ""}`}
+                    disabled={isLoading}
+                  />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    <ValidationIndicator
+                      isValid={validation.email.isValid}
+                      error={validation.email.error}
+                    />
+                  </div>
+                </div>
+                {validation.email.error && (
+                  <p className="text-destructive text-sm mt-1">{validation.email.error}</p>
                 )}
               </div>
 
@@ -351,19 +376,27 @@ const Auth = () => {
                     placeholder={isLogin ? "Enter your password" : "Create a strong password"}
                     value={formData.password}
                     onChange={handleInputChange}
-                    className={`pr-10 ${errors.password ? "border-destructive" : ""}`}
+                    className={`pr-16 ${!isLogin && validation.password.error ? "border-destructive focus-visible:ring-destructive" : !isLogin && validation.password.isValid ? "border-green-500 focus-visible:ring-green-500" : ""}`}
                     disabled={isLoading}
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                    {!isLogin && formData.password && (
+                      <ValidationIndicator
+                        isValid={validation.password.isValid}
+                        error={validation.password.error}
+                      />
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="text-muted-foreground hover:text-foreground"
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
                 </div>
-                {errors.password && (
-                  <p className="text-destructive text-sm mt-1">{errors.password}</p>
+                {!isLogin && validation.password.error && (
+                  <p className="text-destructive text-sm mt-1">{validation.password.error}</p>
                 )}
                 {!isLogin && formData.password && (
                   <div className="mt-2">
@@ -395,19 +428,27 @@ const Auth = () => {
                         placeholder="Confirm your password"
                         value={formData.confirmPassword}
                         onChange={handleInputChange}
-                        className={`pr-10 ${errors.confirmPassword ? "border-destructive" : ""}`}
+                        className={`pr-16 ${validation.confirmPassword.error ? "border-destructive focus-visible:ring-destructive" : validation.confirmPassword.isValid ? "border-green-500 focus-visible:ring-green-500" : ""}`}
                         disabled={isLoading}
                       />
-                      <button
-                        type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                      >
-                        {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </button>
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                        {formData.confirmPassword && (
+                          <ValidationIndicator
+                            isValid={validation.confirmPassword.isValid}
+                            error={validation.confirmPassword.error}
+                          />
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          className="text-muted-foreground hover:text-foreground"
+                        >
+                          {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
                     </div>
-                    {errors.confirmPassword && (
-                      <p className="text-destructive text-sm mt-1">{errors.confirmPassword}</p>
+                    {validation.confirmPassword.error && (
+                      <p className="text-destructive text-sm mt-1">{validation.confirmPassword.error}</p>
                     )}
                   </div>
 
@@ -503,7 +544,7 @@ const Auth = () => {
                   type="button"
                   onClick={() => {
                     setIsLogin(!isLogin);
-                    setErrors({});
+                    resetValidation();
                   }}
                   className="text-primary hover:underline font-medium"
                   disabled={isLoading}
