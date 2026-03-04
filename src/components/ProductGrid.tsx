@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import ProductCard from "./ProductCard";
 import ProductModal from "./ProductModal";
-import { products, ExtendedProduct } from "@/data/products";
+import { ExtendedProduct } from "@/data/products";
 import { useProductFilter } from "@/hooks/useProductFilter";
 import FilterSidebar from "./FilterSidebar";
 import { Button } from "@/components/ui/button";
