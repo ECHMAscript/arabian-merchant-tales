@@ -21,9 +21,9 @@ const ProductGrid = () => {
 
   const { products: dbProducts, refetch: refetchProducts } = useDbProducts();
 
-  // Combine static products with database products
+  // Use only database products
   const allProducts = useMemo(() => {
-    const dbProductsMapped: ExtendedProduct[] = dbProducts.map((p) => ({
+    return dbProducts.map((p): ExtendedProduct => ({
       id: p.id,
       name: p.title,
       price: Number(p.price),
@@ -37,7 +37,6 @@ const ProductGrid = () => {
       colors: [],
       sizes: [],
     }));
-    return [...dbProductsMapped, ...products];
   }, [dbProducts]);
 
   const {
