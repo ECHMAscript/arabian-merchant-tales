@@ -3,7 +3,7 @@ import { useState, useMemo } from "react";
 import Navbar from "@/components/Navbar";
 import BookCard from "@/components/BookCard";
 import BookModal from "@/components/BookModal";
-import { booksData, schoolSuppliesData, bookCategories, schoolSupplyCategories, BookProduct } from "@/data/books";
+import { bookCategories, schoolSupplyCategories, BookProduct } from "@/data/books";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
