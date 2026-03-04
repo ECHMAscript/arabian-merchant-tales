@@ -40,13 +40,11 @@ const Books = () => {
         name: b.title,
         author: b.author || undefined,
         price: Number(b.price),
-        originalPrice: b.original_price ? Number(b.original_price) : undefined,
         image: b.image,
         category: "books" as const,
         subcategory: "General",
         quantityLeft: b.quantity_left,
         rating: 4.5,
-        reviews: 0,
         reviewCount: 0,
         volumes: b.volumes?.length || undefined,
       }));
