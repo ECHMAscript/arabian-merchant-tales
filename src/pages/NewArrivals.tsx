@@ -31,9 +31,9 @@ const NewArrivals = () => {
 
   const { arrivals: dbArrivals, refetch: refetchArrivals } = useDbNewArrivals();
 
-  // Combine database arrivals with static data
+  // Use only database arrivals
   const allArrivals = useMemo(() => {
-    const dbArrivalsMapped: ExtendedProduct[] = dbArrivals.map((p) => ({
+    return dbArrivals.map((p): ExtendedProduct => ({
       id: p.id,
       name: p.title,
       price: Number(p.price),
@@ -47,7 +47,6 @@ const NewArrivals = () => {
       colors: [],
       sizes: [],
     }));
-    return [...dbArrivalsMapped, ...newArrivals];
   }, [dbArrivals]);
 
   const handleProductClick = (product: ExtendedProduct) => {
