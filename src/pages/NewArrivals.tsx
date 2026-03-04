@@ -41,7 +41,6 @@ const NewArrivals = () => {
       image: p.image,
       category: p.category,
       rating: 4.5,
-      reviews: 0,
       reviewCount: 0,
       isNew: true,
       colors: [],
