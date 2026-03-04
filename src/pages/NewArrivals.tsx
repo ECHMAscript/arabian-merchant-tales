@@ -42,9 +42,7 @@ const NewArrivals = () => {
       category: p.category,
       rating: 4.5,
       reviewCount: 0,
-      isNew: true,
       colors: [],
-      sizes: [],
     }));
   }, [dbArrivals]);
 

@@ -32,9 +32,7 @@ const ProductGrid = () => {
       category: p.category,
       rating: 4.5,
       reviewCount: 0,
-      isNew: p.is_new_arrival,
       colors: [],
-      sizes: [],
     }));
   }, [dbProducts]);
 
