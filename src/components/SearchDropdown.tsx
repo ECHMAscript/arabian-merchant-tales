@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { Search, X, Book } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { products, pages } from "@/data/products";
-import { booksData, schoolSuppliesData } from "@/data/books";
+import { pages } from "@/data/products";
 import { ProductCardProps } from "./ProductCard";
+import { useDbProducts, useDbBooks } from "@/hooks/useDbProducts";
 
 interface SearchDropdownProps {
   onProductClick: (product: ProductCardProps) => void;
@@ -28,6 +28,9 @@ const SearchDropdown = ({ onProductClick }: SearchDropdownProps) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
+  const { products: dbProducts } = useDbProducts();
+  const { books: dbBooks } = useDbBooks();
+
   useEffect(() => {
     if (query.trim() === "") {
       setFilteredProducts([]);
@@ -38,19 +41,37 @@ const SearchDropdown = ({ onProductClick }: SearchDropdownProps) => {
 
     const lowerQuery = query.toLowerCase();
     
-    const matchedProducts = products.filter(
-      (p) =>
-        p.name.toLowerCase().includes(lowerQuery) ||
-        p.category.toLowerCase().includes(lowerQuery)
-    );
+    const matchedProducts = dbProducts
+      .filter(
+        (p) =>
+          p.title.toLowerCase().includes(lowerQuery) ||
+          p.category.toLowerCase().includes(lowerQuery)
+      )
+      .map((p): ProductCardProps => ({
+        id: p.id,
+        name: p.title,
+        price: Number(p.price),
+        originalPrice: p.original_price ? Number(p.original_price) : undefined,
+        image: p.image,
+        category: p.category,
+        rating: 4.5,
+        reviewCount: 0,
+      }));
     
-    const allBooks = [...booksData, ...schoolSuppliesData];
-    const matchedBooks = allBooks.filter(
-      (b) =>
-        b.name.toLowerCase().includes(lowerQuery) ||
-        b.subcategory.toLowerCase().includes(lowerQuery) ||
-        (b.arabicName && b.arabicName.includes(query))
-    );
+    const matchedBooks = dbBooks
+      .filter(
+        (b) =>
+          b.title.toLowerCase().includes(lowerQuery) ||
+          b.category.toLowerCase().includes(lowerQuery)
+      )
+      .map((b): BookSearchResult => ({
+        id: b.id,
+        name: b.title,
+        price: Number(b.price),
+        image: b.image,
+        category: b.category as "books" | "school-supplies",
+        subcategory: "General",
+      }));
     
     const matchedPages = pages.filter((p) =>
       p.name.toLowerCase().includes(lowerQuery)
@@ -59,7 +80,7 @@ const SearchDropdown = ({ onProductClick }: SearchDropdownProps) => {
     setFilteredProducts(matchedProducts.slice(0, 5));
     setFilteredBooks(matchedBooks.slice(0, 5));
     setFilteredPages(matchedPages);
-  }, [query]);
+  }, [query, dbProducts, dbBooks]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

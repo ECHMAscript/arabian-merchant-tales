@@ -393,7 +393,15 @@ const Books = () => {
               </div>
 
               {/* Products */}
-              {filteredProducts.length === 0 ? (
+              {(mainCategory === "books" ? allBooks : allSchoolSupplies).length === 0 ? (
+                <div className="text-center py-16">
+                  <Book className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                  <p className="font-display text-xl text-foreground mb-2">✦ This section just opened!</p>
+                  <p className="font-body text-muted-foreground text-lg">
+                    We're currently adding {mainCategory === "books" ? "books" : "school supplies"} to our collection. Check back soon!
+                  </p>
+                </div>
+              ) : filteredProducts.length === 0 ? (
                 <div className="text-center py-16">
                   <Book className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
                   <p className="font-body text-muted-foreground text-lg mb-4">

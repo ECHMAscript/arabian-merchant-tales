@@ -340,7 +340,14 @@ const NewArrivals = () => {
             </select>
           </div>
 
-          {filteredProducts.length === 0 ? (
+          {allArrivals.length === 0 ? (
+            <div className="text-center py-16">
+              <p className="font-display text-xl text-foreground mb-2">✦ This section just opened!</p>
+              <p className="font-body text-muted-foreground text-lg">
+                We're currently adding our newest arrivals. Check back soon for fresh handcrafted treasures.
+              </p>
+            </div>
+          ) : filteredProducts.length === 0 ? (
             <div className="text-center py-16">
               <p className="font-body text-muted-foreground text-lg mb-4">
                 No products match your filters.

@@ -114,7 +114,14 @@ const ProductGrid = () => {
         </div>
 
         {/* Product Grid */}
-        {filteredProducts.length === 0 ? (
+        {allProducts.length === 0 ? (
+          <div className="text-center py-16">
+            <p className="font-display text-xl text-foreground mb-2">✦ This section just opened!</p>
+            <p className="font-body text-muted-foreground text-lg">
+              We're currently curating our collection. Check back soon for beautiful artisan products.
+            </p>
+          </div>
+        ) : filteredProducts.length === 0 ? (
           <div className="text-center py-16">
             <p className="font-body text-muted-foreground text-lg mb-4">
               No products match your filters.
