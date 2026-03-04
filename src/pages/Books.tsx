@@ -31,11 +31,11 @@ const Books = () => {
 
   const { books: dbBooks, refetch: refetchBooks } = useDbBooks();
 
-  // Map database books to BookProduct format and combine with static data
+  // Use only database books
   const allBooks = useMemo(() => {
-    const dbBooksMapped: BookProduct[] = dbBooks
+    return dbBooks
       .filter((b) => b.category === "books")
-      .map((b) => ({
+      .map((b): BookProduct => ({
         id: b.id,
         name: b.title,
         author: b.author || undefined,
@@ -50,13 +50,12 @@ const Books = () => {
         reviewCount: 0,
         volumes: b.volumes?.length || undefined,
       }));
-    return [...dbBooksMapped, ...booksData];
   }, [dbBooks]);
 
   const allSchoolSupplies = useMemo(() => {
-    const dbSuppliesMapped: BookProduct[] = dbBooks
+    return dbBooks
       .filter((b) => b.category === "school-supplies")
-      .map((b) => ({
+      .map((b): BookProduct => ({
         id: b.id,
         name: b.title,
         author: b.author || undefined,
@@ -70,7 +69,6 @@ const Books = () => {
         reviews: 0,
         reviewCount: 0,
       }));
-    return [...dbSuppliesMapped, ...schoolSuppliesData];
   }, [dbBooks]);
 
   const handleProductClick = (product: BookProduct) => {
