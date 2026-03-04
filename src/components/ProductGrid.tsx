@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import ProductCard from "./ProductCard";
 import ProductModal from "./ProductModal";
-import { products, ExtendedProduct } from "@/data/products";
+import { ExtendedProduct } from "@/data/products";
 import { useProductFilter } from "@/hooks/useProductFilter";
 import FilterSidebar from "./FilterSidebar";
 import { Button } from "@/components/ui/button";
@@ -21,9 +21,9 @@ const ProductGrid = () => {
 
   const { products: dbProducts, refetch: refetchProducts } = useDbProducts();
 
-  // Combine static products with database products
+  // Use only database products
   const allProducts = useMemo(() => {
-    const dbProductsMapped: ExtendedProduct[] = dbProducts.map((p) => ({
+    return dbProducts.map((p): ExtendedProduct => ({
       id: p.id,
       name: p.title,
       price: Number(p.price),
@@ -31,13 +31,9 @@ const ProductGrid = () => {
       image: p.image,
       category: p.category,
       rating: 4.5,
-      reviews: 0,
       reviewCount: 0,
-      isNew: p.is_new_arrival,
       colors: [],
-      sizes: [],
     }));
-    return [...dbProductsMapped, ...products];
   }, [dbProducts]);
 
   const {
@@ -115,7 +111,14 @@ const ProductGrid = () => {
         </div>
 
         {/* Product Grid */}
-        {filteredProducts.length === 0 ? (
+        {allProducts.length === 0 ? (
+          <div className="text-center py-16">
+            <p className="font-display text-xl text-foreground mb-2">✦ This section just opened!</p>
+            <p className="font-body text-muted-foreground text-lg">
+              We're currently curating our collection. Check back soon for beautiful artisan products.
+            </p>
+          </div>
+        ) : filteredProducts.length === 0 ? (
           <div className="text-center py-16">
             <p className="font-body text-muted-foreground text-lg mb-4">
               No products match your filters.

@@ -3,7 +3,7 @@ import { useState, useMemo } from "react";
 import Navbar from "@/components/Navbar";
 import ProductCard from "@/components/ProductCard";
 import ProductModal from "@/components/ProductModal";
-import { newArrivals, ExtendedProduct } from "@/data/products";
+import { ExtendedProduct } from "@/data/products";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -31,9 +31,9 @@ const NewArrivals = () => {
 
   const { arrivals: dbArrivals, refetch: refetchArrivals } = useDbNewArrivals();
 
-  // Combine database arrivals with static data
+  // Use only database arrivals
   const allArrivals = useMemo(() => {
-    const dbArrivalsMapped: ExtendedProduct[] = dbArrivals.map((p) => ({
+    return dbArrivals.map((p): ExtendedProduct => ({
       id: p.id,
       name: p.title,
       price: Number(p.price),
@@ -41,13 +41,9 @@ const NewArrivals = () => {
       image: p.image,
       category: p.category,
       rating: 4.5,
-      reviews: 0,
       reviewCount: 0,
-      isNew: true,
       colors: [],
-      sizes: [],
     }));
-    return [...dbArrivalsMapped, ...newArrivals];
   }, [dbArrivals]);
 
   const handleProductClick = (product: ExtendedProduct) => {
@@ -341,7 +337,14 @@ const NewArrivals = () => {
             </select>
           </div>
 
-          {filteredProducts.length === 0 ? (
+          {allArrivals.length === 0 ? (
+            <div className="text-center py-16">
+              <p className="font-display text-xl text-foreground mb-2">✦ This section just opened!</p>
+              <p className="font-body text-muted-foreground text-lg">
+                We're currently adding our newest arrivals. Check back soon for fresh handcrafted treasures.
+              </p>
+            </div>
+          ) : filteredProducts.length === 0 ? (
             <div className="text-center py-16">
               <p className="font-body text-muted-foreground text-lg mb-4">
                 No products match your filters.

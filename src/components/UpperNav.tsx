@@ -72,13 +72,13 @@ const UpperNav = () => {
               </div>
             ) : (
               <>
-                <Link to="/auth">
+                <Link to="/auth?mode=login">
                   <Button variant="ghost" size="sm" className="text-card/80 hover:text-card hover:bg-card/10 gap-1.5 h-7 text-xs">
                     <LogIn className="h-3 w-3" />
                     <span>Sign In</span>
                   </Button>
                 </Link>
-                <Link to="/auth">
+                <Link to="/auth?mode=signup">
                   <Button size="sm" className="bg-primary/20 text-primary-foreground hover:bg-primary/30 h-7 text-xs px-3">
                     Sign Up
                   </Button>

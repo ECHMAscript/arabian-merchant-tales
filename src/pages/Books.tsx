@@ -3,7 +3,7 @@ import { useState, useMemo } from "react";
 import Navbar from "@/components/Navbar";
 import BookCard from "@/components/BookCard";
 import BookModal from "@/components/BookModal";
-import { booksData, schoolSuppliesData, bookCategories, schoolSupplyCategories, BookProduct } from "@/data/books";
+import { bookCategories, schoolSupplyCategories, BookProduct } from "@/data/books";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -31,46 +31,40 @@ const Books = () => {
 
   const { books: dbBooks, refetch: refetchBooks } = useDbBooks();
 
-  // Map database books to BookProduct format and combine with static data
+  // Use only database books
   const allBooks = useMemo(() => {
-    const dbBooksMapped: BookProduct[] = dbBooks
+    return dbBooks
       .filter((b) => b.category === "books")
-      .map((b) => ({
+      .map((b): BookProduct => ({
         id: b.id,
         name: b.title,
         author: b.author || undefined,
         price: Number(b.price),
-        originalPrice: b.original_price ? Number(b.original_price) : undefined,
         image: b.image,
         category: "books" as const,
         subcategory: "General",
         quantityLeft: b.quantity_left,
         rating: 4.5,
-        reviews: 0,
         reviewCount: 0,
         volumes: b.volumes?.length || undefined,
       }));
-    return [...dbBooksMapped, ...booksData];
   }, [dbBooks]);
 
   const allSchoolSupplies = useMemo(() => {
-    const dbSuppliesMapped: BookProduct[] = dbBooks
+    return dbBooks
       .filter((b) => b.category === "school-supplies")
-      .map((b) => ({
+      .map((b): BookProduct => ({
         id: b.id,
         name: b.title,
         author: b.author || undefined,
         price: Number(b.price),
-        originalPrice: b.original_price ? Number(b.original_price) : undefined,
         image: b.image,
         category: "school-supplies" as const,
         subcategory: "General",
         quantityLeft: b.quantity_left,
         rating: 4.5,
-        reviews: 0,
         reviewCount: 0,
       }));
-    return [...dbSuppliesMapped, ...schoolSuppliesData];
   }, [dbBooks]);
 
   const handleProductClick = (product: BookProduct) => {
@@ -395,7 +389,15 @@ const Books = () => {
               </div>
 
               {/* Products */}
-              {filteredProducts.length === 0 ? (
+              {(mainCategory === "books" ? allBooks : allSchoolSupplies).length === 0 ? (
+                <div className="text-center py-16">
+                  <Book className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                  <p className="font-display text-xl text-foreground mb-2">✦ This section just opened!</p>
+                  <p className="font-body text-muted-foreground text-lg">
+                    We're currently adding {mainCategory === "books" ? "books" : "school supplies"} to our collection. Check back soon!
+                  </p>
+                </div>
+              ) : filteredProducts.length === 0 ? (
                 <div className="text-center py-16">
                   <Book className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
                   <p className="font-body text-muted-foreground text-lg mb-4">

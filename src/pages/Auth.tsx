@@ -12,7 +12,8 @@ import { useFormValidation } from "@/hooks/useFormValidation";
 import EmailSentScreen from "@/components/EmailSentScreen";
 
 const Auth = () => {
-  const [isLogin, setIsLogin] = useState(false);
+  const searchParams = new URLSearchParams(window.location.search);
+  const [isLogin, setIsLogin] = useState(searchParams.get("mode") !== "signup");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
