@@ -3,7 +3,7 @@ import { useState, useMemo } from "react";
 import Navbar from "@/components/Navbar";
 import ProductCard from "@/components/ProductCard";
 import ProductModal from "@/components/ProductModal";
-import { newArrivals, ExtendedProduct } from "@/data/products";
+import { ExtendedProduct } from "@/data/products";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
