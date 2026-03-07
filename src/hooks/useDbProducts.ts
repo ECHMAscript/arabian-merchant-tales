@@ -27,6 +27,8 @@ interface DbBook {
   quantity_left: number;
   volumes: string[] | null;
   created_at: string;
+  rating: number;
+  review_count: number;
 }
 
 export const useDbProducts = () => {
