@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Star, X, BookmarkPlus, BookmarkCheck, ShoppingCart, ArrowLeft } from "lucide-react";
+import { BookmarkPlus, BookmarkCheck, ShoppingCart, ArrowLeft } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { toast } from "sonner";
