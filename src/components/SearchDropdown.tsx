@@ -54,8 +54,8 @@ const SearchDropdown = ({ onProductClick }: SearchDropdownProps) => {
         originalPrice: p.original_price ? Number(p.original_price) : undefined,
         image: p.image,
         category: p.category,
-        rating: 4.5,
-        reviewCount: 0,
+        rating: Number(p.rating) || 0,
+        reviewCount: p.review_count || 0,
       }));
     
     const matchedBooks = dbBooks

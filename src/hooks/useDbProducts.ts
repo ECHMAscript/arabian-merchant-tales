@@ -11,6 +11,8 @@ interface DbProduct {
   category: string;
   is_new_arrival: boolean;
   created_at: string;
+  rating: number;
+  review_count: number;
 }
 
 interface DbBook {
@@ -25,6 +27,8 @@ interface DbBook {
   quantity_left: number;
   volumes: string[] | null;
   created_at: string;
+  rating: number;
+  review_count: number;
 }
 
 export const useDbProducts = () => {
