@@ -49,6 +49,8 @@ export type Database = {
           original_price: number | null
           price: number
           quantity_left: number | null
+          rating: number
+          review_count: number
           title: string
           volumes: string[] | null
         }
@@ -62,6 +64,8 @@ export type Database = {
           original_price?: number | null
           price: number
           quantity_left?: number | null
+          rating?: number
+          review_count?: number
           title: string
           volumes?: string[] | null
         }
@@ -75,6 +79,8 @@ export type Database = {
           original_price?: number | null
           price?: number
           quantity_left?: number | null
+          rating?: number
+          review_count?: number
           title?: string
           volumes?: string[] | null
         }
@@ -153,6 +159,8 @@ export type Database = {
           is_new_arrival: boolean | null
           original_price: number | null
           price: number
+          rating: number
+          review_count: number
           title: string
         }
         Insert: {
@@ -164,6 +172,8 @@ export type Database = {
           is_new_arrival?: boolean | null
           original_price?: number | null
           price: number
+          rating?: number
+          review_count?: number
           title: string
         }
         Update: {
@@ -175,6 +185,8 @@ export type Database = {
           is_new_arrival?: boolean | null
           original_price?: number | null
           price?: number
+          rating?: number
+          review_count?: number
           title?: string
         }
         Relationships: []
@@ -200,6 +212,36 @@ export type Database = {
           updated_at?: string
           user_id?: string
           username?: string
+        }
+        Relationships: []
+      }
+      reviews: {
+        Row: {
+          comment: string
+          created_at: string
+          id: string
+          item_id: string
+          item_type: string
+          rating: number
+          user_id: string
+        }
+        Insert: {
+          comment?: string
+          created_at?: string
+          id?: string
+          item_id: string
+          item_type: string
+          rating: number
+          user_id: string
+        }
+        Update: {
+          comment?: string
+          created_at?: string
+          id?: string
+          item_id?: string
+          item_type?: string
+          rating?: number
+          user_id?: string
         }
         Relationships: []
       }
