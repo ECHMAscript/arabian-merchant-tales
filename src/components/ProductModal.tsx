@@ -86,7 +86,7 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
   return (
     <>
       <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent className="max-w-2xl p-0 overflow-hidden bg-card max-h-[95vh] md:max-h-[90vh]">
+        <DialogContent className="max-w-lg p-0 overflow-hidden bg-card max-h-[95vh] md:max-h-[90vh]">
           {/* Mobile Back Button */}
           <div className="md:hidden flex items-center gap-2 p-4 border-b border-border">
             <Button variant="ghost" size="icon" onClick={handleClose} className="shrink-0">
@@ -98,131 +98,128 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
           </div>
 
           <div className="overflow-y-auto max-h-[calc(95vh-60px)] md:max-h-[90vh]">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
-              {/* Left Side - Image */}
-              <div className="bg-muted/30 p-4 md:p-6">
-                <div className="relative aspect-square rounded-xl overflow-hidden">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                  />
-                  {product.originalPrice && (
-                    <span className="absolute top-3 left-3 px-3 py-1 bg-secondary text-secondary-foreground text-xs font-semibold rounded-full">
-                      {Math.round((1 - product.price / product.originalPrice) * 100)}% OFF
-                    </span>
-                  )}
-                </div>
-              </div>
+            {/* Large Hero Image */}
+            <div className="relative w-full">
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-full aspect-[4/5] object-cover"
+              />
+              {product.originalPrice && (
+                <span className="absolute top-4 left-4 px-3 py-1 bg-secondary text-secondary-foreground text-xs font-semibold rounded-full">
+                  {Math.round((1 - product.price / product.originalPrice) * 100)}% OFF
+                </span>
+              )}
+            </div>
 
-              {/* Right Side - Details */}
-              <div className="p-4 md:p-6 flex flex-col">
-                <h2 className="hidden md:block font-display text-xl font-bold text-foreground mb-2">
-                  {product.name}
-                </h2>
-
-                {/* Rating row */}
-                <div className="flex items-center gap-2 mb-4">
+            {/* Details below image */}
+            <div className="p-5 space-y-4">
+              {/* Name & Rating */}
+              <div>
+                <h2 className="font-display text-xl font-bold text-foreground">{product.name}</h2>
+                <div className="flex items-center gap-2 mt-1">
                   <div className="flex items-center gap-0.5">{renderStars(product.rating)}</div>
                   <span className="font-body text-sm text-muted-foreground">
                     ({product.reviewCount} reviews)
                   </span>
                 </div>
+              </div>
 
-                {/* Size Selection */}
-                <div className="space-y-2 mb-4">
-                  <h4 className="font-display text-sm font-medium text-foreground">Size</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {sizes.map((size) => (
-                      <button
-                        key={size}
-                        onClick={() => setSelectedSize(size)}
-                        className={`px-3 py-1.5 md:px-4 md:py-2 rounded-lg border text-sm font-body transition-all ${
-                          selectedSize === size
-                            ? "bg-primary text-primary-foreground border-primary"
-                            : "bg-card border-border text-foreground hover:border-primary"
-                        }`}
-                      >
-                        {size}
-                      </button>
-                    ))}
-                  </div>
+              {/* Price */}
+              <div className="flex items-center gap-3">
+                <span className="font-display text-2xl font-bold text-foreground">
+                  ${product.price.toFixed(2)}
+                </span>
+                {product.originalPrice && (
+                  <span className="font-body text-lg text-muted-foreground line-through">
+                    ${product.originalPrice.toFixed(2)}
+                  </span>
+                )}
+              </div>
+
+              {/* Color Selection */}
+              <div className="space-y-2">
+                <h4 className="font-display text-sm font-medium text-foreground">
+                  Color: <span className="text-muted-foreground font-body">{selectedColor}</span>
+                </h4>
+                <div className="flex flex-wrap gap-3">
+                  {colors.map((color) => (
+                    <button
+                      key={color.name}
+                      onClick={() => setSelectedColor(color.name)}
+                      className={`relative w-9 h-9 rounded-full border-2 transition-all ${
+                        selectedColor === color.name
+                          ? "border-primary ring-2 ring-primary/30"
+                          : "border-border hover:border-primary"
+                      }`}
+                      style={{ backgroundColor: color.value }}
+                      title={color.name}
+                    >
+                      {selectedColor === color.name && (
+                        <span className="absolute inset-0 flex items-center justify-center text-white drop-shadow-md">
+                          ✓
+                        </span>
+                      )}
+                    </button>
+                  ))}
                 </div>
+              </div>
 
-                {/* Color Selection */}
-                <div className="space-y-2 mb-4">
-                  <h4 className="font-display text-sm font-medium text-foreground">Color</h4>
-                  <div className="flex flex-wrap gap-3">
-                    {colors.map((color) => (
-                      <button
-                        key={color.name}
-                        onClick={() => setSelectedColor(color.name)}
-                        className={`relative w-9 h-9 md:w-10 md:h-10 rounded-full border-2 transition-all ${
-                          selectedColor === color.name
-                            ? "border-primary ring-2 ring-primary/30"
-                            : "border-border hover:border-primary"
-                        }`}
-                        style={{ backgroundColor: color.value }}
-                        title={color.name}
-                      >
-                        {selectedColor === color.name && (
-                          <span className="absolute inset-0 flex items-center justify-center text-white drop-shadow-md">
-                            ✓
-                          </span>
-                        )}
-                      </button>
-                    ))}
-                  </div>
+              {/* Size Selection */}
+              <div className="space-y-2">
+                <h4 className="font-display text-sm font-medium text-foreground">Size</h4>
+                <div className="flex flex-wrap gap-2">
+                  {sizes.map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => setSelectedSize(size)}
+                      className={`px-4 py-2 rounded-lg border text-sm font-body transition-all ${
+                        selectedSize === size
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "bg-card border-border text-foreground hover:border-primary"
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  ))}
                 </div>
+              </div>
 
-                {/* Reviews Button */}
-                <Button
-                  variant="outline"
-                  className="w-full gap-2 mb-4"
-                  onClick={() => setShowReviews(true)}
-                >
-                  <MessageSquare className="h-4 w-4" />
-                  View & Write Reviews ({product.reviewCount})
+              {/* Reviews Button */}
+              <Button
+                variant="outline"
+                className="w-full gap-2"
+                onClick={() => setShowReviews(true)}
+              >
+                <MessageSquare className="h-4 w-4" />
+                View & Write Reviews ({product.reviewCount})
+              </Button>
+
+              {/* Add to Cart & Wishlist */}
+              <div className="flex gap-3 pt-2">
+                <Button variant="gold" size="lg" className="flex-1 gap-2" onClick={handleAddToCart}>
+                  <ShoppingCart className="h-4 w-4" />
+                  Add to Cart
                 </Button>
-
-                {/* Price & Add to Cart */}
-                <div className="space-y-3 pt-3 border-t border-border mt-auto">
-                  <div className="flex items-center gap-3">
-                    <span className="font-display text-2xl font-bold text-foreground">
-                      ${product.price.toFixed(2)}
-                    </span>
-                    {product.originalPrice && (
-                      <span className="font-body text-lg text-muted-foreground line-through">
-                        ${product.originalPrice.toFixed(2)}
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex gap-3">
-                    <Button variant="gold" size="lg" className="flex-1 gap-2" onClick={handleAddToCart}>
-                      <ShoppingCart className="h-4 w-4" />
-                      Add to Cart
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      onClick={handleWishlist}
+                      className={inWishlist ? "text-primary border-primary" : ""}
+                    >
+                      {inWishlist ? (
+                        <BookmarkCheck className="h-5 w-5" />
+                      ) : (
+                        <BookmarkPlus className="h-5 w-5" />
+                      )}
                     </Button>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="lg"
-                          onClick={handleWishlist}
-                          className={inWishlist ? "text-primary border-primary" : ""}
-                        >
-                          {inWishlist ? (
-                            <BookmarkCheck className="h-5 w-5" />
-                          ) : (
-                            <BookmarkPlus className="h-5 w-5" />
-                          )}
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>{inWishlist ? "Remove from Wishlist" : "Add to Wishlist"}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </div>
-                </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{inWishlist ? "Remove from Wishlist" : "Add to Wishlist"}</p>
+                  </TooltipContent>
+                </Tooltip>
               </div>
             </div>
           </div>
