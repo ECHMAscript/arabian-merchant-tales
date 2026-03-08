@@ -22,7 +22,7 @@ const HeroSection = () => {
           <span className="inline-block px-4 py-2 bg-primary/20 text-primary-foreground rounded-full text-sm font-medium mb-6 backdrop-blur-sm border border-gold/30">
             ✦ New Collection 2024
           </span>
-          <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-card leading-tight mb-6">
+          <h1 className="font-hero text-4xl md:text-5xl lg:text-6xl font-bold text-card leading-tight mb-6">
             Discover the Elegance of 
             <span className="text-gold-light"> Arabian</span> Craftsmanship
           </h1>
