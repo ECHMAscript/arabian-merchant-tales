@@ -50,6 +50,8 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
 
   if (!product) return null;
 
+  const productColors = product.colors && product.colors.length > 0 ? product.colors : DEFAULT_COLORS;
+
   const inWishlist = isInWishlist(product.id);
 
   const handleAddToCart = () => {
