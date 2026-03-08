@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Star, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ScrollArea } from "@/components/ui/scroll-area";
+
 import { useReviews } from "@/hooks/useReviews";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
