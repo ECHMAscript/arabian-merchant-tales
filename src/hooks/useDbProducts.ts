@@ -13,7 +13,7 @@ interface DbProduct {
   created_at: string;
   rating: number;
   review_count: number;
-  colors: any[] | null;
+  colors: any;
 }
 
 interface DbBook {
