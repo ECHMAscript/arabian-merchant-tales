@@ -11,6 +11,11 @@ import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import ReviewSection from "@/components/ReviewSection";
 
+interface ColorVariant {
+  name: string;
+  value: string;
+}
+
 interface ProductModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -23,11 +28,12 @@ interface ProductModalProps {
     reviewCount: number;
     image: string;
     category: string;
+    colors?: ColorVariant[];
   } | null;
 }
 
 const sizes = ["XS", "S", "M", "L", "XL"];
-const colors = [
+const DEFAULT_COLORS: ColorVariant[] = [
   { name: "Gold", value: "#C9A962" },
   { name: "Burgundy", value: "#6B1D3A" },
   { name: "Sand", value: "#D4C5A9" },
