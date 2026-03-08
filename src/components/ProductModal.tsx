@@ -42,7 +42,7 @@ const DEFAULT_COLORS: ColorVariant[] = [
 
 const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
   const [selectedSize, setSelectedSize] = useState<string>("M");
-  const [selectedColor, setSelectedColor] = useState<string>("Gold");
+  const [selectedColor, setSelectedColor] = useState<string>("");
   const [showReviews, setShowReviews] = useState(false);
   
   const { addToCart } = useCart();
@@ -51,6 +51,11 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
   if (!product) return null;
 
   const productColors = product.colors && product.colors.length > 0 ? product.colors : DEFAULT_COLORS;
+  
+  // Auto-select first color if current selection isn't valid
+  const activeColor = productColors.find(c => c.name === selectedColor) 
+    ? selectedColor 
+    : productColors[0]?.name || "";
 
   const inWishlist = isInWishlist(product.id);
 
