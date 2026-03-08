@@ -74,8 +74,7 @@ const ProductGrid = () => {
       <FilterSidebar
         filters={filters}
         onPriceChange={(value) => updateFilter("priceRange", value)}
-        onToggleSubcategory={(value) => toggleArrayFilter("subcategories", value)}
-        onToggleGender={(value) => toggleArrayFilter("gender", value)}
+        onToggleCategory={(value) => toggleArrayFilter("categories", value)}
         onToggleColor={(value) => toggleArrayFilter("colors", value)}
         onToggleSize={(value) => toggleArrayFilter("sizes", value)}
         onReset={resetFilters}
