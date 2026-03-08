@@ -50,7 +50,7 @@ export const useProductFilter = (products: ExtendedProduct[]) => {
 
       // Colors filter
       if (filters.colors.length > 0) {
-        if (!product.colors || !product.colors.some((c) => filters.colors.includes(c))) {
+        if (!product.colors || !product.colors.some((c) => filters.colors.includes(c.name))) {
           return false;
         }
       }

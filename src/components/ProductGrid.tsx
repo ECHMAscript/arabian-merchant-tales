@@ -32,7 +32,7 @@ const ProductGrid = () => {
       category: p.category,
       rating: Number(p.rating) || 0,
       reviewCount: p.review_count || 0,
-      colors: [],
+      colors: Array.isArray(p.colors) ? (p.colors as any[]).map(c => ({ name: c.name || '', value: c.value || '' })) : [],
     }));
   }, [dbProducts]);
 

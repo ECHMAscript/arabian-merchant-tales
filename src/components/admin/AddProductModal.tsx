@@ -8,6 +8,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Plus, Minus, X } from "lucide-react";
+
+interface ColorVariant {
+  name: string;
+  value: string;
+}
 
 interface AddProductModalProps {
   isOpen: boolean;
@@ -15,6 +21,19 @@ interface AddProductModalProps {
   productType: "product" | "book" | "school-supply" | "carousel";
   onProductAdded?: () => void;
 }
+
+const PRESET_COLORS = [
+  { name: "Gold", value: "#C9A962" },
+  { name: "Burgundy", value: "#6B1D3A" },
+  { name: "Sand", value: "#D4C5A9" },
+  { name: "Black", value: "#1a1a1a" },
+  { name: "White", value: "#F5F5F0" },
+  { name: "Navy", value: "#1B2A4A" },
+  { name: "Olive", value: "#556B2F" },
+  { name: "Rust", value: "#8B4513" },
+  { name: "Cream", value: "#FFFDD0" },
+  { name: "Charcoal", value: "#36454F" },
+];
 
 const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddProductModalProps) => {
   const { toast } = useToast();
@@ -33,6 +52,42 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
     isBestseller: false,
     author: "",
   });
+  const [colorVariants, setColorVariants] = useState<ColorVariant[]>([]);
+  const [colorCount, setColorCount] = useState(0);
+
+  const handleColorCountChange = (newCount: number) => {
+    if (newCount < 0 || newCount > 10) return;
+    setColorCount(newCount);
+    if (newCount > colorVariants.length) {
+      // Add new color slots with defaults
+      const additional = Array.from({ length: newCount - colorVariants.length }, (_, i) => {
+        const presetIdx = colorVariants.length + i;
+        const preset = PRESET_COLORS[presetIdx % PRESET_COLORS.length];
+        return { name: preset.name, value: preset.value };
+      });
+      setColorVariants([...colorVariants, ...additional]);
+    } else {
+      setColorVariants(colorVariants.slice(0, newCount));
+    }
+  };
+
+  const updateColor = (index: number, field: "name" | "value", val: string) => {
+    const updated = [...colorVariants];
+    updated[index] = { ...updated[index], [field]: val };
+    setColorVariants(updated);
+  };
+
+  const removeColor = (index: number) => {
+    const updated = colorVariants.filter((_, i) => i !== index);
+    setColorVariants(updated);
+    setColorCount(updated.length);
+  };
+
+  const selectPresetColor = (index: number, preset: typeof PRESET_COLORS[0]) => {
+    const updated = [...colorVariants];
+    updated[index] = { name: preset.name, value: preset.value };
+    setColorVariants(updated);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,7 +98,6 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
       const originalPrice = formData.originalPrice ? parseFloat(formData.originalPrice) : null;
       
       if (productType === "book" || productType === "school-supply") {
-        // Save to books table
         const { error } = await supabase.from("books").insert({
           title: formData.name,
           author: formData.author || null,
@@ -57,8 +111,9 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
 
         if (error) throw error;
       } else {
-        // Save to products table
-        const { error } = await supabase.from("products").insert({
+        const colorsData = colorVariants.length > 0 ? JSON.parse(JSON.stringify(colorVariants)) : null;
+        
+        const { error } = await supabase.from("products").insert([{
           title: formData.name,
           price: parseFloat(formData.price),
           original_price: originalPrice,
@@ -66,7 +121,8 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
           image: formData.image,
           category: formData.category || "general",
           is_new_arrival: productType === "carousel" || formData.isNew,
-        });
+          colors: colorsData,
+        }]);
 
         if (error) throw error;
       }
@@ -91,6 +147,8 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
         isBestseller: false,
         author: "",
       });
+      setColorVariants([]);
+      setColorCount(0);
       
       onProductAdded?.();
       onClose();
@@ -130,6 +188,7 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
   };
 
   const isBook = productType === "book" || productType === "school-supply";
+  const isClothProduct = !isBook;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -264,6 +323,114 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
               rows={3}
             />
           </div>
+
+          {/* Color Variants - Only for cloth/product items */}
+          {isClothProduct && (
+            <div className="space-y-3 rounded-lg border border-border bg-muted/30 p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-display text-sm font-semibold text-foreground">Color Variants</h4>
+                  <p className="font-body text-xs text-muted-foreground mt-0.5">
+                    Choose how many color options this item has
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => handleColorCountChange(colorCount - 1)}
+                    disabled={colorCount <= 0}
+                  >
+                    <Minus className="h-3 w-3" />
+                  </Button>
+                  <span className="font-body text-sm font-medium text-foreground w-6 text-center">
+                    {colorCount}
+                  </span>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => handleColorCountChange(colorCount + 1)}
+                    disabled={colorCount >= 10}
+                  >
+                    <Plus className="h-3 w-3" />
+                  </Button>
+                </div>
+              </div>
+
+              {colorVariants.length > 0 && (
+                <div className="space-y-3 mt-3">
+                  {colorVariants.map((color, index) => (
+                    <div key={index} className="flex items-end gap-3 rounded-md border border-border bg-card p-3">
+                      {/* Color Preview & Picker */}
+                      <div className="space-y-1.5">
+                        <Label className="text-xs text-muted-foreground">Color</Label>
+                        <div className="relative">
+                          <div
+                            className="w-10 h-10 rounded-lg border-2 border-border cursor-pointer overflow-hidden shadow-sm"
+                            style={{ backgroundColor: color.value }}
+                          >
+                            <input
+                              type="color"
+                              value={color.value}
+                              onChange={(e) => updateColor(index, "value", e.target.value)}
+                              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Color Name */}
+                      <div className="flex-1 space-y-1.5">
+                        <Label className="text-xs text-muted-foreground">Name</Label>
+                        <Input
+                          value={color.name}
+                          onChange={(e) => updateColor(index, "name", e.target.value)}
+                          placeholder="e.g., Royal Gold"
+                          className="h-10"
+                        />
+                      </div>
+
+                      {/* Preset Swatches */}
+                      <div className="space-y-1.5">
+                        <Label className="text-xs text-muted-foreground">Presets</Label>
+                        <div className="flex gap-1 flex-wrap max-w-[120px]">
+                          {PRESET_COLORS.slice(0, 5).map((preset) => (
+                            <button
+                              key={preset.name}
+                              type="button"
+                              onClick={() => selectPresetColor(index, preset)}
+                              className={`w-5 h-5 rounded-full border transition-all hover:scale-110 ${
+                                color.value === preset.value
+                                  ? "border-primary ring-1 ring-primary/30"
+                                  : "border-border"
+                              }`}
+                              style={{ backgroundColor: preset.value }}
+                              title={preset.name}
+                            />
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Remove */}
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground hover:text-destructive shrink-0"
+                        onClick={() => removeColor(index)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Badges */}
           {!isBook && (

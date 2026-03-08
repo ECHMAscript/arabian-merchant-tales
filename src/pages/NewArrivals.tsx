@@ -42,7 +42,7 @@ const NewArrivals = () => {
       category: p.category,
       rating: Number(p.rating) || 0,
       reviewCount: p.review_count || 0,
-      colors: [],
+      colors: Array.isArray(p.colors) ? (p.colors as any[]).map(c => ({ name: c.name || '', value: c.value || '' })) : [],
     }));
   }, [dbArrivals]);
 
@@ -75,7 +75,7 @@ const NewArrivals = () => {
       }
       // Color filter
       if (selectedColors.length > 0) {
-        if (!product.colors || !product.colors.some((c) => selectedColors.includes(c))) {
+        if (!product.colors || !product.colors.some((c) => selectedColors.includes(c.name))) {
           return false;
         }
       }
