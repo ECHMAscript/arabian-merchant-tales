@@ -2,8 +2,7 @@ import { useState, useMemo } from "react";
 import { ExtendedProduct } from "@/data/products";
 
 export interface FilterState {
-  gender: string[];
-  subcategories: string[];
+  categories: string[];
   priceRange: [number, number];
   sizes: string[];
   colors: string[];
@@ -12,8 +11,7 @@ export interface FilterState {
 }
 
 const initialFilterState: FilterState = {
-  gender: [],
-  subcategories: [],
+  categories: [],
   priceRange: [0, 1000],
   sizes: [],
   colors: [],
@@ -26,21 +24,18 @@ export const useProductFilter = (products: ExtendedProduct[]) => {
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
-      // Gender filter
-      if (filters.gender.length > 0) {
-        if (!product.gender || !filters.gender.includes(product.gender)) {
-          // Check if unisex items should be included
-          if (product.gender !== "unisex") {
-            return false;
-          }
-        }
-      }
-
-      // Subcategory filter
-      if (filters.subcategories.length > 0) {
-        if (!product.subcategory || !filters.subcategories.includes(product.subcategory)) {
+      // Category filter - matches against product.category
+      if (filters.categories.length > 0) {
+        const matchesCategory = filters.categories.some((filterCat) => {
+          // Exact match (e.g., product.category === "Men - Clothing")
+          if (product.category === filterCat) return true;
+          // Legacy support: match old flat categories like "Men" against any "Men - *" filter
+          if (filterCat.startsWith(product.category + " - ")) return true;
+          // Also match if product category starts with the filter's parent
+          // e.g., product.category "Men" matches filter "Men - Clothing" loosely
           return false;
-        }
+        });
+        if (!matchesCategory) return false;
       }
 
       // Price range filter
@@ -63,7 +58,7 @@ export const useProductFilter = (products: ExtendedProduct[]) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
-  const toggleArrayFilter = (key: "gender" | "subcategories" | "sizes" | "colors", value: string) => {
+  const toggleArrayFilter = (key: "categories" | "sizes" | "colors", value: string) => {
     setFilters((prev) => {
       const currentArray = prev[key];
       const newArray = currentArray.includes(value)

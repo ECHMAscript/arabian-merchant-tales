@@ -183,7 +183,11 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
       case "school-supply":
         return ["Notebooks", "Learning Aids", "Writing Tools", "Workbooks", "Accessories"];
       default:
-        return ["Men", "Women", "Home & Decor", "Textiles", "Pottery", "Jewelry"];
+        return [
+          "Men - Clothing", "Men - Jewelry", "Men - Accessories",
+          "Women - Clothing", "Women - Jewelry", "Women - Accessories",
+          "Home & Decor - Pottery", "Home & Decor - Lamps", "Home & Decor - Rugs", "Home & Decor - Textiles",
+        ];
     }
   };
 
