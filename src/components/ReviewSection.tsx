@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Star, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ScrollArea } from "@/components/ui/scroll-area";
+
 import { useReviews } from "@/hooks/useReviews";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
@@ -73,9 +73,9 @@ const ReviewSection = ({ itemId, itemType, itemName, rating, reviewCount }: Revi
   };
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
+    <div className="space-y-4">
       {/* Header */}
-      <div className="pb-3 border-b border-border shrink-0">
+      <div className="pb-3 border-b border-border">
         <h3 className="font-display text-lg font-semibold text-foreground">{itemName}</h3>
         <div className="flex items-center gap-2 mt-1">
           <div className="flex items-center gap-0.5">{renderStars(rating)}</div>
@@ -86,37 +86,35 @@ const ReviewSection = ({ itemId, itemType, itemName, rating, reviewCount }: Revi
       </div>
 
       {/* Reviews List */}
-      <ScrollArea className="flex-1 min-h-0 py-3">
-        <div className="space-y-3 pr-2">
-          {loading ? (
-            <p className="text-center text-muted-foreground font-body text-sm py-4">Loading reviews...</p>
-          ) : reviews.length === 0 ? (
-            <p className="text-center text-muted-foreground font-body text-sm py-4">
-              No reviews yet. Be the first to review!
-            </p>
-          ) : (
-            reviews.map((review) => (
-              <div key={review.id} className="p-3 bg-muted/30 rounded-lg space-y-1.5">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="font-display font-medium text-foreground text-sm truncate">
-                    {review.username}
-                  </span>
-                  <span className="font-body text-xs text-muted-foreground whitespace-nowrap shrink-0">
-                    {formatDate(review.created_at)}
-                  </span>
-                </div>
-                <div className="flex items-center gap-0.5">{renderStars(review.rating)}</div>
-                {review.comment && (
-                  <p className="font-body text-sm text-muted-foreground break-words">{review.comment}</p>
-                )}
+      <div className="space-y-3">
+        {loading ? (
+          <p className="text-center text-muted-foreground font-body text-sm py-4">Loading reviews...</p>
+        ) : reviews.length === 0 ? (
+          <p className="text-center text-muted-foreground font-body text-sm py-4">
+            No reviews yet. Be the first to review!
+          </p>
+        ) : (
+          reviews.map((review) => (
+            <div key={review.id} className="p-3 bg-muted/30 rounded-lg space-y-1.5">
+              <div className="flex items-center justify-between gap-2">
+                <span className="font-display font-medium text-foreground text-sm truncate">
+                  {review.username}
+                </span>
+                <span className="font-body text-xs text-muted-foreground whitespace-nowrap shrink-0">
+                  {formatDate(review.created_at)}
+                </span>
               </div>
-            ))
-          )}
-        </div>
-      </ScrollArea>
+              <div className="flex items-center gap-0.5">{renderStars(review.rating)}</div>
+              {review.comment && (
+                <p className="font-body text-sm text-muted-foreground break-words">{review.comment}</p>
+              )}
+            </div>
+          ))
+        )}
+      </div>
 
       {/* Add Review Form */}
-      <div className="pt-3 border-t border-border space-y-2 shrink-0">
+      <div className="pt-3 border-t border-border space-y-2">
         <h4 className="font-display text-sm font-medium text-foreground">Write a Review</h4>
         <div className="flex items-center gap-2">
           <span className="font-body text-sm text-muted-foreground">Rating:</span>
