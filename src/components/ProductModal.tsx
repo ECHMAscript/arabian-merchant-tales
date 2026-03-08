@@ -42,7 +42,7 @@ const DEFAULT_COLORS: ColorVariant[] = [
 
 const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
   const [selectedSize, setSelectedSize] = useState<string>("M");
-  const [selectedColor, setSelectedColor] = useState<string>("Gold");
+  const [selectedColor, setSelectedColor] = useState<string>("");
   const [showReviews, setShowReviews] = useState(false);
   
   const { addToCart } = useCart();
@@ -51,6 +51,11 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
   if (!product) return null;
 
   const productColors = product.colors && product.colors.length > 0 ? product.colors : DEFAULT_COLORS;
+  
+  // Auto-select first color if current selection isn't valid
+  const activeColor = productColors.find(c => c.name === selectedColor) 
+    ? selectedColor 
+    : productColors[0]?.name || "";
 
   const inWishlist = isInWishlist(product.id);
 
@@ -149,7 +154,7 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
                   {/* Color */}
                   <div>
                     <h4 className="font-display text-sm font-medium text-foreground mb-2">
-                      Color: <span className="text-muted-foreground font-body">{selectedColor}</span>
+                      Color: <span className="text-muted-foreground font-body">{activeColor}</span>
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {productColors.map((color) => (
@@ -157,14 +162,14 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
                           key={color.name}
                           onClick={() => setSelectedColor(color.name)}
                           className={`relative w-9 h-9 rounded-full border-2 transition-all ${
-                            selectedColor === color.name
+                            activeColor === color.name
                               ? "border-primary ring-2 ring-primary/30"
                               : "border-border hover:border-primary"
                           }`}
                           style={{ backgroundColor: color.value }}
                           title={color.name}
                         >
-                          {selectedColor === color.name && (
+                          {activeColor === color.name && (
                             <span className="absolute inset-0 flex items-center justify-center text-white drop-shadow-md text-sm">
                               ✓
                             </span>
