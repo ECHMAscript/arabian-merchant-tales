@@ -34,7 +34,7 @@ const FilterSection = ({ title, children, defaultOpen = true }: FilterSectionPro
 
 interface SubCategoryProps {
   title: string;
-  items: string[];
+  items: { label: string; value: string }[];
   selectedItems: string[];
   onToggle: (item: string) => void;
 }
@@ -58,14 +58,14 @@ const SubCategory = ({ title, items, selectedItems, onToggle }: SubCategoryProps
       {isOpen && (
         <div className="pl-4 space-y-2 animate-slide-up">
           {items.map((item) => (
-            <label key={item} className="flex items-center gap-3 cursor-pointer group">
+            <label key={item.value} className="flex items-center gap-3 cursor-pointer group">
               <Checkbox 
-                checked={selectedItems.includes(item)}
-                onCheckedChange={() => onToggle(item)}
+                checked={selectedItems.includes(item.value)}
+                onCheckedChange={() => onToggle(item.value)}
                 className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary" 
               />
               <span className="font-body text-sm text-muted-foreground group-hover:text-foreground transition-colors">
-                {item}
+                {item.label}
               </span>
             </label>
           ))}
@@ -78,20 +78,21 @@ const SubCategory = ({ title, items, selectedItems, onToggle }: SubCategoryProps
 interface FilterSidebarProps {
   filters: FilterState;
   onPriceChange: (value: [number, number]) => void;
-  onToggleSubcategory: (value: string) => void;
-  onToggleGender: (value: string) => void;
+  onToggleCategory: (value: string) => void;
   onToggleColor: (value: string) => void;
   onToggleSize: (value: string) => void;
   onReset: () => void;
   isMobileOpen?: boolean;
   onMobileClose?: () => void;
+  // Keep old props as optional for backward compat
+  onToggleSubcategory?: (value: string) => void;
+  onToggleGender?: (value: string) => void;
 }
 
 const FilterSidebar = ({
   filters,
   onPriceChange,
-  onToggleSubcategory,
-  onToggleGender,
+  onToggleCategory,
   onToggleColor,
   onToggleSize,
   onReset,
@@ -100,9 +101,24 @@ const FilterSidebar = ({
 }: FilterSidebarProps) => {
   const sizes = ["XS", "S", "M", "L", "XL", "XXL"];
   
-  const menSubcategories = ["Clothing", "Jewelry", "Accessories"];
-  const womenSubcategories = ["Clothing", "Jewelry", "Accessories"];
-  const homeCategories = ["Pottery", "Lamps", "Rugs", "Textiles"];
+  const menCategories = [
+    { label: "Clothing", value: "Men - Clothing" },
+    { label: "Jewelry", value: "Men - Jewelry" },
+    { label: "Accessories", value: "Men - Accessories" },
+  ];
+  
+  const womenCategories = [
+    { label: "Clothing", value: "Women - Clothing" },
+    { label: "Jewelry", value: "Women - Jewelry" },
+    { label: "Accessories", value: "Women - Accessories" },
+  ];
+  
+  const homeCategories = [
+    { label: "Pottery", value: "Home & Decor - Pottery" },
+    { label: "Lamps", value: "Home & Decor - Lamps" },
+    { label: "Rugs", value: "Home & Decor - Rugs" },
+    { label: "Textiles", value: "Home & Decor - Textiles" },
+  ];
   
   const colors = [
     { name: "Gold", class: "bg-gold" },
@@ -113,28 +129,8 @@ const FilterSidebar = ({
     { name: "Black", class: "bg-foreground" },
   ];
 
-  const handleMenToggle = (item: string) => {
-    // When toggling a men's subcategory, also toggle "men" gender if not already selected
-    if (!filters.gender.includes("men")) {
-      onToggleGender("men");
-    }
-    onToggleSubcategory(item);
-  };
-
-  const handleWomenToggle = (item: string) => {
-    if (!filters.gender.includes("women")) {
-      onToggleGender("women");
-    }
-    onToggleSubcategory(item);
-  };
-
-  const handleHomeToggle = (item: string) => {
-    onToggleSubcategory(item);
-  };
-
   const hasActiveFilters = 
-    filters.gender.length > 0 ||
-    filters.subcategories.length > 0 ||
+    filters.categories.length > 0 ||
     filters.priceRange[0] > 0 ||
     filters.priceRange[1] < 1000 ||
     filters.colors.length > 0 ||
@@ -170,21 +166,21 @@ const FilterSidebar = ({
         <div className="space-y-1">
           <SubCategory 
             title="Men" 
-            items={menSubcategories} 
-            selectedItems={filters.subcategories}
-            onToggle={handleMenToggle}
+            items={menCategories} 
+            selectedItems={filters.categories}
+            onToggle={onToggleCategory}
           />
           <SubCategory 
             title="Women" 
-            items={womenSubcategories} 
-            selectedItems={filters.subcategories}
-            onToggle={handleWomenToggle}
+            items={womenCategories} 
+            selectedItems={filters.categories}
+            onToggle={onToggleCategory}
           />
           <SubCategory 
             title="Home & Decor" 
             items={homeCategories} 
-            selectedItems={filters.subcategories}
-            onToggle={handleHomeToggle}
+            selectedItems={filters.categories}
+            onToggle={onToggleCategory}
           />
         </div>
       </FilterSection>
