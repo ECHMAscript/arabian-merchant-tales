@@ -79,7 +79,7 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-[700px] w-[95vw] aspect-square p-0 overflow-hidden bg-card">
+      <DialogContent className="max-w-[700px] w-[95vw] md:aspect-square max-h-[90vh] p-0 overflow-hidden bg-card">
         {/* Mobile Back Button */}
         <div className="md:hidden flex items-center gap-2 p-3 border-b border-border absolute top-0 left-0 right-0 z-10 bg-card">
           <Button variant="ghost" size="icon" onClick={showReviews ? () => setShowReviews(false) : handleClose} className="shrink-0">
@@ -97,9 +97,9 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
             style={{ transform: showReviews ? "translateX(-100%)" : "translateX(0)" }}
           >
             {/* Slide 1: Product Details */}
-            <div className="w-full h-full shrink-0 flex flex-col md:flex-row pt-12 md:pt-0">
-              {/* Image - Left side */}
-              <div className="relative w-full md:w-1/2 h-64 sm:h-72 md:h-full shrink-0">
+            <div className="w-full h-full shrink-0 flex flex-col md:flex-row pt-12 md:pt-0 overflow-y-auto md:overflow-hidden">
+              {/* Image - takes ~45% height on mobile */}
+              <div className="relative w-full md:w-1/2 min-h-[45vh] md:min-h-0 md:h-full shrink-0">
                 <img
                   src={product.image}
                   alt={product.name}
@@ -113,7 +113,7 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
               </div>
 
               {/* Details - Right side */}
-              <div className="flex-1 p-5 md:p-6 flex flex-col justify-between overflow-hidden">
+              <div className="flex-1 p-4 md:p-6 flex flex-col justify-between overflow-y-auto md:overflow-hidden">
                 <div className="space-y-4">
                   {/* Name & Rating */}
                   <div>
