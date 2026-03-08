@@ -75,7 +75,7 @@ const NewArrivals = () => {
       }
       // Color filter
       if (selectedColors.length > 0) {
-        if (!product.colors || !product.colors.some((c) => selectedColors.includes(c))) {
+        if (!product.colors || !product.colors.some((c) => selectedColors.includes(c.name))) {
           return false;
         }
       }
