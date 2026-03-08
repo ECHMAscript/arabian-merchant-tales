@@ -19,17 +19,54 @@ serve(async (req: Request) => {
   }
 
   try {
-    const supabaseAdmin = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false,
-        },
-      }
-    );
+    const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 
+    // 1. Verify the caller is authenticated
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    const callerClient = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await callerClient.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    const callerId = claimsData.claims.sub;
+
+    // 2. Verify the caller is an existing admin
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
+
+    const { data: callerRole } = await supabaseAdmin
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", callerId)
+      .eq("role", "admin")
+      .maybeSingle();
+
+    if (!callerRole) {
+      return new Response(
+        JSON.stringify({ error: "Forbidden: only admins can create admin accounts" }),
+        { status: 403, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    // 3. Proceed with admin creation
     const { username, email, password }: CreateAdminRequest = await req.json();
 
     // Check if username already exists in profiles
@@ -42,10 +79,7 @@ serve(async (req: Request) => {
     if (existingProfile) {
       return new Response(
         JSON.stringify({ error: "Username already exists" }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        }
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
 
@@ -54,10 +88,8 @@ serve(async (req: Request) => {
       await supabaseAdmin.auth.admin.createUser({
         email,
         password,
-        email_confirm: true, // Auto-confirm email for admin
-        user_metadata: {
-          username,
-        },
+        email_confirm: true,
+        user_metadata: { username },
       });
 
     if (authError) {
@@ -71,15 +103,11 @@ serve(async (req: Request) => {
     if (!authData.user) {
       return new Response(
         JSON.stringify({ error: "Failed to create user" }),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        }
+        { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
 
-    // The trigger will create the profile and assign 'user' role
-    // We need to upgrade to 'admin' role
+    // Upgrade to 'admin' role
     const { error: roleError } = await supabaseAdmin
       .from("user_roles")
       .update({ role: "admin" })
@@ -101,10 +129,7 @@ serve(async (req: Request) => {
         userId: authData.user.id,
         message: "Admin user created successfully",
       }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      }
+      { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
   } catch (error: any) {
     console.error("Error:", error);

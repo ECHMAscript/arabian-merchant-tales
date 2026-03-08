@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Users can view own verification tokens" ON public.email_verification_tokens;
