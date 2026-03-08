@@ -99,7 +99,7 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
             {/* Slide 1: Product Details */}
             <div className="w-full h-full shrink-0 flex flex-col md:flex-row pt-12 md:pt-0">
               {/* Image - Left side */}
-              <div className="relative w-full md:w-1/2 h-48 md:h-full shrink-0">
+              <div className="relative w-full md:w-1/2 h-64 sm:h-72 md:h-full shrink-0">
                 <img
                   src={product.image}
                   alt={product.name}
