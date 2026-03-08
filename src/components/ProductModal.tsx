@@ -112,7 +112,7 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
             {/* Slide 1: Product Details */}
             <div className="w-full h-full shrink-0 flex flex-col md:flex-row pt-12 md:pt-0 overflow-y-auto md:overflow-hidden">
               {/* Image */}
-              <div className="relative w-full md:w-1/2 h-[35vh] md:h-full shrink-0">
+              <div className="relative w-full md:w-1/2 h-[35vh] md:h-auto md:min-h-[350px] md:max-h-[70vh] shrink-0">
                 <img
                   src={product.image}
                   alt={product.name}
