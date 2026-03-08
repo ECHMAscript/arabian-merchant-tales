@@ -126,7 +126,7 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
               </div>
 
               {/* Details */}
-              <div className="flex-1 p-4 md:p-6 flex flex-col justify-between overflow-y-auto md:overflow-hidden">
+              <div className="flex-1 p-4 md:p-6 flex flex-col justify-between overflow-y-auto md:max-h-[70vh]">
                 <div className="space-y-4">
                   {/* Name & Rating */}
                   <div>
