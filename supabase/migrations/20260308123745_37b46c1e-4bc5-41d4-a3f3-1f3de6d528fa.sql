@@ -1,0 +1,1 @@
+ALTER TABLE public.products ADD COLUMN colors jsonb DEFAULT NULL;
