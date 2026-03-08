@@ -98,8 +98,8 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
           >
             {/* Slide 1: Product Details */}
             <div className="w-full h-full shrink-0 flex flex-col md:flex-row pt-12 md:pt-0 overflow-y-auto md:overflow-hidden">
-              {/* Image - takes ~45% height on mobile */}
-              <div className="relative w-full md:w-1/2 min-h-[45vh] md:min-h-0 md:h-full shrink-0">
+              {/* Image */}
+              <div className="relative w-full md:w-1/2 h-[35vh] md:h-full shrink-0">
                 <img
                   src={product.image}
                   alt={product.name}
@@ -112,7 +112,7 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
                 )}
               </div>
 
-              {/* Details - Right side */}
+              {/* Details */}
               <div className="flex-1 p-4 md:p-6 flex flex-col justify-between overflow-y-auto md:overflow-hidden">
                 <div className="space-y-4">
                   {/* Name & Rating */}
