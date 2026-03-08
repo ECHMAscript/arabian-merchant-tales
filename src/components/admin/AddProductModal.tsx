@@ -111,9 +111,9 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
 
         if (error) throw error;
       } else {
-        const colorsData = colorVariants.length > 0 ? colorVariants : null;
+        const colorsData = colorVariants.length > 0 ? JSON.parse(JSON.stringify(colorVariants)) : null;
         
-        const { error } = await supabase.from("products").insert({
+        const { error } = await supabase.from("products").insert([{
           title: formData.name,
           price: parseFloat(formData.price),
           original_price: originalPrice,
@@ -122,7 +122,7 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
           category: formData.category || "general",
           is_new_arrival: productType === "carousel" || formData.isNew,
           colors: colorsData,
-        });
+        }]);
 
         if (error) throw error;
       }
