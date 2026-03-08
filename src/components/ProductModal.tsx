@@ -180,7 +180,7 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
           </div>
 
           {/* Right Side - Reviews */}
-          <div className="flex flex-col h-auto md:h-[600px] p-4 md:p-6">
+          <div className="flex flex-col h-auto md:h-[600px] p-4 md:p-6 overflow-hidden">
             <ReviewSection
               itemId={product.id}
               itemType="product"
