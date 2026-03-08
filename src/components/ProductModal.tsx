@@ -152,7 +152,7 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
                       Color: <span className="text-muted-foreground font-body">{selectedColor}</span>
                     </h4>
                     <div className="flex flex-wrap gap-2">
-                      {colors.map((color) => (
+                      {productColors.map((color) => (
                         <button
                           key={color.name}
                           onClick={() => setSelectedColor(color.name)}

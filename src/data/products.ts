@@ -1,10 +1,15 @@
 import { ProductCardProps } from "@/components/ProductCard";
 
+export interface ColorVariant {
+  name: string;
+  value: string;
+}
+
 export interface ExtendedProduct extends Omit<ProductCardProps, 'id'> {
   id: number | string;
   gender?: "men" | "women" | "unisex";
   subcategory?: string;
-  colors?: string[];
+  colors?: ColorVariant[];
 }
 
 export const pages = [
