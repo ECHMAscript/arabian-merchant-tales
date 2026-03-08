@@ -92,7 +92,7 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-[700px] w-[95vw] md:aspect-square max-h-[90vh] p-0 overflow-hidden bg-card">
+      <DialogContent className="max-w-[700px] w-[95vw] max-h-[90vh] p-0 overflow-hidden bg-card">
         {/* Mobile Back Button */}
         <div className="md:hidden flex items-center gap-2 p-3 border-b border-border absolute top-0 left-0 right-0 z-10 bg-card">
           <Button variant="ghost" size="icon" onClick={showReviews ? () => setShowReviews(false) : handleClose} className="shrink-0">
