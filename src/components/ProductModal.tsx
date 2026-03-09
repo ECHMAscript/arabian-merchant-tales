@@ -29,6 +29,7 @@ interface ProductModalProps {
     image: string;
     category: string;
     colors?: ColorVariant[];
+    isPreorder?: boolean;
   } | null;
 }
 
