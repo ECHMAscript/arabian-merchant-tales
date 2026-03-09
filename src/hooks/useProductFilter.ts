@@ -41,13 +41,6 @@ export const useProductFilter = (products: ExtendedProduct[]) => {
         return false;
       }
 
-      // Colors filter
-      if (filters.colors.length > 0) {
-        if (!product.colors || !product.colors.some((c) => filters.colors.includes(c.name))) {
-          return false;
-        }
-      }
-
       return true;
     });
   }, [products, filters]);
