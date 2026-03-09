@@ -113,7 +113,7 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
 
         if (error) throw error;
       } else {
-        const colorsData = colorVariants.length > 0 ? JSON.parse(JSON.stringify(colorVariants)) : null;
+        const colorsData = hasColorVariants && colorVariants.length > 0 ? JSON.parse(JSON.stringify(colorVariants)) : null;
         
         const { error } = await supabase.from("products").insert([{
           title: formData.name,
