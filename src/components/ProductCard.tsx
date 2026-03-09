@@ -145,6 +145,13 @@ const ProductCard = ({
             {Math.round((1 - price / originalPrice) * 100)}% OFF
           </span>
         )}
+
+        {/* Pre-order Badge */}
+        {isPreorder && (
+          <span className="absolute bottom-3 left-3 px-3 py-1 bg-primary text-primary-foreground text-xs font-semibold rounded-full">
+            Pre-order
+          </span>
+        )}
       </div>
 
       {/* Product Info - 25% of card */}
