@@ -147,6 +147,7 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
         discount: "",
         isNew: false,
         isBestseller: false,
+        isPreorder: false,
         author: "",
       });
       setColorVariants([]);
