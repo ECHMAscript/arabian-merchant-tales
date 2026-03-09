@@ -16,6 +16,7 @@ export interface ProductCardProps {
   reviewCount: number;
   image: string;
   category: string;
+  isPreorder?: boolean;
 }
 
 interface ProductCardComponentProps extends ProductCardProps {
