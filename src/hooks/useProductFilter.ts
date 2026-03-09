@@ -13,7 +13,6 @@ const initialFilterState: FilterState = {
   categories: [],
   priceRange: [0, 1000],
   sizes: [],
-  colors: [],
   inStock: false,
   preOrder: false,
 };
