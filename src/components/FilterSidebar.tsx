@@ -130,7 +130,6 @@ const FilterSidebar = ({
     filters.categories.length > 0 ||
     filters.priceRange[0] > 0 ||
     filters.priceRange[1] < 1000 ||
-    filters.colors.length > 0 ||
     filters.sizes.length > 0;
 
   const sidebarContent = (
