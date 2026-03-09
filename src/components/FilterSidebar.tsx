@@ -231,24 +231,6 @@ const FilterSidebar = ({
         </div>
       </FilterSection>
 
-      {/* Colors */}
-      <FilterSection title="Colors">
-        <div className="flex flex-wrap gap-3">
-          {colors.map((color) => (
-            <button
-              key={color.name}
-              onClick={() => onToggleColor(color.name)}
-              className={`w-8 h-8 rounded-full ${color.class} border-2 transition-all duration-200 shadow-soft focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
-                filters.colors.includes(color.name)
-                  ? "border-primary scale-110"
-                  : "border-transparent hover:border-primary hover:scale-110"
-              }`}
-              title={color.name}
-            />
-          ))}
-        </div>
-      </FilterSection>
-
       {/* Availability */}
       <FilterSection title="Availability" defaultOpen={false}>
         <div className="space-y-3">
