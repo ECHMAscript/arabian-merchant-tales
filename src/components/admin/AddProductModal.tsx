@@ -50,6 +50,7 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
     discount: "",
     isNew: false,
     isBestseller: false,
+    isPreorder: false,
     author: "",
   });
   const [colorVariants, setColorVariants] = useState<ColorVariant[]>([]);
@@ -121,6 +122,7 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
           image: formData.image,
           category: formData.category || "general",
           is_new_arrival: productType === "carousel" || formData.isNew,
+          is_preorder: formData.isPreorder,
           colors: colorsData,
         }]);
 
@@ -145,6 +147,7 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
         discount: "",
         isNew: false,
         isBestseller: false,
+        isPreorder: false,
         author: "",
       });
       setColorVariants([]);
@@ -187,6 +190,7 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
           "Men - Clothing", "Men - Jewelry", "Men - Accessories",
           "Women - Clothing", "Women - Jewelry", "Women - Accessories",
           "Home & Decor - Pottery", "Home & Decor - Lamps", "Home & Decor - Rugs", "Home & Decor - Textiles",
+          "Filters - Dates", "Filters - Bukhoor", "Filters - Oud", "Filters - Attar / Perfume",
         ];
     }
   };
@@ -289,19 +293,21 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
               />
             </div>
 
-            {/* Quantity */}
-            <div className="space-y-2">
-              <Label htmlFor="quantity">Quantity in Stock *</Label>
-              <Input
-                id="quantity"
-                type="number"
-                min="0"
-                value={formData.quantity}
-                onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
-                placeholder="Available quantity"
-                required
-              />
-            </div>
+            {/* Quantity - hidden when preorder */}
+            {!formData.isPreorder && (
+              <div className="space-y-2">
+                <Label htmlFor="quantity">Quantity in Stock *</Label>
+                <Input
+                  id="quantity"
+                  type="number"
+                  min="0"
+                  value={formData.quantity}
+                  onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+                  placeholder="Available quantity"
+                  required={!formData.isPreorder}
+                />
+              </div>
+            )}
           </div>
 
           {/* Image URL */}
@@ -438,7 +444,7 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
 
           {/* Badges */}
           {!isBook && (
-            <div className="flex gap-6">
+            <div className="flex flex-wrap gap-6">
               <div className="flex items-center gap-2">
                 <Checkbox
                   id="isNew"
@@ -454,6 +460,14 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
                   onCheckedChange={(checked) => setFormData({ ...formData, isBestseller: checked as boolean })}
                 />
                 <Label htmlFor="isBestseller" className="cursor-pointer">Mark as Bestseller</Label>
+              </div>
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="isPreorder"
+                  checked={formData.isPreorder}
+                  onCheckedChange={(checked) => setFormData({ ...formData, isPreorder: checked as boolean })}
+                />
+                <Label htmlFor="isPreorder" className="cursor-pointer text-primary font-semibold">Not in Stock — Pre-order</Label>
               </div>
             </div>
           )}

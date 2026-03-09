@@ -75,7 +75,6 @@ const ProductGrid = () => {
         filters={filters}
         onPriceChange={(value) => updateFilter("priceRange", value)}
         onToggleCategory={(value) => toggleArrayFilter("categories", value)}
-        onToggleColor={(value) => toggleArrayFilter("colors", value)}
         onToggleSize={(value) => toggleArrayFilter("sizes", value)}
         onReset={resetFilters}
         isMobileOpen={mobileFiltersOpen}

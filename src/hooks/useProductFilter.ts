@@ -5,7 +5,6 @@ export interface FilterState {
   categories: string[];
   priceRange: [number, number];
   sizes: string[];
-  colors: string[];
   inStock: boolean;
   preOrder: boolean;
 }
@@ -14,7 +13,6 @@ const initialFilterState: FilterState = {
   categories: [],
   priceRange: [0, 1000],
   sizes: [],
-  colors: [],
   inStock: false,
   preOrder: false,
 };
@@ -43,13 +41,6 @@ export const useProductFilter = (products: ExtendedProduct[]) => {
         return false;
       }
 
-      // Colors filter
-      if (filters.colors.length > 0) {
-        if (!product.colors || !product.colors.some((c) => filters.colors.includes(c.name))) {
-          return false;
-        }
-      }
-
       return true;
     });
   }, [products, filters]);
@@ -58,7 +49,7 @@ export const useProductFilter = (products: ExtendedProduct[]) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
-  const toggleArrayFilter = (key: "categories" | "sizes" | "colors", value: string) => {
+  const toggleArrayFilter = (key: "categories" | "sizes", value: string) => {
     setFilters((prev) => {
       const currentArray = prev[key];
       const newArray = currentArray.includes(value)

@@ -79,7 +79,7 @@ interface FilterSidebarProps {
   filters: FilterState;
   onPriceChange: (value: [number, number]) => void;
   onToggleCategory: (value: string) => void;
-  onToggleColor: (value: string) => void;
+  onToggleColor?: (value: string) => void;
   onToggleSize: (value: string) => void;
   onReset: () => void;
   isMobileOpen?: boolean;
@@ -93,7 +93,6 @@ const FilterSidebar = ({
   filters,
   onPriceChange,
   onToggleCategory,
-  onToggleColor,
   onToggleSize,
   onReset,
   isMobileOpen = false,
@@ -119,21 +118,18 @@ const FilterSidebar = ({
     { label: "Rugs", value: "Home & Decor - Rugs" },
     { label: "Textiles", value: "Home & Decor - Textiles" },
   ];
-  
-  const colors = [
-    { name: "Gold", class: "bg-gold" },
-    { name: "Burgundy", class: "bg-burgundy" },
-    { name: "Sand", class: "bg-sand-dark" },
-    { name: "Bronze", class: "bg-bronze" },
-    { name: "Cream", class: "bg-card" },
-    { name: "Black", class: "bg-foreground" },
+
+  const filtersCategories = [
+    { label: "Dates", value: "Filters - Dates" },
+    { label: "Bukhoor", value: "Filters - Bukhoor" },
+    { label: "Oud", value: "Filters - Oud" },
+    { label: "Attar / Perfume", value: "Filters - Attar / Perfume" },
   ];
 
   const hasActiveFilters = 
     filters.categories.length > 0 ||
     filters.priceRange[0] > 0 ||
     filters.priceRange[1] < 1000 ||
-    filters.colors.length > 0 ||
     filters.sizes.length > 0;
 
   const sidebarContent = (
@@ -182,6 +178,12 @@ const FilterSidebar = ({
             selectedItems={filters.categories}
             onToggle={onToggleCategory}
           />
+          <SubCategory 
+            title="Filters (Dates, Bukhoor...)" 
+            items={filtersCategories} 
+            selectedItems={filters.categories}
+            onToggle={onToggleCategory}
+          />
         </div>
       </FilterSection>
 
@@ -223,24 +225,6 @@ const FilterSidebar = ({
             >
               {size}
             </button>
-          ))}
-        </div>
-      </FilterSection>
-
-      {/* Colors */}
-      <FilterSection title="Colors">
-        <div className="flex flex-wrap gap-3">
-          {colors.map((color) => (
-            <button
-              key={color.name}
-              onClick={() => onToggleColor(color.name)}
-              className={`w-8 h-8 rounded-full ${color.class} border-2 transition-all duration-200 shadow-soft focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
-                filters.colors.includes(color.name)
-                  ? "border-primary scale-110"
-                  : "border-transparent hover:border-primary hover:scale-110"
-              }`}
-              title={color.name}
-            />
           ))}
         </div>
       </FilterSection>
