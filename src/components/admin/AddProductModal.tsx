@@ -293,19 +293,21 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
               />
             </div>
 
-            {/* Quantity */}
-            <div className="space-y-2">
-              <Label htmlFor="quantity">Quantity in Stock *</Label>
-              <Input
-                id="quantity"
-                type="number"
-                min="0"
-                value={formData.quantity}
-                onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
-                placeholder="Available quantity"
-                required
-              />
-            </div>
+            {/* Quantity - hidden when preorder */}
+            {!formData.isPreorder && (
+              <div className="space-y-2">
+                <Label htmlFor="quantity">Quantity in Stock *</Label>
+                <Input
+                  id="quantity"
+                  type="number"
+                  min="0"
+                  value={formData.quantity}
+                  onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+                  placeholder="Available quantity"
+                  required={!formData.isPreorder}
+                />
+              </div>
+            )}
           </div>
 
           {/* Image URL */}
