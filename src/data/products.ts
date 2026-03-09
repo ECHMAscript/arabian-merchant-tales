@@ -10,6 +10,7 @@ export interface ExtendedProduct extends Omit<ProductCardProps, 'id'> {
   gender?: "men" | "women" | "unisex";
   subcategory?: string;
   colors?: ColorVariant[];
+  isPreorder?: boolean;
 }
 
 export const pages = [

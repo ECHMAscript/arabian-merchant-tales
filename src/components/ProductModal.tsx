@@ -29,6 +29,7 @@ interface ProductModalProps {
     image: string;
     category: string;
     colors?: ColorVariant[];
+    isPreorder?: boolean;
   } | null;
 }
 
@@ -50,7 +51,8 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
 
   if (!product) return null;
 
-  const productColors = product.colors && product.colors.length > 0 ? product.colors : DEFAULT_COLORS;
+  const hasColors = product.colors && product.colors.length > 0;
+  const productColors = hasColors ? product.colors! : DEFAULT_COLORS;
   
   // Auto-select first color if current selection isn't valid
   const activeColor = productColors.find(c => c.name === selectedColor) 
@@ -69,7 +71,7 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
       image: product.image,
       category: product.category,
     });
-    toast.success(`${product.name} added to cart!`);
+    toast.success(product.isPreorder ? `${product.name} pre-ordered!` : `${product.name} added to cart!`);
   };
 
   const handleWishlist = () => {
@@ -123,6 +125,11 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
                     {Math.round((1 - product.price / product.originalPrice) * 100)}% OFF
                   </span>
                 )}
+                {product.isPreorder && (
+                  <span className="absolute bottom-3 left-3 px-3 py-1 bg-primary text-primary-foreground text-xs font-semibold rounded-full">
+                    Pre-order Only
+                  </span>
+                )}
               </div>
 
               {/* Details */}
@@ -131,6 +138,11 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
                   {/* Name & Rating */}
                   <div>
                     <h2 className="hidden md:block font-display text-xl font-bold text-foreground">{product.name}</h2>
+                    {product.isPreorder && (
+                      <p className="font-body text-sm text-primary font-medium mt-1">
+                        ⏳ This item is currently not in stock — available for pre-order only.
+                      </p>
+                    )}
                     <div className="flex items-center gap-2 mt-1">
                       <div className="flex items-center gap-0.5">{renderStars(product.rating)}</div>
                       <span className="font-body text-sm text-muted-foreground">
@@ -151,33 +163,35 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
                     )}
                   </div>
 
-                  {/* Color */}
-                  <div>
-                    <h4 className="font-display text-sm font-medium text-foreground mb-2">
-                      Color: <span className="text-muted-foreground font-body">{activeColor}</span>
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {productColors.map((color) => (
-                        <button
-                          key={color.name}
-                          onClick={() => setSelectedColor(color.name)}
-                          className={`relative w-9 h-9 rounded-full border-2 transition-all ${
-                            activeColor === color.name
-                              ? "border-primary ring-2 ring-primary/30"
-                              : "border-border hover:border-primary"
-                          }`}
-                          style={{ backgroundColor: color.value }}
-                          title={color.name}
-                        >
-                          {activeColor === color.name && (
-                            <span className="absolute inset-0 flex items-center justify-center text-white drop-shadow-md text-sm">
-                              ✓
-                            </span>
-                          )}
-                        </button>
-                      ))}
+                  {/* Color - only show if product has explicit colors */}
+                  {hasColors && (
+                    <div>
+                      <h4 className="font-display text-sm font-medium text-foreground mb-2">
+                        Color: <span className="text-muted-foreground font-body">{activeColor}</span>
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {productColors.map((color) => (
+                          <button
+                            key={color.name}
+                            onClick={() => setSelectedColor(color.name)}
+                            className={`relative w-9 h-9 rounded-full border-2 transition-all ${
+                              activeColor === color.name
+                                ? "border-primary ring-2 ring-primary/30"
+                                : "border-border hover:border-primary"
+                            }`}
+                            style={{ backgroundColor: color.value }}
+                            title={color.name}
+                          >
+                            {activeColor === color.name && (
+                              <span className="absolute inset-0 flex items-center justify-center text-white drop-shadow-md text-sm">
+                                ✓
+                              </span>
+                            )}
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* Size */}
                   <div>
@@ -216,7 +230,7 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
                   <div className="flex gap-2">
                     <Button variant="gold" className="flex-1 gap-2" onClick={handleAddToCart}>
                       <ShoppingCart className="h-4 w-4" />
-                      Add to Cart
+                      {product.isPreorder ? "Pre-order Now" : "Add to Cart"}
                     </Button>
                     <Tooltip>
                       <TooltipTrigger asChild>

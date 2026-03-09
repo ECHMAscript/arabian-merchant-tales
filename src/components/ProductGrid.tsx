@@ -33,6 +33,7 @@ const ProductGrid = () => {
       rating: Number(p.rating) || 0,
       reviewCount: p.review_count || 0,
       colors: Array.isArray(p.colors) ? (p.colors as any[]).map(c => ({ name: c.name || '', value: c.value || '' })) : [],
+      isPreorder: p.is_preorder || false,
     }));
   }, [dbProducts]);
 

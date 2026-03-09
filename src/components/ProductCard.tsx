@@ -16,6 +16,7 @@ export interface ProductCardProps {
   reviewCount: number;
   image: string;
   category: string;
+  isPreorder?: boolean;
 }
 
 interface ProductCardComponentProps extends ProductCardProps {
@@ -32,6 +33,7 @@ const ProductCard = ({
   reviewCount,
   image,
   category,
+  isPreorder,
   onClick,
   onDeleted,
 }: ProductCardComponentProps) => {
@@ -141,6 +143,13 @@ const ProductCard = ({
         {originalPrice && (
           <span className="absolute top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-secondary text-secondary-foreground text-xs font-semibold rounded-full">
             {Math.round((1 - price / originalPrice) * 100)}% OFF
+          </span>
+        )}
+
+        {/* Pre-order Badge */}
+        {isPreorder && (
+          <span className="absolute bottom-3 left-3 px-3 py-1 bg-primary text-primary-foreground text-xs font-semibold rounded-full">
+            Pre-order
           </span>
         )}
       </div>
