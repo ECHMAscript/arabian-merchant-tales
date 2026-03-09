@@ -460,6 +460,8 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
                   ))}
                 </div>
               )}
+                </>
+              )}
             </div>
           )}
 
