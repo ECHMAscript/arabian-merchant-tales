@@ -71,7 +71,7 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
       image: product.image,
       category: product.category,
     });
-    toast.success(`${product.name} added to cart!`);
+    toast.success(product.isPreorder ? `${product.name} pre-ordered!` : `${product.name} added to cart!`);
   };
 
   const handleWishlist = () => {
