@@ -339,6 +339,25 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
           {/* Color Variants - Only for cloth/product items */}
           {isClothProduct && (
             <div className="space-y-3 rounded-lg border border-border bg-muted/30 p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Checkbox
+                  id="hasColorVariants"
+                  checked={hasColorVariants}
+                  onCheckedChange={(checked) => {
+                    setHasColorVariants(checked as boolean);
+                    if (!checked) {
+                      setColorVariants([]);
+                      setColorCount(0);
+                    }
+                  }}
+                />
+                <Label htmlFor="hasColorVariants" className="cursor-pointer font-display text-sm font-semibold text-foreground">
+                  This item has color variants
+                </Label>
+              </div>
+
+              {hasColorVariants && (
+                <>
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="font-display text-sm font-semibold text-foreground">Color Variants</h4>

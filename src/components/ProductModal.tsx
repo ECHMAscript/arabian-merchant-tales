@@ -230,7 +230,7 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
                   <div className="flex gap-2">
                     <Button variant="gold" className="flex-1 gap-2" onClick={handleAddToCart}>
                       <ShoppingCart className="h-4 w-4" />
-                      Add to Cart
+                      {product.isPreorder ? "Pre-order Now" : "Add to Cart"}
                     </Button>
                     <Tooltip>
                       <TooltipTrigger asChild>
