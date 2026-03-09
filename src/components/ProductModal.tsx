@@ -138,6 +138,11 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
                   {/* Name & Rating */}
                   <div>
                     <h2 className="hidden md:block font-display text-xl font-bold text-foreground">{product.name}</h2>
+                    {product.isPreorder && (
+                      <p className="font-body text-sm text-primary font-medium mt-1">
+                        ⏳ This item is currently not in stock — available for pre-order only.
+                      </p>
+                    )}
                     <div className="flex items-center gap-2 mt-1">
                       <div className="flex items-center gap-0.5">{renderStars(product.rating)}</div>
                       <span className="font-body text-sm text-muted-foreground">
