@@ -33,6 +33,7 @@ const ProductCard = ({
   reviewCount,
   image,
   category,
+  isPreorder,
   onClick,
   onDeleted,
 }: ProductCardComponentProps) => {
