@@ -49,7 +49,7 @@ export const useProductFilter = (products: ExtendedProduct[]) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
-  const toggleArrayFilter = (key: "categories" | "sizes" | "colors", value: string) => {
+  const toggleArrayFilter = (key: "categories" | "sizes", value: string) => {
     setFilters((prev) => {
       const currentArray = prev[key];
       const newArray = currentArray.includes(value)

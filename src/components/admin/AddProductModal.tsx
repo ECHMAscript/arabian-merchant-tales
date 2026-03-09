@@ -444,7 +444,7 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
 
           {/* Badges */}
           {!isBook && (
-            <div className="flex gap-6">
+            <div className="flex flex-wrap gap-6">
               <div className="flex items-center gap-2">
                 <Checkbox
                   id="isNew"
@@ -460,6 +460,14 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
                   onCheckedChange={(checked) => setFormData({ ...formData, isBestseller: checked as boolean })}
                 />
                 <Label htmlFor="isBestseller" className="cursor-pointer">Mark as Bestseller</Label>
+              </div>
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="isPreorder"
+                  checked={formData.isPreorder}
+                  onCheckedChange={(checked) => setFormData({ ...formData, isPreorder: checked as boolean })}
+                />
+                <Label htmlFor="isPreorder" className="cursor-pointer text-amber-600 font-semibold">Not in Stock — Pre-order</Label>
               </div>
             </div>
           )}

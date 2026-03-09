@@ -79,7 +79,7 @@ interface FilterSidebarProps {
   filters: FilterState;
   onPriceChange: (value: [number, number]) => void;
   onToggleCategory: (value: string) => void;
-  onToggleColor: (value: string) => void;
+  onToggleColor?: (value: string) => void;
   onToggleSize: (value: string) => void;
   onReset: () => void;
   isMobileOpen?: boolean;
