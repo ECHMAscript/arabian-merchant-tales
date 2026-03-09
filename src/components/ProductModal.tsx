@@ -163,33 +163,35 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
                     )}
                   </div>
 
-                  {/* Color */}
-                  <div>
-                    <h4 className="font-display text-sm font-medium text-foreground mb-2">
-                      Color: <span className="text-muted-foreground font-body">{activeColor}</span>
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {productColors.map((color) => (
-                        <button
-                          key={color.name}
-                          onClick={() => setSelectedColor(color.name)}
-                          className={`relative w-9 h-9 rounded-full border-2 transition-all ${
-                            activeColor === color.name
-                              ? "border-primary ring-2 ring-primary/30"
-                              : "border-border hover:border-primary"
-                          }`}
-                          style={{ backgroundColor: color.value }}
-                          title={color.name}
-                        >
-                          {activeColor === color.name && (
-                            <span className="absolute inset-0 flex items-center justify-center text-white drop-shadow-md text-sm">
-                              ✓
-                            </span>
-                          )}
-                        </button>
-                      ))}
+                  {/* Color - only show if product has explicit colors */}
+                  {hasColors && (
+                    <div>
+                      <h4 className="font-display text-sm font-medium text-foreground mb-2">
+                        Color: <span className="text-muted-foreground font-body">{activeColor}</span>
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {productColors.map((color) => (
+                          <button
+                            key={color.name}
+                            onClick={() => setSelectedColor(color.name)}
+                            className={`relative w-9 h-9 rounded-full border-2 transition-all ${
+                              activeColor === color.name
+                                ? "border-primary ring-2 ring-primary/30"
+                                : "border-border hover:border-primary"
+                            }`}
+                            style={{ backgroundColor: color.value }}
+                            title={color.name}
+                          >
+                            {activeColor === color.name && (
+                              <span className="absolute inset-0 flex items-center justify-center text-white drop-shadow-md text-sm">
+                                ✓
+                              </span>
+                            )}
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* Size */}
                   <div>
