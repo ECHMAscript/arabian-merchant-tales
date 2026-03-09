@@ -93,7 +93,6 @@ const FilterSidebar = ({
   filters,
   onPriceChange,
   onToggleCategory,
-  onToggleColor,
   onToggleSize,
   onReset,
   isMobileOpen = false,
