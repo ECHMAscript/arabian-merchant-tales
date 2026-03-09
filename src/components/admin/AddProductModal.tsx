@@ -187,6 +187,7 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
           "Men - Clothing", "Men - Jewelry", "Men - Accessories",
           "Women - Clothing", "Women - Jewelry", "Women - Accessories",
           "Home & Decor - Pottery", "Home & Decor - Lamps", "Home & Decor - Rugs", "Home & Decor - Textiles",
+          "Filters - Dates", "Filters - Bukhoor", "Filters - Oud", "Filters - Attar / Perfume",
         ];
     }
   };
