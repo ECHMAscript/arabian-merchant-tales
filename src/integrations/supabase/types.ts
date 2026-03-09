@@ -158,6 +158,7 @@ export type Database = {
           id: string
           image: string
           is_new_arrival: boolean | null
+          is_preorder: boolean
           original_price: number | null
           price: number
           rating: number
@@ -172,6 +173,7 @@ export type Database = {
           id?: string
           image: string
           is_new_arrival?: boolean | null
+          is_preorder?: boolean
           original_price?: number | null
           price: number
           rating?: number
@@ -186,6 +188,7 @@ export type Database = {
           id?: string
           image?: string
           is_new_arrival?: boolean | null
+          is_preorder?: boolean
           original_price?: number | null
           price?: number
           rating?: number
