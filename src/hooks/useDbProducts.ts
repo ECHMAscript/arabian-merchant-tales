@@ -10,6 +10,7 @@ interface DbProduct {
   image: string;
   category: string;
   is_new_arrival: boolean;
+  is_preorder: boolean;
   created_at: string;
   rating: number;
   review_count: number;
