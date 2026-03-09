@@ -467,7 +467,7 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
                   checked={formData.isPreorder}
                   onCheckedChange={(checked) => setFormData({ ...formData, isPreorder: checked as boolean })}
                 />
-                <Label htmlFor="isPreorder" className="cursor-pointer text-amber-600 font-semibold">Not in Stock — Pre-order</Label>
+                <Label htmlFor="isPreorder" className="cursor-pointer text-primary font-semibold">Not in Stock — Pre-order</Label>
               </div>
             </div>
           )}
