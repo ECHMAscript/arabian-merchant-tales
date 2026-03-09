@@ -119,14 +119,12 @@ const FilterSidebar = ({
     { label: "Rugs", value: "Home & Decor - Rugs" },
     { label: "Textiles", value: "Home & Decor - Textiles" },
   ];
-  
-  const colors = [
-    { name: "Gold", class: "bg-gold" },
-    { name: "Burgundy", class: "bg-burgundy" },
-    { name: "Sand", class: "bg-sand-dark" },
-    { name: "Bronze", class: "bg-bronze" },
-    { name: "Cream", class: "bg-card" },
-    { name: "Black", class: "bg-foreground" },
+
+  const filtersCategories = [
+    { label: "Dates", value: "Filters - Dates" },
+    { label: "Bukhoor", value: "Filters - Bukhoor" },
+    { label: "Oud", value: "Filters - Oud" },
+    { label: "Attar / Perfume", value: "Filters - Attar / Perfume" },
   ];
 
   const hasActiveFilters = 
