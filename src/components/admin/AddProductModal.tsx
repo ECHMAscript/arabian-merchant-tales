@@ -122,6 +122,7 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
           image: formData.image,
           category: formData.category || "general",
           is_new_arrival: productType === "carousel" || formData.isNew,
+          is_preorder: formData.isPreorder,
           colors: colorsData,
         }]);
 
