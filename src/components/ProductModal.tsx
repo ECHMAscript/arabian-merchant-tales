@@ -51,7 +51,8 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
 
   if (!product) return null;
 
-  const productColors = product.colors && product.colors.length > 0 ? product.colors : DEFAULT_COLORS;
+  const hasColors = product.colors && product.colors.length > 0;
+  const productColors = hasColors ? product.colors! : DEFAULT_COLORS;
   
   // Auto-select first color if current selection isn't valid
   const activeColor = productColors.find(c => c.name === selectedColor) 
