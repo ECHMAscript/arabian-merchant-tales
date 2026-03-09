@@ -53,6 +53,7 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
     isPreorder: false,
     author: "",
   });
+  const [hasColorVariants, setHasColorVariants] = useState(true);
   const [colorVariants, setColorVariants] = useState<ColorVariant[]>([]);
   const [colorCount, setColorCount] = useState(0);
 
