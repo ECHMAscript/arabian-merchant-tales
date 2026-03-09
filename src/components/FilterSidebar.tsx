@@ -180,6 +180,12 @@ const FilterSidebar = ({
             selectedItems={filters.categories}
             onToggle={onToggleCategory}
           />
+          <SubCategory 
+            title="Filters (Dates, Bukhoor...)" 
+            items={filtersCategories} 
+            selectedItems={filters.categories}
+            onToggle={onToggleCategory}
+          />
         </div>
       </FilterSection>
 
