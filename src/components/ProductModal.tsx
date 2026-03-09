@@ -125,6 +125,11 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
                     {Math.round((1 - product.price / product.originalPrice) * 100)}% OFF
                   </span>
                 )}
+                {product.isPreorder && (
+                  <span className="absolute bottom-3 left-3 px-3 py-1 bg-primary text-primary-foreground text-xs font-semibold rounded-full">
+                    Pre-order Only
+                  </span>
+                )}
               </div>
 
               {/* Details */}
