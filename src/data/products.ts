@@ -11,6 +11,7 @@ export interface ExtendedProduct extends Omit<ProductCardProps, 'id'> {
   subcategory?: string;
   colors?: ColorVariant[];
   isPreorder?: boolean;
+  hasSizes?: boolean;
 }
 
 export const pages = [
