@@ -46,7 +46,21 @@ const ProductGrid = () => {
     resetFilters,
   } = useProductFilter(allProducts);
 
-  const displayedProducts = filteredProducts.slice(0, displayCount);
+  const sortedProducts = useMemo(() => {
+    const sorted = [...filteredProducts];
+    switch (sortOption) {
+      case "price-low":
+        return sorted.sort((a, b) => a.price - b.price);
+      case "price-high":
+        return sorted.sort((a, b) => b.price - a.price);
+      case "rating":
+        return sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+      default:
+        return sorted;
+    }
+  }, [filteredProducts, sortOption]);
+
+  const displayedProducts = sortedProducts.slice(0, displayCount);
   const hasMoreProducts = displayCount < filteredProducts.length;
 
   const handleProductClick = (product: ExtendedProduct) => {
