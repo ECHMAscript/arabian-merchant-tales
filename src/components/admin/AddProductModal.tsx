@@ -126,6 +126,7 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
           is_new_arrival: productType === "carousel" || formData.isNew,
           is_preorder: formData.isPreorder,
           colors: colorsData,
+          has_sizes: hasSizes,
         }]);
 
         if (error) throw error;
