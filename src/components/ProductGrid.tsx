@@ -18,6 +18,7 @@ const ProductGrid = () => {
   const [displayCount, setDisplayCount] = useState(ITEMS_PER_PAGE);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [sortOption, setSortOption] = useState("featured");
 
   const { products: dbProducts, refetch: refetchProducts } = useDbProducts();
 
