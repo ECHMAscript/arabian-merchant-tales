@@ -143,30 +143,32 @@ const Navbar = () => {
           {isMenuOpen && (
             <div className="md:hidden py-4 border-t border-border animate-slide-up">
               <div className="flex flex-col gap-4">
-                <Link to="/" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
-                  Home
-                </Link>
-                <Link to="/tailoring" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
-                  Tailoring
-                </Link>
-                <Link to="/books" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
-                  Books
-                </Link>
-                <Link to="/new-arrivals" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
-                  New Arrivals
-                </Link>
-                <Link to="/about" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
-                  About
-                </Link>
-                <Link to="/wishlist" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
-                  Wishlist ({wishlist.length})
-                </Link>
-                <Link to="/favorites" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
-                  Favorites ({favorites.length})
-                </Link>
-                <Link to="/profile" className="font-body text-foreground hover:text-primary transition-colors px-2 py-2">
-                  Profile
-                </Link>
+                {[
+                  { to: "/", label: "Home" },
+                  { to: "/tailoring", label: "Tailoring" },
+                  { to: "/books", label: "Books" },
+                  { to: "/new-arrivals", label: "New Arrivals" },
+                  { to: "/about", label: "About" },
+                  { to: "/wishlist", label: `Wishlist (${wishlist.length})` },
+                  { to: "/favorites", label: `Favorites (${favorites.length})` },
+                  { to: "/profile", label: "Profile" },
+                ].map((link) => (
+                  <NavLink
+                    key={link.to}
+                    to={link.to}
+                    end={link.to === "/"}
+                    className={({ isActive }) =>
+                      `font-body transition-colors px-2 py-2 ${
+                        isActive
+                          ? "text-primary font-medium"
+                          : "text-foreground hover:text-primary"
+                      }`
+                    }
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {link.label}
+                  </NavLink>
+                ))}
               </div>
             </div>
           )}

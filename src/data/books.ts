@@ -20,6 +20,7 @@ export const bookCategories = [
   { name: "Fiqh", arabicName: "الفقه", description: "Islamic Jurisprudence" },
   { name: "Seerah", arabicName: "السيرة", description: "Prophetic Biography" },
   { name: "Hadeeth", arabicName: "الحديث", description: "Prophetic Traditions" },
+  { name: "Others", arabicName: "أخرى", description: "Other Islamic books" },
 ];
 
 export const schoolSupplyCategories = [

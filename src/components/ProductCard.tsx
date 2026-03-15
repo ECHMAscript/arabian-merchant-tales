@@ -148,7 +148,11 @@ const ProductCard = ({
 
         {/* Pre-order Badge */}
         {isPreorder && (
-          <span className="absolute bottom-3 left-3 px-3 py-1 bg-primary text-primary-foreground text-xs font-semibold rounded-full">
+          <span className={`absolute bottom-3 left-3 px-3 py-1 text-xs font-semibold rounded-full z-10 transition-colors duration-300 ${
+            isHovered 
+              ? "bg-secondary text-secondary-foreground" 
+              : "bg-primary text-primary-foreground"
+          }`}>
             Pre-order
           </span>
         )}
