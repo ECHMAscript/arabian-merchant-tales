@@ -61,7 +61,7 @@ const ProductGrid = () => {
   }, [filteredProducts, sortOption]);
 
   const displayedProducts = sortedProducts.slice(0, displayCount);
-  const hasMoreProducts = displayCount < filteredProducts.length;
+  const hasMoreProducts = displayCount < sortedProducts.length;
 
   const handleProductClick = (product: ExtendedProduct) => {
     setSelectedProduct(product);
