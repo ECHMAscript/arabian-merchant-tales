@@ -18,6 +18,7 @@ const ProductGrid = () => {
   const [displayCount, setDisplayCount] = useState(ITEMS_PER_PAGE);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [sortOption, setSortOption] = useState("featured");
 
   const { products: dbProducts, refetch: refetchProducts } = useDbProducts();
 
@@ -34,6 +35,7 @@ const ProductGrid = () => {
       reviewCount: p.review_count || 0,
       colors: Array.isArray(p.colors) ? (p.colors as any[]).map(c => ({ name: c.name || '', value: c.value || '' })) : [],
       isPreorder: p.is_preorder || false,
+      hasSizes: p.has_sizes !== false,
     }));
   }, [dbProducts]);
 
@@ -45,8 +47,22 @@ const ProductGrid = () => {
     resetFilters,
   } = useProductFilter(allProducts);
 
-  const displayedProducts = filteredProducts.slice(0, displayCount);
-  const hasMoreProducts = displayCount < filteredProducts.length;
+  const sortedProducts = useMemo(() => {
+    const sorted = [...filteredProducts];
+    switch (sortOption) {
+      case "price-low":
+        return sorted.sort((a, b) => a.price - b.price);
+      case "price-high":
+        return sorted.sort((a, b) => b.price - a.price);
+      case "rating":
+        return sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+      default:
+        return sorted;
+    }
+  }, [filteredProducts, sortOption]);
+
+  const displayedProducts = sortedProducts.slice(0, displayCount);
+  const hasMoreProducts = displayCount < sortedProducts.length;
 
   const handleProductClick = (product: ExtendedProduct) => {
     setSelectedProduct(product);
@@ -92,7 +108,7 @@ const ProductGrid = () => {
                 Our Collection
               </h2>
               <p className="font-body text-muted-foreground mt-1">
-                Showing {displayedProducts.length} of {filteredProducts.length} artisan products
+                Showing {displayedProducts.length} of {sortedProducts.length} artisan products
               </p>
             </div>
             <AdminAddButton 
@@ -100,12 +116,15 @@ const ProductGrid = () => {
               tooltip="Add new product"
             />
           </div>
-          <select className="px-4 py-2 bg-card border border-border rounded-lg font-body text-foreground focus:ring-2 focus:ring-primary focus:border-primary outline-none">
-            <option>Sort by: Featured</option>
-            <option>Price: Low to High</option>
-            <option>Price: High to Low</option>
-            <option>Rating: High to Low</option>
-            <option>Newest First</option>
+          <select 
+            value={sortOption}
+            onChange={(e) => setSortOption(e.target.value)}
+            className="px-4 py-2 bg-card border border-border rounded-lg font-body text-foreground focus:ring-2 focus:ring-primary focus:border-primary outline-none"
+          >
+            <option value="featured">Sort by: Featured</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="rating">Rating: High to Low</option>
           </select>
         </div>
 
@@ -117,7 +136,7 @@ const ProductGrid = () => {
               We're currently curating our collection. Check back soon for beautiful artisan products.
             </p>
           </div>
-        ) : filteredProducts.length === 0 ? (
+        ) : sortedProducts.length === 0 ? (
           <div className="text-center py-16">
             <p className="font-body text-muted-foreground text-lg mb-4">
               No products match your filters.
@@ -153,7 +172,7 @@ const ProductGrid = () => {
             >
               Load More Products
             </button>
-          ) : filteredProducts.length > 0 ? (
+          ) : sortedProducts.length > 0 ? (
             <p className="font-body text-muted-foreground">
               You've reached the end of our collection
             </p>

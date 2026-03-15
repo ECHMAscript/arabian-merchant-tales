@@ -30,6 +30,7 @@ interface ProductModalProps {
     category: string;
     colors?: ColorVariant[];
     isPreorder?: boolean;
+    hasSizes?: boolean;
   } | null;
 }
 
@@ -194,6 +195,7 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
                   )}
 
                   {/* Size */}
+                  {product.hasSizes !== false && (
                   <div>
                     <h4 className="font-display text-sm font-medium text-foreground mb-2">Size</h4>
                     <div className="flex flex-wrap gap-2">
@@ -212,6 +214,7 @@ const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) => {
                       ))}
                     </div>
                   </div>
+                  )}
                 </div>
 
                 {/* Actions */}

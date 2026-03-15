@@ -54,6 +54,7 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
     author: "",
   });
   const [hasColorVariants, setHasColorVariants] = useState(true);
+  const [hasSizes, setHasSizes] = useState(true);
   const [colorVariants, setColorVariants] = useState<ColorVariant[]>([]);
   const [colorCount, setColorCount] = useState(0);
 
@@ -125,6 +126,7 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
           is_new_arrival: productType === "carousel" || formData.isNew,
           is_preorder: formData.isPreorder,
           colors: colorsData,
+          has_sizes: hasSizes,
         }]);
 
         if (error) throw error;
@@ -154,6 +156,7 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
       setColorVariants([]);
       setColorCount(0);
       setHasColorVariants(true);
+      setHasSizes(true);
       
       onProductAdded?.();
       onClose();
@@ -336,7 +339,22 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
             />
           </div>
 
-          {/* Color Variants - Only for cloth/product items */}
+          {/* Size & Color Variants - Only for product items */}
+          {isClothProduct && (
+            <div className="space-y-3 rounded-lg border border-border bg-muted/30 p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Checkbox
+                  id="hasSizes"
+                  checked={hasSizes}
+                  onCheckedChange={(checked) => setHasSizes(checked as boolean)}
+                />
+                <Label htmlFor="hasSizes" className="cursor-pointer font-display text-sm font-semibold text-foreground">
+                  This item has size options
+                </Label>
+              </div>
+            </div>
+          )}
+
           {isClothProduct && (
             <div className="space-y-3 rounded-lg border border-border bg-muted/30 p-4">
               <div className="flex items-center gap-2 mb-3">

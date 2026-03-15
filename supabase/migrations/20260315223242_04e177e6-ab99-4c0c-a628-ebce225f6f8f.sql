@@ -1,0 +1,1 @@
+ALTER TABLE public.products ADD COLUMN has_sizes boolean NOT NULL DEFAULT true;

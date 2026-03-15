@@ -44,6 +44,7 @@ const NewArrivals = () => {
       reviewCount: p.review_count || 0,
       colors: Array.isArray(p.colors) ? (p.colors as any[]).map(c => ({ name: c.name || '', value: c.value || '' })) : [],
       isPreorder: p.is_preorder || false,
+      hasSizes: p.has_sizes !== false,
     }));
   }, [dbArrivals]);
 

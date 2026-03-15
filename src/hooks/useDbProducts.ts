@@ -15,6 +15,7 @@ interface DbProduct {
   rating: number;
   review_count: number;
   colors: any;
+  has_sizes: boolean;
 }
 
 interface DbBook {
