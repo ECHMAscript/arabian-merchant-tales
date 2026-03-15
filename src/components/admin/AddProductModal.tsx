@@ -156,6 +156,7 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
       setColorVariants([]);
       setColorCount(0);
       setHasColorVariants(true);
+      setHasSizes(true);
       
       onProductAdded?.();
       onClose();
