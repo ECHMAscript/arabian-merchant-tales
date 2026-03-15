@@ -54,6 +54,7 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
     author: "",
   });
   const [hasColorVariants, setHasColorVariants] = useState(true);
+  const [hasSizes, setHasSizes] = useState(true);
   const [colorVariants, setColorVariants] = useState<ColorVariant[]>([]);
   const [colorCount, setColorCount] = useState(0);
 
