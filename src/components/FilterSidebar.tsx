@@ -99,6 +99,10 @@ const FilterSidebar = ({
   onMobileClose,
 }: FilterSidebarProps) => {
   const sizes = ["XS", "S", "M", "L", "XL", "XXL"];
+
+  const hasClothingSelected = filters.categories.some(
+    (cat) => cat.includes("Clothing")
+  );
   
   const menCategories = [
     { label: "Clothing", value: "Men - Clothing" },
