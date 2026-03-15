@@ -107,7 +107,7 @@ const ProductGrid = () => {
                 Our Collection
               </h2>
               <p className="font-body text-muted-foreground mt-1">
-                Showing {displayedProducts.length} of {filteredProducts.length} artisan products
+                Showing {displayedProducts.length} of {sortedProducts.length} artisan products
               </p>
             </div>
             <AdminAddButton 
