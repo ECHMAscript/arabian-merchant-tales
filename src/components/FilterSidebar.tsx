@@ -99,6 +99,10 @@ const FilterSidebar = ({
   onMobileClose,
 }: FilterSidebarProps) => {
   const sizes = ["XS", "S", "M", "L", "XL", "XXL"];
+
+  const hasClothingSelected = filters.categories.some(
+    (cat) => cat.includes("Clothing")
+  );
   
   const menCategories = [
     { label: "Clothing", value: "Men - Clothing" },
@@ -210,42 +214,26 @@ const FilterSidebar = ({
         </div>
       </FilterSection>
 
-      {/* Sizes */}
-      <FilterSection title="Size">
-        <div className="flex flex-wrap gap-2">
-          {sizes.map((size) => (
-            <button
-              key={size}
-              onClick={() => onToggleSize(size)}
-              className={`w-10 h-10 rounded-lg border font-body text-sm transition-all duration-200 focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
-                filters.sizes.includes(size)
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border bg-background text-muted-foreground hover:border-primary hover:text-primary hover:bg-primary/5"
-              }`}
-            >
-              {size}
-            </button>
-          ))}
-        </div>
-      </FilterSection>
-
-      {/* Availability */}
-      <FilterSection title="Availability" defaultOpen={false}>
-        <div className="space-y-3">
-          <label className="flex items-center gap-3 cursor-pointer group">
-            <Checkbox className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary" />
-            <span className="font-body text-muted-foreground group-hover:text-foreground transition-colors">
-              In Stock
-            </span>
-          </label>
-          <label className="flex items-center gap-3 cursor-pointer group">
-            <Checkbox className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary" />
-            <span className="font-body text-muted-foreground group-hover:text-foreground transition-colors">
-              Pre-order
-            </span>
-          </label>
-        </div>
-      </FilterSection>
+      {/* Sizes - only shown when clothing is selected */}
+      {hasClothingSelected && (
+        <FilterSection title="Size">
+          <div className="flex flex-wrap gap-2">
+            {sizes.map((size) => (
+              <button
+                key={size}
+                onClick={() => onToggleSize(size)}
+                className={`w-10 h-10 rounded-lg border font-body text-sm transition-all duration-200 focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
+                  filters.sizes.includes(size)
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border bg-background text-muted-foreground hover:border-primary hover:text-primary hover:bg-primary/5"
+                }`}
+              >
+                {size}
+              </button>
+            ))}
+          </div>
+        </FilterSection>
+      )}
     </>
   );
 
