@@ -339,7 +339,22 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
             />
           </div>
 
-          {/* Color Variants - Only for cloth/product items */}
+          {/* Size & Color Variants - Only for product items */}
+          {isClothProduct && (
+            <div className="space-y-3 rounded-lg border border-border bg-muted/30 p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Checkbox
+                  id="hasSizes"
+                  checked={hasSizes}
+                  onCheckedChange={(checked) => setHasSizes(checked as boolean)}
+                />
+                <Label htmlFor="hasSizes" className="cursor-pointer font-display text-sm font-semibold text-foreground">
+                  This item has size options
+                </Label>
+              </div>
+            </div>
+          )}
+
           {isClothProduct && (
             <div className="space-y-3 rounded-lg border border-border bg-muted/30 p-4">
               <div className="flex items-center gap-2 mb-3">
