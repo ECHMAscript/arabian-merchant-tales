@@ -49,21 +49,28 @@ const Navbar = () => {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-8">
-              <Link to="/" className="font-body text-foreground hover:text-primary transition-colors duration-200">
-                Home
-              </Link>
-              <Link to="/tailoring" className="font-body text-foreground hover:text-primary transition-colors duration-200">
-                Tailoring
-              </Link>
-              <Link to="/books" className="font-body text-foreground hover:text-primary transition-colors duration-200">
-                Books
-              </Link>
-              <Link to="/new-arrivals" className="font-body text-foreground hover:text-primary transition-colors duration-200">
-                New Arrivals
-              </Link>
-              <Link to="/about" className="font-body text-foreground hover:text-primary transition-colors duration-200">
-                About
-              </Link>
+              {[
+                { to: "/", label: "Home" },
+                { to: "/tailoring", label: "Tailoring" },
+                { to: "/books", label: "Books" },
+                { to: "/new-arrivals", label: "New Arrivals" },
+                { to: "/about", label: "About" },
+              ].map((link) => (
+                <NavLink
+                  key={link.to}
+                  to={link.to}
+                  end={link.to === "/"}
+                  className={({ isActive }) =>
+                    `font-body transition-colors duration-200 border-b-2 pb-0.5 ${
+                      isActive
+                        ? "text-primary border-primary font-medium"
+                        : "text-foreground hover:text-primary border-transparent"
+                    }`
+                  }
+                >
+                  {link.label}
+                </NavLink>
+              ))}
             </div>
 
             {/* Right Actions */}
