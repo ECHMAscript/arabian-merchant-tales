@@ -17,7 +17,7 @@ const initialValidationState: ValidationState = {
 
 export const useFormValidation = () => {
   const [validation, setValidation] = useState<ValidationState>(initialValidationState);
-  const debounceTimers = useRef<{ username?: NodeJS.Timeout; email?: NodeJS.Timeout }>({});
+  const debounceTimers = useRef<{ username?: ReturnType<typeof setTimeout>; email?: ReturnType<typeof setTimeout> }>({});
 
   // Cleanup debounce timers on unmount
   useEffect(() => {
