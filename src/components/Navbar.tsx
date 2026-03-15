@@ -1,7 +1,7 @@
 import { ShoppingCart, Menu, Heart, BookMarked, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import SearchDropdown from "./SearchDropdown";
 import ProductModal from "./ProductModal";
 import UpperNav from "./UpperNav";
