@@ -171,7 +171,7 @@ const ProductGrid = () => {
             >
               Load More Products
             </button>
-          ) : filteredProducts.length > 0 ? (
+          ) : sortedProducts.length > 0 ? (
             <p className="font-body text-muted-foreground">
               You've reached the end of our collection
             </p>
