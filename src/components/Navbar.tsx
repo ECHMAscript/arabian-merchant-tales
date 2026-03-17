@@ -1,4 +1,4 @@
-import { ShoppingCart, Menu, Heart, BookMarked, User } from "lucide-react";
+import { ShoppingCart, Menu, Heart, BookMarked, User, ClipboardList } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
@@ -9,6 +9,7 @@ import { ProductCardProps } from "./ProductCard";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -18,6 +19,7 @@ const Navbar = () => {
   const { favorites } = useFavorites();
   const { cartCount } = useCart();
   const { wishlist } = useWishlist();
+  const { hasAdminRole } = useAuthContext();
 
   const handleSearchProductClick = (product: ProductCardProps) => {
     setSelectedProduct(product);
@@ -78,20 +80,33 @@ const Navbar = () => {
               <div className="hidden md:block">
                 <SearchDropdown onProductClick={handleSearchProductClick} />
               </div>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="relative hidden md:flex"
-                onClick={() => navigate('/wishlist')}
-                title="Wishlist"
-              >
-                <BookMarked className="h-5 w-5" />
-                {wishlist.length > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-primary-foreground text-xs rounded-full flex items-center justify-center font-semibold">
-                    {wishlist.length}
-                  </span>
-                )}
-              </Button>
+              {/* Admin Orders Icon - replaces Wishlist for admins */}
+              {hasAdminRole ? (
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="relative hidden md:flex"
+                  onClick={() => navigate('/orders')}
+                  title="Orders"
+                >
+                  <ClipboardList className="h-5 w-5" />
+                </Button>
+              ) : (
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="relative hidden md:flex"
+                  onClick={() => navigate('/wishlist')}
+                  title="Wishlist"
+                >
+                  <BookMarked className="h-5 w-5" />
+                  {wishlist.length > 0 && (
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-primary-foreground text-xs rounded-full flex items-center justify-center font-semibold">
+                      {wishlist.length}
+                    </span>
+                  )}
+                </Button>
+              )}
               <Button 
                 variant="ghost" 
                 size="icon" 
@@ -149,7 +164,10 @@ const Navbar = () => {
                   { to: "/books", label: "Books" },
                   { to: "/new-arrivals", label: "New Arrivals" },
                   { to: "/about", label: "About" },
-                  { to: "/wishlist", label: `Wishlist (${wishlist.length})` },
+                  ...(hasAdminRole
+                    ? [{ to: "/orders", label: "Orders" }]
+                    : [{ to: "/wishlist", label: `Wishlist (${wishlist.length})` }]
+                  ),
                   { to: "/favorites", label: `Favorites (${favorites.length})` },
                   { to: "/profile", label: "Profile" },
                 ].map((link) => (

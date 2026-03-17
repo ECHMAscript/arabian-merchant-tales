@@ -51,6 +51,7 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
     isNew: false,
     isBestseller: false,
     isPreorder: false,
+    isInStock: true,
     author: "",
   });
   const [hasColorVariants, setHasColorVariants] = useState(true);
@@ -101,6 +102,7 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
       const originalPrice = formData.originalPrice ? parseFloat(formData.originalPrice) : null;
       
       if (productType === "book" || productType === "school-supply") {
+        const qty = formData.isInStock ? (parseInt(formData.quantity) || 10) : 0;
         const { error } = await supabase.from("books").insert({
           title: formData.name,
           author: formData.author || null,
@@ -109,7 +111,7 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
           discount_percentage: discountPercentage,
           image: formData.image,
           category: productType === "book" ? "books" : "school-supplies",
-          quantity_left: parseInt(formData.quantity) || 10,
+          quantity_left: qty,
         });
 
         if (error) throw error;
@@ -151,6 +153,7 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
         isNew: false,
         isBestseller: false,
         isPreorder: false,
+        isInStock: true,
         author: "",
       });
       setColorVariants([]);
@@ -187,7 +190,7 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
   const getCategories = () => {
     switch (productType) {
       case "book":
-        return ["Tafseer (تفسير)", "Fiqh (الفقه)", "Seerah (السيرة)", "Hadeeth (الحديث)"];
+        return ["Tafseer (تفسير)", "Fiqh (الفقه)", "Seerah (السيرة)", "Hadeeth (الحديث)", "Others (أخرى)"];
       case "school-supply":
         return ["Notebooks", "Learning Aids", "Writing Tools", "Workbooks", "Accessories"];
       default:
@@ -298,18 +301,33 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
               />
             </div>
 
-            {/* Quantity - hidden when preorder */}
-            {!formData.isPreorder && (
+            {/* In Stock Toggle (for books) */}
+            {isBook && (
+              <div className="space-y-2">
+                <Label className="block">Availability</Label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <Checkbox
+                    checked={formData.isInStock}
+                    onCheckedChange={(checked) => setFormData({ ...formData, isInStock: checked as boolean })}
+                    className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                  />
+                  <span className="font-body text-sm text-foreground">Item is currently in stock</span>
+                </label>
+              </div>
+            )}
+
+            {/* Quantity - hidden when preorder or out of stock */}
+            {!formData.isPreorder && formData.isInStock && (
               <div className="space-y-2">
                 <Label htmlFor="quantity">Quantity in Stock *</Label>
                 <Input
                   id="quantity"
                   type="number"
-                  min="0"
+                  min="1"
                   value={formData.quantity}
                   onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
                   placeholder="Available quantity"
-                  required={!formData.isPreorder}
+                  required={!formData.isPreorder && formData.isInStock}
                 />
               </div>
             )}

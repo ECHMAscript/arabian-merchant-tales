@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label";
 import { BookProduct } from "@/data/books";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Star, BookmarkPlus, BookmarkCheck, ShoppingCart, Package, AlertCircle, ArrowLeft, MessageSquare } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -29,6 +31,7 @@ const BookModal = ({ isOpen, onClose, book }: BookModalProps) => {
   
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
+  const { user } = useAuthContext();
 
   const handleClose = () => {
     setShowRequestForm(false);
@@ -83,15 +86,44 @@ const BookModal = ({ isOpen, onClose, book }: BookModalProps) => {
     onClose();
   };
 
-  const handleRequestOrder = () => {
+  const handleRequestOrder = async () => {
     if (!requestOrderEmail.trim()) {
       toast.error("Please enter your email address");
       return;
     }
-    toast.success("Request order placed! We'll notify you when it's available.");
-    setShowRequestForm(false);
-    setRequestOrderEmail("");
-    onClose();
+    
+    try {
+      const userId = user?.id;
+      if (!userId) {
+        toast.error("Please sign in to request an order");
+        return;
+      }
+
+      await supabase.from("orders").insert({
+        user_id: userId,
+        items: [{
+          id: book.id,
+          name: book.name,
+          price: book.price,
+          quantity: 1,
+          image: book.image,
+          category: book.subcategory || 'books',
+        }] as any,
+        total: book.price,
+        status: "pending",
+        order_type: "request",
+        customer_name: user?.email || 'Customer',
+        customer_email: requestOrderEmail,
+        is_guest: false,
+      });
+
+      toast.success("Request order placed! We'll notify you when it's available.");
+      setShowRequestForm(false);
+      setRequestOrderEmail("");
+      onClose();
+    } catch (error) {
+      toast.error("Failed to place request order");
+    }
   };
 
   const handleWishlist = () => {

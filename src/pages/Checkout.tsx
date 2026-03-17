@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Trash2, Plus, Minus, CreditCard, Wallet, Building2, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,16 +7,78 @@ import { Separator } from "@/components/ui/separator";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useCart } from "@/contexts/CartContext";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Checkout = () => {
-  const { cartItems, updateQuantity, removeFromCart, cartTotal } = useCart();
+  const { cartItems, updateQuantity, removeFromCart, cartTotal, clearCart } = useCart();
+  const { user } = useAuthContext();
+  const { toast } = useToast();
+  const navigate = useNavigate();
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [promoCode, setPromoCode] = useState("");
+  const [placing, setPlacing] = useState(false);
+  const [shippingForm, setShippingForm] = useState({
+    firstName: "", lastName: "", address: "", city: "", state: "", zip: "", email: "",
+  });
 
   const subtotal = cartTotal;
   const shipping = subtotal > 150 ? 0 : 15;
   const tax = subtotal * 0.08;
   const total = subtotal + shipping + tax;
+
+  const handlePlaceOrder = async () => {
+    if (cartItems.length === 0) return;
+
+    setPlacing(true);
+    try {
+      const userId = user?.id;
+      if (!userId) {
+        toast({ title: "Error", description: "Please sign in to place an order", variant: "destructive" });
+        setPlacing(false);
+        return;
+      }
+
+      const orderItems = cartItems.map(item => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        image: item.image,
+        category: item.category || '',
+        size: item.size || null,
+        color: item.color || null,
+      }));
+
+      const { error } = await supabase.from("orders").insert({
+        user_id: userId,
+        items: orderItems as any,
+        total,
+        status: "pending",
+        order_type: "standard",
+        customer_name: `${shippingForm.firstName} ${shippingForm.lastName}`.trim() || user?.email || 'Customer',
+        customer_email: shippingForm.email || user?.email || null,
+        is_guest: false,
+        shipping_address: {
+          address: shippingForm.address,
+          city: shippingForm.city,
+          state: shippingForm.state,
+          zip: shippingForm.zip,
+        } as any,
+      });
+
+      if (error) throw error;
+
+      clearCart();
+      toast({ title: "Order Placed!", description: "Your order has been submitted successfully." });
+      navigate("/");
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message || "Failed to place order", variant: "destructive" });
+    } finally {
+      setPlacing(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -198,29 +260,33 @@ const Checkout = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="firstName">First Name</Label>
-                      <Input id="firstName" placeholder="John" className="mt-1" />
+                      <Input id="firstName" placeholder="John" className="mt-1" value={shippingForm.firstName} onChange={(e) => setShippingForm(p => ({...p, firstName: e.target.value}))} />
                     </div>
                     <div>
                       <Label htmlFor="lastName">Last Name</Label>
-                      <Input id="lastName" placeholder="Doe" className="mt-1" />
+                      <Input id="lastName" placeholder="Doe" className="mt-1" value={shippingForm.lastName} onChange={(e) => setShippingForm(p => ({...p, lastName: e.target.value}))} />
                     </div>
                   </div>
                   <div>
+                    <Label htmlFor="email">Email</Label>
+                    <Input id="email" type="email" placeholder="your@email.com" className="mt-1" value={shippingForm.email} onChange={(e) => setShippingForm(p => ({...p, email: e.target.value}))} />
+                  </div>
+                  <div>
                     <Label htmlFor="address">Street Address</Label>
-                    <Input id="address" placeholder="123 Main Street" className="mt-1" />
+                    <Input id="address" placeholder="123 Main Street" className="mt-1" value={shippingForm.address} onChange={(e) => setShippingForm(p => ({...p, address: e.target.value}))} />
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
                       <Label htmlFor="city">City</Label>
-                      <Input id="city" placeholder="New York" className="mt-1" />
+                      <Input id="city" placeholder="New York" className="mt-1" value={shippingForm.city} onChange={(e) => setShippingForm(p => ({...p, city: e.target.value}))} />
                     </div>
                     <div>
                       <Label htmlFor="state">State</Label>
-                      <Input id="state" placeholder="NY" className="mt-1" />
+                      <Input id="state" placeholder="NY" className="mt-1" value={shippingForm.state} onChange={(e) => setShippingForm(p => ({...p, state: e.target.value}))} />
                     </div>
                     <div>
                       <Label htmlFor="zip">ZIP Code</Label>
-                      <Input id="zip" placeholder="10001" className="mt-1" />
+                      <Input id="zip" placeholder="10001" className="mt-1" value={shippingForm.zip} onChange={(e) => setShippingForm(p => ({...p, zip: e.target.value}))} />
                     </div>
                   </div>
                 </div>
@@ -272,8 +338,13 @@ const Checkout = () => {
                   </div>
                 </div>
 
-                <Button variant="gold" className="w-full mt-6 h-12 text-lg font-semibold">
-                  Place Order
+                <Button 
+                  variant="gold" 
+                  className="w-full mt-6 h-12 text-lg font-semibold"
+                  onClick={handlePlaceOrder}
+                  disabled={placing}
+                >
+                  {placing ? "Placing Order..." : "Place Order"}
                 </Button>
 
                 <div className="flex items-center justify-center gap-2 mt-4 text-sm text-muted-foreground">

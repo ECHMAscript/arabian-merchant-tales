@@ -27,7 +27,7 @@ interface DbBook {
   discount_percentage: number;
   image: string;
   category: string;
-  quantity_left: number;
+  quantity_left: number | null;
   volumes: string[] | null;
   created_at: string;
   rating: number;
