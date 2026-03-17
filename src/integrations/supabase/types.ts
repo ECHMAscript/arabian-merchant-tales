@@ -118,9 +118,15 @@ export type Database = {
       }
       orders: {
         Row: {
+          cancel_reason: string | null
+          cancelled_at: string | null
           created_at: string
+          customer_email: string | null
+          customer_name: string | null
           id: string
+          is_guest: boolean
           items: Json
+          order_type: string
           shipping_address: Json | null
           status: string
           total: number
@@ -128,9 +134,15 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          cancel_reason?: string | null
+          cancelled_at?: string | null
           created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
           id?: string
+          is_guest?: boolean
           items: Json
+          order_type?: string
           shipping_address?: Json | null
           status?: string
           total: number
@@ -138,9 +150,15 @@ export type Database = {
           user_id: string
         }
         Update: {
+          cancel_reason?: string | null
+          cancelled_at?: string | null
           created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
           id?: string
+          is_guest?: boolean
           items?: Json
+          order_type?: string
           shipping_address?: Json | null
           status?: string
           total?: number
