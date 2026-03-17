@@ -301,18 +301,33 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
               />
             </div>
 
-            {/* Quantity - hidden when preorder */}
-            {!formData.isPreorder && (
+            {/* In Stock Toggle (for books) */}
+            {isBook && (
+              <div className="space-y-2">
+                <Label className="block">Availability</Label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <Checkbox
+                    checked={formData.isInStock}
+                    onCheckedChange={(checked) => setFormData({ ...formData, isInStock: checked as boolean })}
+                    className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                  />
+                  <span className="font-body text-sm text-foreground">Item is currently in stock</span>
+                </label>
+              </div>
+            )}
+
+            {/* Quantity - hidden when preorder or out of stock */}
+            {!formData.isPreorder && formData.isInStock && (
               <div className="space-y-2">
                 <Label htmlFor="quantity">Quantity in Stock *</Label>
                 <Input
                   id="quantity"
                   type="number"
-                  min="0"
+                  min="1"
                   value={formData.quantity}
                   onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
                   placeholder="Available quantity"
-                  required={!formData.isPreorder}
+                  required={!formData.isPreorder && formData.isInStock}
                 />
               </div>
             )}
