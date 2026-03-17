@@ -19,6 +19,7 @@ const Navbar = () => {
   const { favorites } = useFavorites();
   const { cartCount } = useCart();
   const { wishlist } = useWishlist();
+  const { hasAdminRole } = useAuthContext();
 
   const handleSearchProductClick = (product: ProductCardProps) => {
     setSelectedProduct(product);
