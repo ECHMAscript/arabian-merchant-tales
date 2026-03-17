@@ -1,4 +1,4 @@
-import { ShoppingCart, Menu, Heart, BookMarked, User } from "lucide-react";
+import { ShoppingCart, Menu, Heart, BookMarked, User, ClipboardList } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
@@ -9,6 +9,7 @@ import { ProductCardProps } from "./ProductCard";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
