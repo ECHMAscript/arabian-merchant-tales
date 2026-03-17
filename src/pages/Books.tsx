@@ -104,7 +104,7 @@ const Books = () => {
         return false;
       }
       // In stock filter
-      if (showInStockOnly && product.quantityLeft === 0) {
+      if (showInStockOnly && (product.quantityLeft <= 0)) {
         return false;
       }
       return true;
