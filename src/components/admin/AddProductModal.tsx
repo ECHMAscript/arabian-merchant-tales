@@ -101,6 +101,7 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
       const originalPrice = formData.originalPrice ? parseFloat(formData.originalPrice) : null;
       
       if (productType === "book" || productType === "school-supply") {
+        const qty = formData.isInStock ? (parseInt(formData.quantity) || 10) : 0;
         const { error } = await supabase.from("books").insert({
           title: formData.name,
           author: formData.author || null,
@@ -109,7 +110,7 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
           discount_percentage: discountPercentage,
           image: formData.image,
           category: productType === "book" ? "books" : "school-supplies",
-          quantity_left: parseInt(formData.quantity) || 10,
+          quantity_left: qty,
         });
 
         if (error) throw error;
