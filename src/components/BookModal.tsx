@@ -31,6 +31,7 @@ const BookModal = ({ isOpen, onClose, book }: BookModalProps) => {
   
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
+  const { user } = useAuthContext();
 
   const handleClose = () => {
     setShowRequestForm(false);
