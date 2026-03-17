@@ -43,7 +43,7 @@ const Books = () => {
         image: b.image,
         category: "books" as const,
         subcategory: "General",
-        quantityLeft: b.quantity_left,
+        quantityLeft: b.quantity_left ?? 0,
         rating: Number(b.rating) || 0,
         reviewCount: b.review_count || 0,
         volumes: b.volumes?.length || undefined,
