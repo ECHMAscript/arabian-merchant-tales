@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label";
 import { BookProduct } from "@/data/books";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Star, BookmarkPlus, BookmarkCheck, ShoppingCart, Package, AlertCircle, ArrowLeft, MessageSquare } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
