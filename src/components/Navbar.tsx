@@ -164,7 +164,10 @@ const Navbar = () => {
                   { to: "/books", label: "Books" },
                   { to: "/new-arrivals", label: "New Arrivals" },
                   { to: "/about", label: "About" },
-                  { to: "/wishlist", label: `Wishlist (${wishlist.length})` },
+                  ...(hasAdminRole
+                    ? [{ to: "/orders", label: "Orders" }]
+                    : [{ to: "/wishlist", label: `Wishlist (${wishlist.length})` }]
+                  ),
                   { to: "/favorites", label: `Favorites (${favorites.length})` },
                   { to: "/profile", label: "Profile" },
                 ].map((link) => (
