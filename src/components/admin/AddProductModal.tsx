@@ -153,6 +153,7 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
         isNew: false,
         isBestseller: false,
         isPreorder: false,
+        isInStock: true,
         author: "",
       });
       setColorVariants([]);
