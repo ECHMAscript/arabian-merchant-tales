@@ -187,7 +187,7 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
   const getCategories = () => {
     switch (productType) {
       case "book":
-        return ["Tafseer (تفسير)", "Fiqh (الفقه)", "Seerah (السيرة)", "Hadeeth (الحديث)"];
+        return ["Tafseer (تفسير)", "Fiqh (الفقه)", "Seerah (السيرة)", "Hadeeth (الحديث)", "Others (أخرى)"];
       case "school-supply":
         return ["Notebooks", "Learning Aids", "Writing Tools", "Workbooks", "Accessories"];
       default:
