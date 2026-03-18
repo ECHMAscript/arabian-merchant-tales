@@ -167,9 +167,10 @@ const Orders = () => {
       // Send cancellation email
       const email = cancelOrder.customer_email;
       if (email) {
-        await supabase.functions.invoke("cancel-order-email", {
-          body: { email, subject: cancelSubject, message: cancelMessage, orderId: cancelOrder.id },
+        const { error: emailError } = await supabase.functions.invoke("cancel-order-email", {
+          body: { email, subject: cancelSubject, message: cancelMessage, orderId: cancelOrder.id, siteUrl: window.location.origin },
         });
+        if (emailError) console.error("Email send error:", emailError);
       }
 
       // Delete the order from the database
