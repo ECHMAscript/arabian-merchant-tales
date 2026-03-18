@@ -59,6 +59,7 @@ const App = () => (
                 </WishlistProvider>
               </CartProvider>
             </FavoritesProvider>
+            </OrderNotificationProvider>
           </AdminProvider>
         </AuthProvider>
       </TooltipProvider>
