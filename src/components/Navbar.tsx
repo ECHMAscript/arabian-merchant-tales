@@ -21,6 +21,7 @@ const Navbar = () => {
   const { cartCount } = useCart();
   const { wishlist } = useWishlist();
   const { hasAdminRole } = useAuthContext();
+  const { unseenCount, formattedCount, markAllSeen } = useOrderNotifications();
 
   const handleSearchProductClick = (product: ProductCardProps) => {
     setSelectedProduct(product);
