@@ -10,6 +10,7 @@ import { useFavorites } from "@/contexts/FavoritesContext";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { useOrderNotifications } from "@/contexts/OrderNotificationContext";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
