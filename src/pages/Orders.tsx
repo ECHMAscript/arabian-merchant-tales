@@ -55,6 +55,7 @@ const CHART_COLORS = [
 const Orders = () => {
   const { user, isAdmin, hasAdminRole } = useAuthContext();
   const { toast } = useToast();
+  const { markAllSeen } = useOrderNotifications();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
