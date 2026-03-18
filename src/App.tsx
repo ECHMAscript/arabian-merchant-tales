@@ -9,6 +9,7 @@ import { CartProvider } from "@/contexts/CartContext";
 import { WishlistProvider } from "@/contexts/WishlistContext";
 import { AdminProvider } from "@/contexts/AdminContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { OrderNotificationProvider } from "@/contexts/OrderNotificationContext";
 import Index from "./pages/Index";
 import Checkout from "./pages/Checkout";
 import Profile from "./pages/Profile";
