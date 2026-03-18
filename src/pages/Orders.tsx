@@ -88,9 +88,10 @@ const Orders = () => {
 
   useEffect(() => {
     fetchOrders();
+    markAllSeen();
   }, []);
 
-  // Realtime subscription
+  // Realtime subscription for live list updates (toast handled globally)
   useEffect(() => {
     const channel = supabase
       .channel("orders-realtime")
@@ -110,10 +111,7 @@ const Orders = () => {
             cancel_reason: newOrder.cancel_reason || null,
           }, ...prev]);
           setNewOrderAlert(true);
-          toast({
-            title: "🔔 New Order Received!",
-            description: `Order from ${newOrder.customer_name || 'a customer'} - $${Number(newOrder.total).toFixed(2)}`,
-          });
+          markAllSeen();
           setTimeout(() => setNewOrderAlert(false), 5000);
         }
       )
