@@ -51,11 +51,11 @@ const ProductGrid = () => {
     const sorted = [...filteredProducts];
     switch (sortOption) {
       case "price-low":
-        return sorted.sort((a, b) => a.price - b.price);
+        return sorted.sort((a, b) => Number(a.price) - Number(b.price));
       case "price-high":
-        return sorted.sort((a, b) => b.price - a.price);
+        return sorted.sort((a, b) => Number(b.price) - Number(a.price));
       case "rating":
-        return sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        return sorted.sort((a, b) => (Number(b.rating) || 0) - (Number(a.rating) || 0));
       default:
         return sorted;
     }

@@ -10,6 +10,7 @@ import { useFavorites } from "@/contexts/FavoritesContext";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { useOrderNotifications } from "@/contexts/OrderNotificationContext";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -20,6 +21,7 @@ const Navbar = () => {
   const { cartCount } = useCart();
   const { wishlist } = useWishlist();
   const { hasAdminRole } = useAuthContext();
+  const { unseenCount, formattedCount, markAllSeen } = useOrderNotifications();
 
   const handleSearchProductClick = (product: ProductCardProps) => {
     setSelectedProduct(product);
@@ -86,10 +88,18 @@ const Navbar = () => {
                   variant="ghost" 
                   size="icon" 
                   className="relative hidden md:flex"
-                  onClick={() => navigate('/orders')}
+                  onClick={() => {
+                    markAllSeen();
+                    navigate('/orders');
+                  }}
                   title="Orders"
                 >
                   <ClipboardList className="h-5 w-5" />
+                  {unseenCount > 0 && (
+                    <span className="absolute -top-1 -right-1 min-w-5 h-5 px-1 bg-destructive text-destructive-foreground text-xs rounded-full flex items-center justify-center font-semibold">
+                      {formattedCount}
+                    </span>
+                  )}
                 </Button>
               ) : (
                 <Button 

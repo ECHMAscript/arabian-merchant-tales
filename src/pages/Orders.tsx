@@ -2,6 +2,7 @@ import { Helmet } from "react-helmet-async";
 import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { useOrderNotifications } from "@/contexts/OrderNotificationContext";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -54,6 +55,7 @@ const CHART_COLORS = [
 const Orders = () => {
   const { user, isAdmin, hasAdminRole } = useAuthContext();
   const { toast } = useToast();
+  const { markAllSeen } = useOrderNotifications();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -86,9 +88,10 @@ const Orders = () => {
 
   useEffect(() => {
     fetchOrders();
+    markAllSeen();
   }, []);
 
-  // Realtime subscription
+  // Realtime subscription for live list updates (toast handled globally)
   useEffect(() => {
     const channel = supabase
       .channel("orders-realtime")
@@ -108,10 +111,7 @@ const Orders = () => {
             cancel_reason: newOrder.cancel_reason || null,
           }, ...prev]);
           setNewOrderAlert(true);
-          toast({
-            title: "🔔 New Order Received!",
-            description: `Order from ${newOrder.customer_name || 'a customer'} - $${Number(newOrder.total).toFixed(2)}`,
-          });
+          markAllSeen();
           setTimeout(() => setNewOrderAlert(false), 5000);
         }
       )
