@@ -249,9 +249,9 @@ const Tailoring = () => {
                     />
                   </div>
 
-                  <Button type="submit" variant="gold" size="lg" className="w-full mt-6">
+                  <Button type="submit" variant="gold" size="lg" className="w-full mt-6" disabled={submitting}>
                     <Scissors className="w-5 h-5 mr-2" />
-                    Submit Custom Order
+                    {submitting ? "Submitting..." : "Submit Custom Order"}
                   </Button>
                 </form>
               </div>
