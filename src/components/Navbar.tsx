@@ -1,4 +1,4 @@
-import { ShoppingCart, Menu, Heart, BookMarked, User, ClipboardList } from "lucide-react";
+import { ShoppingCart, Menu, Heart, BookMarked, User, ClipboardList, Scissors } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
