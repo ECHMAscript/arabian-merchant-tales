@@ -101,6 +101,15 @@ const Navbar = () => {
                     </span>
                   )}
                 </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="relative hidden md:flex"
+                  onClick={() => navigate('/work-orders')}
+                  title="Work Orders"
+                >
+                  <Scissors className="h-5 w-5" />
+                </Button>
               ) : (
                 <Button 
                   variant="ghost" 
