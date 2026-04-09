@@ -6,6 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Scissors } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 interface GarmentType {
   id: string;
@@ -79,20 +82,45 @@ const garmentTypes: GarmentType[] = [
 const Tailoring = () => {
   const [selectedGarment, setSelectedGarment] = useState<GarmentType | null>(null);
   const [measurements, setMeasurements] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuthContext();
+  const navigate = useNavigate();
 
   const handleMeasurementChange = (id: string, value: string) => {
     setMeasurements((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Order Submitted!",
-      description: `Your custom ${selectedGarment?.name} order has been received. We'll contact you soon.`,
+    if (!user) {
+      toast({ title: "Please sign in", description: "You need to be logged in to place a tailoring order.", variant: "destructive" });
+      navigate("/auth");
+      return;
+    }
+    if (!selectedGarment) return;
+    setSubmitting(true);
+
+    const notesEl = document.getElementById("notes") as HTMLTextAreaElement | null;
+
+    const { error } = await supabase.from("tailoring_orders").insert({
+      user_id: user.id,
+      customer_name: user.user_metadata?.username || user.email?.split("@")[0] || "Customer",
+      customer_email: user.email,
+      garment_type: selectedGarment.id,
+      garment_name: selectedGarment.name,
+      measurements,
+      special_notes: notesEl?.value || null,
     });
-    setMeasurements({});
-    setSelectedGarment(null);
+
+    setSubmitting(false);
+    if (error) {
+      toast({ title: "Error", description: "Failed to submit order. Please try again.", variant: "destructive" });
+    } else {
+      toast({ title: "Order Submitted!", description: `Your custom ${selectedGarment.name} order has been received. We'll contact you soon.` });
+      setMeasurements({});
+      setSelectedGarment(null);
+    }
   };
 
   const handleBack = () => {
@@ -221,9 +249,9 @@ const Tailoring = () => {
                     />
                   </div>
 
-                  <Button type="submit" variant="gold" size="lg" className="w-full mt-6">
+                  <Button type="submit" variant="gold" size="lg" className="w-full mt-6" disabled={submitting}>
                     <Scissors className="w-5 h-5 mr-2" />
-                    Submit Custom Order
+                    {submitting ? "Submitting..." : "Submit Custom Order"}
                   </Button>
                 </form>
               </div>
