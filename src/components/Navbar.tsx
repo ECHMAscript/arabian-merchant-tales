@@ -175,7 +175,10 @@ const Navbar = () => {
                   { to: "/new-arrivals", label: "New Arrivals" },
                   { to: "/about", label: "About" },
                   ...(hasAdminRole
-                    ? [{ to: "/orders", label: "Orders" }]
+                    ? [
+                        { to: "/orders", label: "Orders" },
+                        { to: "/work-orders", label: "Work Orders" },
+                      ]
                     : [{ to: "/wishlist", label: `Wishlist (${wishlist.length})` }]
                   ),
                   { to: "/favorites", label: `Favorites (${favorites.length})` },
