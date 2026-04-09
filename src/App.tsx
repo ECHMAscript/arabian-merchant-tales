@@ -22,6 +22,7 @@ import Books from "./pages/Books";
 import Auth from "./pages/Auth";
 import VerifyEmail from "./pages/VerifyEmail";
 import Orders from "./pages/Orders";
+import WorkOrders from "./pages/WorkOrders";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
