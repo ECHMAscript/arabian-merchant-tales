@@ -82,7 +82,10 @@ const garmentTypes: GarmentType[] = [
 const Tailoring = () => {
   const [selectedGarment, setSelectedGarment] = useState<GarmentType | null>(null);
   const [measurements, setMeasurements] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuthContext();
+  const navigate = useNavigate();
 
   const handleMeasurementChange = (id: string, value: string) => {
     setMeasurements((prev) => ({ ...prev, [id]: value }));
