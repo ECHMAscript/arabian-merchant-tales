@@ -91,14 +91,36 @@ const Tailoring = () => {
     setMeasurements((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Order Submitted!",
-      description: `Your custom ${selectedGarment?.name} order has been received. We'll contact you soon.`,
+    if (!user) {
+      toast({ title: "Please sign in", description: "You need to be logged in to place a tailoring order.", variant: "destructive" });
+      navigate("/auth");
+      return;
+    }
+    if (!selectedGarment) return;
+    setSubmitting(true);
+
+    const notesEl = document.getElementById("notes") as HTMLTextAreaElement | null;
+
+    const { error } = await supabase.from("tailoring_orders").insert({
+      user_id: user.id,
+      customer_name: user.user_metadata?.username || user.email?.split("@")[0] || "Customer",
+      customer_email: user.email,
+      garment_type: selectedGarment.id,
+      garment_name: selectedGarment.name,
+      measurements,
+      special_notes: notesEl?.value || null,
     });
-    setMeasurements({});
-    setSelectedGarment(null);
+
+    setSubmitting(false);
+    if (error) {
+      toast({ title: "Error", description: "Failed to submit order. Please try again.", variant: "destructive" });
+    } else {
+      toast({ title: "Order Submitted!", description: `Your custom ${selectedGarment.name} order has been received. We'll contact you soon.` });
+      setMeasurements({});
+      setSelectedGarment(null);
+    }
   };
 
   const handleBack = () => {
