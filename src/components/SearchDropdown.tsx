@@ -127,7 +127,7 @@ const SearchDropdown = ({ onProductClick }: SearchDropdownProps) => {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search products, pages..."
-              className="bg-transparent outline-none font-body text-foreground placeholder:text-muted-foreground w-48 md:w-64"
+              className="bg-transparent outline-none font-body text-foreground placeholder:text-muted-foreground w-32 sm:w-48 md:w-64"
               autoFocus
             />
             <button

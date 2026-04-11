@@ -220,22 +220,46 @@ export type Database = {
       }
       profiles: {
         Row: {
+          address: string | null
+          bio: string | null
+          city: string | null
+          country: string | null
           created_at: string
+          first_name: string | null
           id: string
+          last_name: string | null
+          phone: string | null
+          postal_code: string | null
           updated_at: string
           user_id: string
           username: string
         }
         Insert: {
+          address?: string | null
+          bio?: string | null
+          city?: string | null
+          country?: string | null
           created_at?: string
+          first_name?: string | null
           id?: string
+          last_name?: string | null
+          phone?: string | null
+          postal_code?: string | null
           updated_at?: string
           user_id: string
           username: string
         }
         Update: {
+          address?: string | null
+          bio?: string | null
+          city?: string | null
+          country?: string | null
           created_at?: string
+          first_name?: string | null
           id?: string
+          last_name?: string | null
+          phone?: string | null
+          postal_code?: string | null
           updated_at?: string
           user_id?: string
           username?: string
@@ -247,6 +271,7 @@ export type Database = {
           comment: string
           created_at: string
           id: string
+          images: string[] | null
           item_id: string
           item_type: string
           rating: number
@@ -256,6 +281,7 @@ export type Database = {
           comment?: string
           created_at?: string
           id?: string
+          images?: string[] | null
           item_id: string
           item_type: string
           rating: number
@@ -265,6 +291,7 @@ export type Database = {
           comment?: string
           created_at?: string
           id?: string
+          images?: string[] | null
           item_id?: string
           item_type?: string
           rating?: number

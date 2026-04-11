@@ -85,10 +85,14 @@ export const useDbNewArrivals = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchArrivals = useCallback(async () => {
+    // Get products explicitly marked OR created in last 7 days
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
     const { data, error } = await supabase
       .from("products")
       .select("*")
-      .eq("is_new_arrival", true)
+      .or(`is_new_arrival.eq.true,created_at.gte.${sevenDaysAgo.toISOString()}`)
       .order("created_at", { ascending: false });
 
     if (!error && data) {
