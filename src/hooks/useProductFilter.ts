@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback, useRef } from "react";
 import { ExtendedProduct } from "@/data/products";
 
 export interface FilterState {
@@ -19,6 +19,8 @@ const initialFilterState: FilterState = {
 
 export const useProductFilter = (products: ExtendedProduct[]) => {
   const [filters, setFilters] = useState<FilterState>(initialFilterState);
+  const [debouncedPrice, setDebouncedPrice] = useState<[number, number]>([0, 1000]);
+  const priceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
@@ -36,18 +38,24 @@ export const useProductFilter = (products: ExtendedProduct[]) => {
         if (!matchesCategory) return false;
       }
 
-      // Price range filter
-      if (product.price < filters.priceRange[0] || product.price > filters.priceRange[1]) {
+      // Price range filter (use debounced value)
+      if (product.price < debouncedPrice[0] || product.price > debouncedPrice[1]) {
         return false;
       }
 
       return true;
     });
-  }, [products, filters]);
+  }, [products, filters.categories, debouncedPrice]);
 
-  const updateFilter = <K extends keyof FilterState>(key: K, value: FilterState[K]) => {
+  const updateFilter = useCallback(<K extends keyof FilterState>(key: K, value: FilterState[K]) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
-  };
+    if (key === "priceRange") {
+      if (priceTimerRef.current) clearTimeout(priceTimerRef.current);
+      priceTimerRef.current = setTimeout(() => {
+        setDebouncedPrice(value as [number, number]);
+      }, 200);
+    }
+  }, []);
 
   const toggleArrayFilter = (key: "categories" | "sizes", value: string) => {
     setFilters((prev) => {
@@ -61,6 +69,7 @@ export const useProductFilter = (products: ExtendedProduct[]) => {
 
   const resetFilters = () => {
     setFilters(initialFilterState);
+    setDebouncedPrice([0, 1000]);
   };
 
   return {
