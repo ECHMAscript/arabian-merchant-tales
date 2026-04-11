@@ -1,8 +1,7 @@
-import { useState } from "react";
-import { Star, Send } from "lucide-react";
+import { useState, useRef } from "react";
+import { Star, Send, ImagePlus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-
 import { useReviews } from "@/hooks/useReviews";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
@@ -21,6 +20,9 @@ const ReviewSection = ({ itemId, itemType, itemName, rating, reviewCount }: Revi
   const [newComment, setNewComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [hoverRating, setHoverRating] = useState(0);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const renderStars = (r: number, interactive = false) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -38,6 +40,30 @@ const ReviewSection = ({ itemId, itemType, itemName, rating, reviewCount }: Revi
     ));
   };
 
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const remaining = 4 - imageFiles.length;
+    const toAdd = files.slice(0, remaining);
+    
+    const newFiles = [...imageFiles, ...toAdd];
+    setImageFiles(newFiles);
+
+    toAdd.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        setImagePreviews((prev) => [...prev, ev.target?.result as string]);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    if (e.target) e.target.value = "";
+  };
+
+  const removeImage = (index: number) => {
+    setImageFiles((prev) => prev.filter((_, i) => i !== index));
+    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async () => {
     if (!newComment.trim()) {
       toast.error("Please write a comment");
@@ -45,13 +71,15 @@ const ReviewSection = ({ itemId, itemType, itemName, rating, reviewCount }: Revi
     }
 
     setSubmitting(true);
-    const result = await submitReview(newRating, newComment.trim());
+    const result = await submitReview(newRating, newComment.trim(), imageFiles);
     setSubmitting(false);
 
     if (result.success) {
       toast.success("Review submitted!");
       setNewComment("");
       setNewRating(5);
+      setImageFiles([]);
+      setImagePreviews([]);
     } else if (result.error === "not_authenticated") {
       toast.error("Please log in or create an account to leave a review", {
         action: {
@@ -108,6 +136,19 @@ const ReviewSection = ({ itemId, itemType, itemName, rating, reviewCount }: Revi
               {review.comment && (
                 <p className="font-body text-sm text-muted-foreground break-words">{review.comment}</p>
               )}
+              {review.images && review.images.length > 0 && (
+                <div className="flex gap-2 mt-2 flex-wrap">
+                  {review.images.map((img, i) => (
+                    <img
+                      key={i}
+                      src={img}
+                      alt={`Review image ${i + 1}`}
+                      className="w-16 h-16 object-cover rounded-lg border border-border cursor-pointer hover:opacity-80 transition-opacity"
+                      onClick={() => window.open(img, "_blank")}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           ))
         )}
@@ -127,6 +168,46 @@ const ReviewSection = ({ itemId, itemType, itemName, rating, reviewCount }: Revi
           className="bg-background resize-none"
           rows={2}
         />
+
+        {/* Image upload */}
+        <div className="space-y-2">
+          {imagePreviews.length > 0 && (
+            <div className="flex gap-2 flex-wrap">
+              {imagePreviews.map((preview, i) => (
+                <div key={i} className="relative group">
+                  <img src={preview} alt={`Upload ${i + 1}`} className="w-16 h-16 object-cover rounded-lg border border-border" />
+                  <button
+                    onClick={() => removeImage(i)}
+                    className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+          {imageFiles.length < 4 && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5"
+              onClick={() => fileInputRef.current?.click()}
+              type="button"
+            >
+              <ImagePlus className="h-4 w-4" />
+              Add Photos ({imageFiles.length}/4)
+            </Button>
+          )}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            className="hidden"
+            onChange={handleImageSelect}
+          />
+        </div>
+
         <Button
           onClick={handleSubmit}
           variant="gold"

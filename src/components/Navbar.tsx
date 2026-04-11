@@ -30,14 +30,13 @@ const Navbar = () => {
 
   return (
     <>
-      {/* Upper Navigation Bar */}
       <UpperNav />
 
       <nav className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-border shadow-soft">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-2">
+            <Link to="/" className="flex items-center gap-2 shrink-0">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center">
                 <span className="font-display text-primary-foreground text-lg font-bold">ر</span>
               </div>
@@ -65,7 +64,7 @@ const Navbar = () => {
                   to={link.to}
                   end={link.to === "/"}
                   className={({ isActive }) =>
-                    `font-body transition-colors duration-200 border-b-2 pb-0.5 ${
+                    `font-body transition-colors duration-200 border-b-2 pb-0.5 whitespace-nowrap ${
                       isActive
                         ? "text-primary border-primary font-medium"
                         : "text-foreground hover:text-primary border-transparent"
@@ -78,23 +77,13 @@ const Navbar = () => {
             </div>
 
             {/* Right Actions */}
-            <div className="flex items-center gap-2 md:gap-4">
-              <div className="hidden md:block">
-                <SearchDropdown onProductClick={handleSearchProductClick} />
-              </div>
-              {/* Admin Orders Icon - replaces Wishlist for admins */}
+            <div className="flex items-center gap-1 md:gap-4 shrink-0">
+              {/* Search - always visible */}
+              <SearchDropdown onProductClick={handleSearchProductClick} />
+
               {hasAdminRole ? (
                 <>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="relative hidden md:flex"
-                    onClick={() => {
-                      markAllSeen();
-                      navigate('/orders');
-                    }}
-                    title="Orders"
-                  >
+                  <Button variant="ghost" size="icon" className="relative hidden md:flex" onClick={() => { markAllSeen(); navigate('/orders'); }} title="Orders">
                     <ClipboardList className="h-5 w-5" />
                     {unseenCount > 0 && (
                       <span className="absolute -top-1 -right-1 min-w-5 h-5 px-1 bg-destructive text-destructive-foreground text-xs rounded-full flex items-center justify-center font-semibold">
@@ -102,24 +91,12 @@ const Navbar = () => {
                       </span>
                     )}
                   </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="relative hidden md:flex"
-                    onClick={() => navigate('/work-orders')}
-                    title="Work Orders"
-                  >
+                  <Button variant="ghost" size="icon" className="relative hidden md:flex" onClick={() => navigate('/work-orders')} title="Work Orders">
                     <Scissors className="h-5 w-5" />
                   </Button>
                 </>
               ) : (
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="relative hidden md:flex"
-                  onClick={() => navigate('/wishlist')}
-                  title="Wishlist"
-                >
+                <Button variant="ghost" size="icon" className="relative hidden md:flex" onClick={() => navigate('/wishlist')} title="Wishlist">
                   <BookMarked className="h-5 w-5" />
                   {wishlist.length > 0 && (
                     <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-primary-foreground text-xs rounded-full flex items-center justify-center font-semibold">
@@ -128,13 +105,7 @@ const Navbar = () => {
                   )}
                 </Button>
               )}
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="relative hidden md:flex"
-                onClick={() => navigate('/favorites')}
-                title="Favorites"
-              >
+              <Button variant="ghost" size="icon" className="relative hidden md:flex" onClick={() => navigate('/favorites')} title="Favorites">
                 <Heart className="h-5 w-5" />
                 {favorites.length > 0 && (
                   <span className="absolute -top-1 -right-1 w-5 h-5 bg-secondary text-secondary-foreground text-xs rounded-full flex items-center justify-center font-semibold">
@@ -142,21 +113,10 @@ const Navbar = () => {
                   </span>
                 )}
               </Button>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="relative hidden md:flex"
-                onClick={() => navigate('/profile')}
-                title="My Profile"
-              >
+              <Button variant="ghost" size="icon" className="relative hidden md:flex" onClick={() => navigate('/profile')} title="My Profile">
                 <User className="h-5 w-5" />
               </Button>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="relative"
-                onClick={() => navigate('/checkout')}
-              >
+              <Button variant="ghost" size="icon" className="relative" onClick={() => navigate('/checkout')}>
                 <ShoppingCart className="h-5 w-5" />
                 {cartCount > 0 && (
                   <span className="absolute -top-1 -right-1 w-5 h-5 bg-secondary text-secondary-foreground text-xs rounded-full flex items-center justify-center font-semibold">
@@ -164,12 +124,7 @@ const Navbar = () => {
                   </span>
                 )}
               </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="md:hidden"
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-              >
+              <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
                 <Menu className="h-5 w-5" />
               </Button>
             </div>
@@ -200,7 +155,7 @@ const Navbar = () => {
                     to={link.to}
                     end={link.to === "/"}
                     className={({ isActive }) =>
-                      `font-body transition-colors px-2 py-2 ${
+                      `font-body transition-colors px-2 py-2 whitespace-nowrap ${
                         isActive
                           ? "text-primary font-medium"
                           : "text-foreground hover:text-primary"

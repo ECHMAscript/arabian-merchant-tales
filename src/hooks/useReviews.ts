@@ -10,6 +10,7 @@ export interface Review {
   comment: string;
   created_at: string;
   username?: string;
+  images?: string[];
 }
 
 export const useReviews = (itemId: string | number | undefined, itemType: "product" | "book") => {
@@ -27,7 +28,6 @@ export const useReviews = (itemId: string | number | undefined, itemType: "produ
       .order("created_at", { ascending: false });
 
     if (!error && data) {
-      // Fetch usernames for each review
       const userIds = [...new Set(data.map((r: any) => r.user_id))];
       const { data: profiles } = await supabase
         .from("profiles")
@@ -42,6 +42,7 @@ export const useReviews = (itemId: string | number | undefined, itemType: "produ
         data.map((r: any) => ({
           ...r,
           username: profileMap.get(r.user_id) || "Anonymous",
+          images: r.images || [],
         }))
       );
     }
@@ -52,13 +53,57 @@ export const useReviews = (itemId: string | number | undefined, itemType: "produ
     fetchReviews();
   }, [fetchReviews]);
 
-  const submitReview = async (rating: number, comment: string): Promise<{ success: boolean; error?: string }> => {
+  const submitReview = async (
+    rating: number,
+    comment: string,
+    imageFiles?: File[]
+  ): Promise<{ success: boolean; error?: string }> => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       return { success: false, error: "not_authenticated" };
     }
     if (!itemId || typeof itemId !== "string") {
       return { success: false, error: "Invalid item" };
+    }
+
+    // Check 10-day cooldown
+    const { data: existing } = await supabase
+      .from("reviews")
+      .select("created_at")
+      .eq("user_id", user.id)
+      .eq("item_id", itemId)
+      .maybeSingle();
+
+    if (existing) {
+      const lastReviewDate = new Date(existing.created_at);
+      const now = new Date();
+      const daysDiff = (now.getTime() - lastReviewDate.getTime()) / (1000 * 60 * 60 * 24);
+      if (daysDiff < 10) {
+        const daysLeft = Math.ceil(10 - daysDiff);
+        return {
+          success: false,
+          error: `You've already reviewed this item. You can update your review in ${daysLeft} day${daysLeft !== 1 ? "s" : ""}.`,
+        };
+      }
+    }
+
+    // Upload images if provided
+    let imageUrls: string[] = [];
+    if (imageFiles && imageFiles.length > 0) {
+      const uploads = imageFiles.slice(0, 4);
+      for (const file of uploads) {
+        const ext = file.name.split(".").pop();
+        const path = `${user.id}/${itemId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+        const { error: uploadError } = await supabase.storage
+          .from("review-images")
+          .upload(path, file);
+        if (!uploadError) {
+          const { data: urlData } = supabase.storage
+            .from("review-images")
+            .getPublicUrl(path);
+          imageUrls.push(urlData.publicUrl);
+        }
+      }
     }
 
     const { error } = await supabase.from("reviews").upsert(
@@ -68,7 +113,8 @@ export const useReviews = (itemId: string | number | undefined, itemType: "produ
         item_type: itemType,
         rating,
         comment,
-      },
+        images: imageUrls.length > 0 ? imageUrls : undefined,
+      } as any,
       { onConflict: "user_id,item_id" }
     );
 
