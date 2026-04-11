@@ -8,12 +8,14 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useCart } from "@/contexts/CartContext";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { useWishlist } from "@/contexts/WishlistContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 const Checkout = () => {
   const { cartItems, updateQuantity, removeFromCart, cartTotal, clearCart } = useCart();
   const { user } = useAuthContext();
+  const { wishlist, removeFromWishlist } = useWishlist();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [paymentMethod, setPaymentMethod] = useState("card");
@@ -69,6 +71,13 @@ const Checkout = () => {
       });
 
       if (error) throw error;
+
+      // Remove purchased items from wishlist
+      for (const item of cartItems) {
+        if (wishlist.some((w) => String(w.id) === String(item.id))) {
+          removeFromWishlist(item.id);
+        }
+      }
 
       clearCart();
       toast({ title: "Order Placed!", description: "Your order has been submitted successfully." });
