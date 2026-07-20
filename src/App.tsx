@@ -12,6 +12,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { OrderNotificationProvider } from "@/contexts/OrderNotificationContext";
 import Index from "./pages/Index";
 import Checkout from "./pages/Checkout";
+import CheckoutReturn from "./pages/CheckoutReturn";
 import Profile from "./pages/Profile";
 import Favorites from "./pages/Favorites";
 import Wishlist from "./pages/Wishlist";
@@ -43,6 +44,7 @@ const App = () => (
                     <Routes>
                       <Route path="/" element={<Index />} />
                       <Route path="/checkout" element={<Checkout />} />
+                      <Route path="/checkout/return" element={<CheckoutReturn />} />
                       <Route path="/profile" element={<Profile />} />
                       <Route path="/favorites" element={<Favorites />} />
                       <Route path="/wishlist" element={<Wishlist />} />
