@@ -123,12 +123,16 @@ export type Database = {
           created_at: string
           customer_email: string | null
           customer_name: string | null
+          environment: string
           id: string
           is_guest: boolean
           items: Json
           order_type: string
+          paid_at: string | null
+          payment_status: string
           shipping_address: Json | null
           status: string
+          stripe_session_id: string | null
           total: number
           updated_at: string
           user_id: string
@@ -139,12 +143,16 @@ export type Database = {
           created_at?: string
           customer_email?: string | null
           customer_name?: string | null
+          environment?: string
           id?: string
           is_guest?: boolean
           items: Json
           order_type?: string
+          paid_at?: string | null
+          payment_status?: string
           shipping_address?: Json | null
           status?: string
+          stripe_session_id?: string | null
           total: number
           updated_at?: string
           user_id: string
@@ -155,12 +163,16 @@ export type Database = {
           created_at?: string
           customer_email?: string | null
           customer_name?: string | null
+          environment?: string
           id?: string
           is_guest?: boolean
           items?: Json
           order_type?: string
+          paid_at?: string | null
+          payment_status?: string
           shipping_address?: Json | null
           status?: string
+          stripe_session_id?: string | null
           total?: number
           updated_at?: string
           user_id?: string
