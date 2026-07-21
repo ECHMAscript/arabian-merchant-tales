@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import SearchDropdown from "./SearchDropdown";
-import ProductModal from "./ProductModal";
 import UpperNav from "./UpperNav";
 import { ProductCardProps } from "./ProductCard";
 import { useFavorites } from "@/contexts/FavoritesContext";
@@ -14,8 +13,6 @@ import { useOrderNotifications } from "@/contexts/OrderNotificationContext";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<ProductCardProps | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
   const { favorites } = useFavorites();
   const { cartCount } = useCart();
@@ -24,8 +21,7 @@ const Navbar = () => {
   const { unseenCount, formattedCount, markAllSeen } = useOrderNotifications();
 
   const handleSearchProductClick = (product: ProductCardProps) => {
-    setSelectedProduct(product);
-    setIsModalOpen(true);
+    navigate(`/product/${product.id}`);
   };
 
   return (
