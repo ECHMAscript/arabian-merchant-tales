@@ -382,7 +382,7 @@ const Profile = () => {
       </main>
 
       <BookModal isOpen={isBookModalOpen} onClose={() => setIsBookModalOpen(false)} book={selectedBook} />
-      <ProductModal isOpen={isProductModalOpen} onClose={() => setIsProductModalOpen(false)} product={selectedProduct} />
+      
     </div>
   );
 };
