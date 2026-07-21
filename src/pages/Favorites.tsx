@@ -1,20 +1,17 @@
 import { Helmet } from "react-helmet-async";
 import { Heart, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { useFavorites } from "@/contexts/FavoritesContext";
-import ProductModal from "@/components/ProductModal";
 import { ProductCardProps } from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
 
 const Favorites = () => {
   const { favorites, removeFavorite } = useFavorites();
-  const [selectedProduct, setSelectedProduct] = useState<ProductCardProps | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleProductClick = (product: ProductCardProps) => {
-    setSelectedProduct(product);
-    setIsModalOpen(true);
+    navigate(`/product/${product.id}`);
   };
 
   return (
@@ -98,11 +95,6 @@ const Favorites = () => {
           )}
         </main>
 
-        <ProductModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          product={selectedProduct}
-        />
       </div>
     </>
   );

@@ -1,8 +1,8 @@
 import { Helmet } from "react-helmet-async";
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import ProductCard from "@/components/ProductCard";
-import ProductModal from "@/components/ProductModal";
 import { ExtendedProduct } from "@/data/products";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -20,8 +20,7 @@ import AddProductModal from "@/components/admin/AddProductModal";
 import { useDbNewArrivals } from "@/hooks/useDbProducts";
 
 const NewArrivals = () => {
-  const [selectedProduct, setSelectedProduct] = useState<ExtendedProduct | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 500]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
@@ -47,10 +46,8 @@ const NewArrivals = () => {
       hasSizes: p.has_sizes !== false,
     }));
   }, [dbArrivals]);
-
   const handleProductClick = (product: ExtendedProduct) => {
-    setSelectedProduct(product);
-    setIsModalOpen(true);
+    navigate(`/product/${product.id}`);
   };
 
   const toggleCategory = (cat: string) => {
@@ -374,11 +371,6 @@ const NewArrivals = () => {
           )}
         </main>
 
-        <ProductModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          product={selectedProduct}
-        />
 
         {/* Admin Add Modals */}
         <AddProductModal

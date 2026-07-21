@@ -14,7 +14,6 @@ import { useCart } from "@/contexts/CartContext";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import BookModal from "@/components/BookModal";
-import ProductModal from "@/components/ProductModal";
 import { BookProduct } from "@/data/books";
 
 const Profile = () => {
@@ -47,8 +46,6 @@ const Profile = () => {
   // Modal state
   const [selectedBook, setSelectedBook] = useState<BookProduct | null>(null);
   const [isBookModalOpen, setIsBookModalOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<any>(null);
-  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
 
   // Load profile from DB
   useEffect(() => {
@@ -143,8 +140,7 @@ const Profile = () => {
       setSelectedBook(item as BookProduct);
       setIsBookModalOpen(true);
     } else {
-      setSelectedProduct(item);
-      setIsProductModalOpen(true);
+      navigate(`/product/${item.id}`);
     }
   };
 
@@ -386,7 +382,7 @@ const Profile = () => {
       </main>
 
       <BookModal isOpen={isBookModalOpen} onClose={() => setIsBookModalOpen(false)} book={selectedBook} />
-      <ProductModal isOpen={isProductModalOpen} onClose={() => setIsProductModalOpen(false)} product={selectedProduct} />
+      
     </div>
   );
 };
