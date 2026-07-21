@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import ProductCard from "./ProductCard";
-import ProductModal from "./ProductModal";
 import { ExtendedProduct } from "@/data/products";
 import { useProductFilter } from "@/hooks/useProductFilter";
 import FilterSidebar from "./FilterSidebar";
@@ -13,8 +13,7 @@ import { useDbProducts } from "@/hooks/useDbProducts";
 const ITEMS_PER_PAGE = 8;
 
 const ProductGrid = () => {
-  const [selectedProduct, setSelectedProduct] = useState<ExtendedProduct | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
   const [displayCount, setDisplayCount] = useState(ITEMS_PER_PAGE);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -65,8 +64,7 @@ const ProductGrid = () => {
   const hasMoreProducts = displayCount < sortedProducts.length;
 
   const handleProductClick = (product: ExtendedProduct) => {
-    setSelectedProduct(product);
-    setIsModalOpen(true);
+    navigate(`/product/${product.id}`);
   };
 
   const handleLoadMore = () => {
@@ -178,13 +176,6 @@ const ProductGrid = () => {
             </p>
           ) : null}
         </div>
-
-        {/* Product Modal */}
-        <ProductModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          product={selectedProduct}
-        />
 
         {/* Admin Add Product Modal */}
         <AddProductModal
