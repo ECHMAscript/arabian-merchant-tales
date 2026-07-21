@@ -148,6 +148,7 @@ const Wishlist = () => {
           isOpen={isBookModalOpen}
           onClose={() => setIsBookModalOpen(false)}
           book={selectedBook}
+        />
       </div>
     </>
   );
