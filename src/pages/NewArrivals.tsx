@@ -371,11 +371,6 @@ const NewArrivals = () => {
           )}
         </main>
 
-        <ProductModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          product={selectedProduct}
-        />
 
         {/* Admin Add Modals */}
         <AddProductModal
