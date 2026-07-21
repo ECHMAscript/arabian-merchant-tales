@@ -167,12 +167,6 @@ const Navbar = () => {
           )}
         </div>
       </nav>
-
-      <ProductModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        product={selectedProduct}
-      />
     </>
   );
 };
