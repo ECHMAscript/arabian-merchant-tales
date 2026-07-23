@@ -5,6 +5,7 @@ import { ChevronRight, ChevronLeft, Star, ShoppingCart, Heart, Minus, Plus, Mess
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import ReviewSection from "@/components/ReviewSection";
+import ImageMagnifier from "@/components/ImageMagnifier";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
