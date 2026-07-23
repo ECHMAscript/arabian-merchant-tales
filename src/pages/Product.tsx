@@ -282,8 +282,11 @@ const ProductPage = () => {
                     </div>
                   )}
 
+                  {/* Bottom-anchored controls */}
+                  <div className="mt-auto pt-6">
                   {/* Quantity */}
-                  <div className="mt-6">
+                  <div>
+
                     <h3 className="font-body text-xs tracking-[0.2em] uppercase text-muted-foreground mb-2">
                       Quantity
                     </h3>
