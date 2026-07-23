@@ -162,7 +162,7 @@ const ProductPage = () => {
             <span className="text-foreground">{product.name}</span>
           </nav>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-stretch">
             {/* Image */}
             <div className="relative bg-card rounded-2xl overflow-hidden shadow-card">
               <div className="aspect-square w-full">
@@ -185,13 +185,14 @@ const ProductPage = () => {
             </div>
 
             {/* Right side: sliding carousel between Details and Reviews */}
-            <div className="relative overflow-hidden">
+            <div className="relative overflow-hidden lg:h-full">
               <div
-                className="flex transition-transform duration-500 ease-in-out"
+                className="flex transition-transform duration-500 ease-in-out h-full"
                 style={{ transform: showReviews ? "translateX(-50%)" : "translateX(0%)", width: "200%" }}
               >
                 {/* Details panel */}
-                <div className="w-1/2 pr-4 flex flex-col">
+                <div className="w-1/2 pr-4 flex flex-col h-full">
+
                   <p className="font-body text-xs tracking-[0.2em] uppercase text-primary mb-2">
                     {product.category}
                   </p>
