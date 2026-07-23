@@ -228,10 +228,11 @@ const ProductPage = () => {
                   )}
 
                   {product.description && (
-                    <p className="font-body text-sm text-muted-foreground mt-4 leading-relaxed line-clamp-3">
+                    <p className="font-body text-sm text-muted-foreground mt-4 leading-relaxed">
                       {product.description}
                     </p>
                   )}
+
 
                   {/* Colors */}
                   {product.colors.length > 0 && (
