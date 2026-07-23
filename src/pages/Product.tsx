@@ -5,6 +5,7 @@ import { ChevronRight, ChevronLeft, Star, ShoppingCart, Heart, Minus, Plus, Mess
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import ReviewSection from "@/components/ReviewSection";
+import ImageMagnifier from "@/components/ImageMagnifier";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
@@ -165,20 +166,21 @@ const ProductPage = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-stretch">
             {/* Image */}
             <div className="relative bg-card rounded-2xl overflow-hidden shadow-card">
-              <div className="aspect-square w-full">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+              <ImageMagnifier
+                src={product.image}
+                alt={product.name}
+                className="aspect-square w-full"
+                imgClassName="w-full h-full object-cover select-none"
+                zoom={2.4}
+                lensSize={180}
+              />
               {product.originalPrice && (
-                <span className="absolute top-4 right-4 px-3 py-1 bg-secondary text-secondary-foreground text-xs font-semibold rounded-full">
+                <span className="absolute top-4 right-4 z-10 px-3 py-1 bg-secondary text-secondary-foreground text-xs font-semibold rounded-full">
                   {Math.round((1 - product.price / product.originalPrice) * 100)}% OFF
                 </span>
               )}
               {product.isPreorder && (
-                <span className="absolute bottom-4 left-4 px-3 py-1 bg-primary text-primary-foreground text-xs font-semibold rounded-full">
+                <span className="absolute bottom-4 left-4 z-10 px-3 py-1 bg-primary text-primary-foreground text-xs font-semibold rounded-full">
                   Pre-order Only
                 </span>
               )}
