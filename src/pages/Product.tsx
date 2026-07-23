@@ -342,7 +342,9 @@ const ProductPage = () => {
                     READ &amp; WRITE REVIEWS
                     <ChevronRight className="h-4 w-4" />
                   </button>
+                  </div>
                 </div>
+
 
                 {/* Reviews panel */}
                 <div className="w-1/2 pl-4 flex flex-col">
