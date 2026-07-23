@@ -125,11 +125,13 @@ const AddProductModal = ({ isOpen, onClose, productType, onProductAdded }: AddPr
           discount_percentage: discountPercentage,
           image: formData.image,
           category: formData.category || "general",
+          description: formData.description || null,
           is_new_arrival: true,
           is_preorder: formData.isPreorder,
           colors: colorsData,
           has_sizes: hasSizes,
         }]);
+
 
         if (error) throw error;
       }
