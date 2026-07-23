@@ -184,6 +184,7 @@ export type Database = {
           category: string
           colors: Json | null
           created_at: string
+          description: string | null
           discount_percentage: number | null
           has_sizes: boolean
           id: string
@@ -200,6 +201,7 @@ export type Database = {
           category?: string
           colors?: Json | null
           created_at?: string
+          description?: string | null
           discount_percentage?: number | null
           has_sizes?: boolean
           id?: string
@@ -216,6 +218,7 @@ export type Database = {
           category?: string
           colors?: Json | null
           created_at?: string
+          description?: string | null
           discount_percentage?: number | null
           has_sizes?: boolean
           id?: string
