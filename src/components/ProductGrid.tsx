@@ -7,7 +7,6 @@ import FilterSidebar from "./FilterSidebar";
 import { Button } from "@/components/ui/button";
 import { SlidersHorizontal } from "lucide-react";
 import AdminAddButton from "./admin/AdminAddButton";
-import AddProductModal from "./admin/AddProductModal";
 import { useDbProducts } from "@/hooks/useDbProducts";
 
 const ITEMS_PER_PAGE = 8;
@@ -16,7 +15,6 @@ const ProductGrid = () => {
   const navigate = useNavigate();
   const [displayCount, setDisplayCount] = useState(ITEMS_PER_PAGE);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [sortOption, setSortOption] = useState("featured");
 
   const { products: dbProducts, refetch: refetchProducts } = useDbProducts();
@@ -110,7 +108,7 @@ const ProductGrid = () => {
               </p>
             </div>
             <AdminAddButton 
-              onClick={() => setIsAddModalOpen(true)} 
+              onClick={() => navigate("/admin/add-product?type=product")} 
               tooltip="Add new product"
             />
           </div>
@@ -176,14 +174,6 @@ const ProductGrid = () => {
             </p>
           ) : null}
         </div>
-
-        {/* Admin Add Product Modal */}
-        <AddProductModal
-          isOpen={isAddModalOpen}
-          onClose={() => setIsAddModalOpen(false)}
-          productType="product"
-          onProductAdded={refetchProducts}
-        />
       </div>
     </div>
   );

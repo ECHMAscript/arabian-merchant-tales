@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Book, GraduationCap, SlidersHorizontal, X, ChevronDown, ChevronRight } from "lucide-react";
 import AdminAddButton from "@/components/admin/AdminAddButton";
-import AddProductModal from "@/components/admin/AddProductModal";
 import { useDbBooks } from "@/hooks/useDbProducts";
 
 type MainCategory = "books" | "school-supplies";
@@ -355,7 +354,7 @@ const Books = () => {
                     Books
                   </Button>
                   <AdminAddButton
-                    onClick={() => setIsAddBookModalOpen(true)}
+                    onClick={() => navigate("/admin/add-product?type=book")}
                     tooltip="Add new book"
                   />
                 </div>
@@ -369,7 +368,7 @@ const Books = () => {
                     School Resources
                   </Button>
                   <AdminAddButton
-                    onClick={() => setIsAddSupplyModalOpen(true)}
+                    onClick={() => navigate("/admin/add-product?type=school-supply")}
                     tooltip="Add school supply"
                   />
                 </div>
