@@ -1,4 +1,5 @@
 import { Helmet } from "react-helmet-async";
+import { useNavigate } from "react-router-dom";
 import { useState, useMemo } from "react";
 import Navbar from "@/components/Navbar";
 import BookCard from "@/components/BookCard";
@@ -9,12 +10,12 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Book, GraduationCap, SlidersHorizontal, X, ChevronDown, ChevronRight } from "lucide-react";
 import AdminAddButton from "@/components/admin/AdminAddButton";
-import AddProductModal from "@/components/admin/AddProductModal";
 import { useDbBooks } from "@/hooks/useDbProducts";
 
 type MainCategory = "books" | "school-supplies";
 
 const Books = () => {
+  const navigate = useNavigate();
   const [selectedProduct, setSelectedProduct] = useState<BookProduct | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [mainCategory, setMainCategory] = useState<MainCategory>("books");
@@ -26,8 +27,6 @@ const Books = () => {
     books: true,
     schoolSupplies: false
   });
-  const [isAddBookModalOpen, setIsAddBookModalOpen] = useState(false);
-  const [isAddSupplyModalOpen, setIsAddSupplyModalOpen] = useState(false);
 
   const { books: dbBooks, refetch: refetchBooks } = useDbBooks();
 
@@ -355,7 +354,7 @@ const Books = () => {
                     Books
                   </Button>
                   <AdminAddButton
-                    onClick={() => setIsAddBookModalOpen(true)}
+                    onClick={() => navigate("/admin/add-product?type=book")}
                     tooltip="Add new book"
                   />
                 </div>
@@ -369,7 +368,7 @@ const Books = () => {
                     School Resources
                   </Button>
                   <AdminAddButton
-                    onClick={() => setIsAddSupplyModalOpen(true)}
+                    onClick={() => navigate("/admin/add-product?type=school-supply")}
                     tooltip="Add school supply"
                   />
                 </div>
@@ -434,19 +433,6 @@ const Books = () => {
           book={selectedProduct}
         />
 
-        {/* Admin Add Modals */}
-        <AddProductModal
-          isOpen={isAddBookModalOpen}
-          onClose={() => setIsAddBookModalOpen(false)}
-          productType="book"
-          onProductAdded={refetchBooks}
-        />
-        <AddProductModal
-          isOpen={isAddSupplyModalOpen}
-          onClose={() => setIsAddSupplyModalOpen(false)}
-          productType="school-supply"
-          onProductAdded={refetchBooks}
-        />
       </div>
     </>
   );

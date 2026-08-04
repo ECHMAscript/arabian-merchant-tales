@@ -12,6 +12,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { OrderNotificationProvider } from "@/contexts/OrderNotificationContext";
 import Index from "./pages/Index";
 import Product from "./pages/Product";
+import AddProduct from "./pages/AddProduct";
 import Checkout from "./pages/Checkout";
 import CheckoutReturn from "./pages/CheckoutReturn";
 import Profile from "./pages/Profile";
@@ -45,6 +46,7 @@ const App = () => (
                     <Routes>
                       <Route path="/" element={<Index />} />
                       <Route path="/product/:id" element={<Product />} />
+                      <Route path="/admin/add-product" element={<AddProduct />} />
                       <Route path="/checkout" element={<Checkout />} />
                       <Route path="/checkout/return" element={<CheckoutReturn />} />
                       <Route path="/profile" element={<Profile />} />

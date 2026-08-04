@@ -16,7 +16,6 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import AdminAddButton from "@/components/admin/AdminAddButton";
-import AddProductModal from "@/components/admin/AddProductModal";
 import { useDbNewArrivals } from "@/hooks/useDbProducts";
 
 const NewArrivals = () => {
@@ -25,8 +24,6 @@ const NewArrivals = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const [isAddCarouselModalOpen, setIsAddCarouselModalOpen] = useState(false);
-  const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
 
   const { arrivals: dbArrivals, refetch: refetchArrivals } = useDbNewArrivals();
 
@@ -120,7 +117,7 @@ const NewArrivals = () => {
                   ✦ Just Arrived
                 </span>
                 <AdminAddButton
-                  onClick={() => setIsAddCarouselModalOpen(true)}
+                  onClick={() => navigate("/admin/add-product?type=carousel")}
                   tooltip="Add to carousel"
                 />
               </div>
@@ -324,7 +321,7 @@ const NewArrivals = () => {
                 Showing {filteredProducts.length} new items
               </p>
               <AdminAddButton
-                onClick={() => setIsAddProductModalOpen(true)}
+                onClick={() => navigate("/admin/add-product?type=product")}
                 tooltip="Add new arrival"
               />
             </div>
@@ -370,21 +367,6 @@ const NewArrivals = () => {
             </div>
           )}
         </main>
-
-
-        {/* Admin Add Modals */}
-        <AddProductModal
-          isOpen={isAddCarouselModalOpen}
-          onClose={() => setIsAddCarouselModalOpen(false)}
-          productType="carousel"
-          onProductAdded={refetchArrivals}
-        />
-        <AddProductModal
-          isOpen={isAddProductModalOpen}
-          onClose={() => setIsAddProductModalOpen(false)}
-          productType="product"
-          onProductAdded={refetchArrivals}
-        />
       </div>
     </>
   );
