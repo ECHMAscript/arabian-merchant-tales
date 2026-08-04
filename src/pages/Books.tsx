@@ -433,19 +433,6 @@ const Books = () => {
           book={selectedProduct}
         />
 
-        {/* Admin Add Modals */}
-        <AddProductModal
-          isOpen={isAddBookModalOpen}
-          onClose={() => setIsAddBookModalOpen(false)}
-          productType="book"
-          onProductAdded={refetchBooks}
-        />
-        <AddProductModal
-          isOpen={isAddSupplyModalOpen}
-          onClose={() => setIsAddSupplyModalOpen(false)}
-          productType="school-supply"
-          onProductAdded={refetchBooks}
-        />
       </div>
     </>
   );
