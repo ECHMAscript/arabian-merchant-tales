@@ -1,4 +1,5 @@
 import { Helmet } from "react-helmet-async";
+import { useNavigate } from "react-router-dom";
 import { useState, useMemo } from "react";
 import Navbar from "@/components/Navbar";
 import BookCard from "@/components/BookCard";
@@ -14,6 +15,7 @@ import { useDbBooks } from "@/hooks/useDbProducts";
 type MainCategory = "books" | "school-supplies";
 
 const Books = () => {
+  const navigate = useNavigate();
   const [selectedProduct, setSelectedProduct] = useState<BookProduct | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [mainCategory, setMainCategory] = useState<MainCategory>("books");
@@ -25,8 +27,6 @@ const Books = () => {
     books: true,
     schoolSupplies: false
   });
-  const [isAddBookModalOpen, setIsAddBookModalOpen] = useState(false);
-  const [isAddSupplyModalOpen, setIsAddSupplyModalOpen] = useState(false);
 
   const { books: dbBooks, refetch: refetchBooks } = useDbBooks();
 

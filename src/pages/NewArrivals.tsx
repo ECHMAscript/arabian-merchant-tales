@@ -24,7 +24,6 @@ const NewArrivals = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const [isAddCarouselModalOpen, setIsAddCarouselModalOpen] = useState(false);
 
   const { arrivals: dbArrivals, refetch: refetchArrivals } = useDbNewArrivals();
 
@@ -368,21 +367,6 @@ const NewArrivals = () => {
             </div>
           )}
         </main>
-
-
-        {/* Admin Add Modals */}
-        <AddProductModal
-          isOpen={isAddCarouselModalOpen}
-          onClose={() => setIsAddCarouselModalOpen(false)}
-          productType="carousel"
-          onProductAdded={refetchArrivals}
-        />
-        <AddProductModal
-          isOpen={isAddProductModalOpen}
-          onClose={() => setIsAddProductModalOpen(false)}
-          productType="product"
-          onProductAdded={refetchArrivals}
-        />
       </div>
     </>
   );
